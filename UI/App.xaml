@@ -4,6 +4,10 @@
              xmlns:local="clr-namespace:UI"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <ResourceDictionary>
+            <SolidColorBrush x:Key="BorderColor" Color="#51504D"/>
+            <SolidColorBrush x:Key="LightTile" Color="#EFEFEF"/>
+            <SolidColorBrush x:Key="DarkTile" Color="#C2D7E2"/>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>
