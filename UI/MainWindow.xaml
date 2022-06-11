@@ -5,107 +5,103 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:UI"
         mc:Ignorable="d"
-        Title="MainWindow" Height="800" Width="800">
+        Title="DuckFish" Height="800" Width="800">
     <Grid>
-        <Border BorderThickness="40" BorderBrush="{StaticResource BorderColor}">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition />
-                    <RowDefinition />
-                    <RowDefinition />
-                    <RowDefinition />
-                    <RowDefinition />
-                    <RowDefinition />
-                    <RowDefinition />
-                    <RowDefinition />
-                </Grid.RowDefinitions>
-                
-                <Grid Grid.Row="0" Grid.Column="0" Background="{StaticResource LightTile}"></Grid>
-                <Grid Grid.Row="0" Grid.Column="1" Background="{StaticResource DarkTile}"></Grid>
-                <Grid Grid.Row="0" Grid.Column="2" Background="{StaticResource LightTile}"></Grid>
-                <Grid Grid.Row="0" Grid.Column="3" Background="{StaticResource DarkTile}"></Grid>
-                <Grid Grid.Row="0" Grid.Column="4" Background="{StaticResource LightTile}"></Grid>
-                <Grid Grid.Row="0" Grid.Column="5" Background="{StaticResource DarkTile}"></Grid>
-                <Grid Grid.Row="0" Grid.Column="6" Background="{StaticResource LightTile}"></Grid>
-                <Grid Grid.Row="0" Grid.Column="7" Background="{StaticResource DarkTile}"></Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="20"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition />
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="20"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition />
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="20"/>
+        </Grid.RowDefinitions>
+        <Border Grid.Column="2" Grid.Row="2" BorderThickness="40" BorderBrush="{StaticResource BorderColor}">
+            <UniformGrid Grid.Column="2" Grid.Row="2" Columns="8" Rows="8">
 
-                <Grid Grid.Row="1" Grid.Column="0" Background="{StaticResource DarkTile}"></Grid>
-                <Grid Grid.Row="1" Grid.Column="1" Background="{StaticResource LightTile}"></Grid>
-                <Grid Grid.Row="1" Grid.Column="2" Background="{StaticResource DarkTile}"></Grid>
-                <Grid Grid.Row="1" Grid.Column="3" Background="{StaticResource LightTile}"></Grid>
-                <Grid Grid.Row="1" Grid.Column="4" Background="{StaticResource DarkTile}"></Grid>
-                <Grid Grid.Row="1" Grid.Column="5" Background="{StaticResource LightTile}"></Grid>
-                <Grid Grid.Row="1" Grid.Column="6" Background="{StaticResource DarkTile}"></Grid>
-                <Grid Grid.Row="1" Grid.Column="7" Background="{StaticResource LightTile}"></Grid>
+                <!--ROW 8-->
 
-                <Grid Grid.Row="2" Grid.Column="0" Background="{StaticResource LightTile}"></Grid>
-                <Grid Grid.Row="2" Grid.Column="1" Background="{StaticResource DarkTile}"></Grid>
-                <Grid Grid.Row="2" Grid.Column="2" Background="{StaticResource LightTile}"></Grid>
-                <Grid Grid.Row="2" Grid.Column="3" Background="{StaticResource DarkTile}"></Grid>
-                <Grid Grid.Row="2" Grid.Column="4" Background="{StaticResource LightTile}"></Grid>
-                <Grid Grid.Row="2" Grid.Column="5" Background="{StaticResource DarkTile}"></Grid>
-                <Grid Grid.Row="2" Grid.Column="6" Background="{StaticResource LightTile}"></Grid>
-                <Grid Grid.Row="2" Grid.Column="7" Background="{StaticResource DarkTile}"></Grid>
+                <UniformGrid Grid.Row="0" Grid.Column="0" Background="{StaticResource LightTile}">
+                    <Image Tag="a8" Loaded="Image_Loaded" Margin="2"  />
+                </UniformGrid>
+                <UniformGrid Grid.Row="0" Grid.Column="1" Background="{StaticResource DarkTile}"></UniformGrid>
+                <UniformGrid Grid.Row="0" Grid.Column="2" Background="{StaticResource LightTile}"></UniformGrid>
+                <UniformGrid Grid.Row="0" Grid.Column="3" Background="{StaticResource DarkTile}"></UniformGrid>
+                <UniformGrid Grid.Row="0" Grid.Column="4" Background="{StaticResource LightTile}"></UniformGrid>
+                <UniformGrid Grid.Row="0" Grid.Column="5" Background="{StaticResource DarkTile}"></UniformGrid>
+                <UniformGrid Grid.Row="0" Grid.Column="6" Background="{StaticResource LightTile}"></UniformGrid>
+                <UniformGrid Grid.Row="0" Grid.Column="7" Background="{StaticResource DarkTile}"></UniformGrid>
 
-                <Grid Grid.Row="3" Grid.Column="0" Background="{StaticResource DarkTile}"></Grid>
-                <Grid Grid.Row="3" Grid.Column="1" Background="{StaticResource LightTile}"></Grid>
-                <Grid Grid.Row="3" Grid.Column="2" Background="{StaticResource DarkTile}"></Grid>
-                <Grid Grid.Row="3" Grid.Column="3" Background="{StaticResource LightTile}"></Grid>
-                <Grid Grid.Row="3" Grid.Column="4" Background="{StaticResource DarkTile}"></Grid>
-                <Grid Grid.Row="3" Grid.Column="5" Background="{StaticResource LightTile}"></Grid>
-                <Grid Grid.Row="3" Grid.Column="6" Background="{StaticResource DarkTile}"></Grid>
-                <Grid Grid.Row="3" Grid.Column="7" Background="{StaticResource LightTile}"></Grid>
+                <UniformGrid Grid.Row="1" Grid.Column="0" Background="{StaticResource DarkTile}"></UniformGrid>
+                <UniformGrid Grid.Row="1" Grid.Column="1" Background="{StaticResource LightTile}"></UniformGrid>
+                <UniformGrid Grid.Row="1" Grid.Column="2" Background="{StaticResource DarkTile}"></UniformGrid>
+                <UniformGrid Grid.Row="1" Grid.Column="3" Background="{StaticResource LightTile}"></UniformGrid>
+                <UniformGrid Grid.Row="1" Grid.Column="4" Background="{StaticResource DarkTile}"></UniformGrid>
+                <UniformGrid Grid.Row="1" Grid.Column="5" Background="{StaticResource LightTile}"></UniformGrid>
+                <UniformGrid Grid.Row="1" Grid.Column="6" Background="{StaticResource DarkTile}"></UniformGrid>
+                <UniformGrid Grid.Row="1" Grid.Column="7" Background="{StaticResource LightTile}"></UniformGrid>
 
-                <Grid Grid.Row="4" Grid.Column="0" Background="{StaticResource LightTile}"></Grid>
-                <Grid Grid.Row="4" Grid.Column="1" Background="{StaticResource DarkTile}"></Grid>
-                <Grid Grid.Row="4" Grid.Column="2" Background="{StaticResource LightTile}"></Grid>
-                <Grid Grid.Row="4" Grid.Column="3" Background="{StaticResource DarkTile}"></Grid>
-                <Grid Grid.Row="4" Grid.Column="4" Background="{StaticResource LightTile}"></Grid>
-                <Grid Grid.Row="4" Grid.Column="5" Background="{StaticResource DarkTile}"></Grid>
-                <Grid Grid.Row="4" Grid.Column="6" Background="{StaticResource LightTile}"></Grid>
-                <Grid Grid.Row="4" Grid.Column="7" Background="{StaticResource DarkTile}"></Grid>
+                <UniformGrid Grid.Row="2" Grid.Column="0" Background="{StaticResource LightTile}"></UniformGrid>
+                <UniformGrid Grid.Row="2" Grid.Column="1" Background="{StaticResource DarkTile}"></UniformGrid>
+                <UniformGrid Grid.Row="2" Grid.Column="2" Background="{StaticResource LightTile}"></UniformGrid>
+                <UniformGrid Grid.Row="2" Grid.Column="3" Background="{StaticResource DarkTile}"></UniformGrid>
+                <UniformGrid Grid.Row="2" Grid.Column="4" Background="{StaticResource LightTile}"></UniformGrid>
+                <UniformGrid Grid.Row="2" Grid.Column="5" Background="{StaticResource DarkTile}"></UniformGrid>
+                <UniformGrid Grid.Row="2" Grid.Column="6" Background="{StaticResource LightTile}"></UniformGrid>
+                <UniformGrid Grid.Row="2" Grid.Column="7" Background="{StaticResource DarkTile}"></UniformGrid>
 
-                <Grid Grid.Row="5" Grid.Column="0" Background="{StaticResource DarkTile}"></Grid>
-                <Grid Grid.Row="5" Grid.Column="1" Background="{StaticResource LightTile}"></Grid>
-                <Grid Grid.Row="5" Grid.Column="2" Background="{StaticResource DarkTile}"></Grid>
-                <Grid Grid.Row="5" Grid.Column="3" Background="{StaticResource LightTile}"></Grid>
-                <Grid Grid.Row="5" Grid.Column="4" Background="{StaticResource DarkTile}"></Grid>
-                <Grid Grid.Row="5" Grid.Column="5" Background="{StaticResource LightTile}"></Grid>
-                <Grid Grid.Row="5" Grid.Column="6" Background="{StaticResource DarkTile}"></Grid>
-                <Grid Grid.Row="5" Grid.Column="7" Background="{StaticResource LightTile}"></Grid>
+                <UniformGrid Grid.Row="3" Grid.Column="0" Background="{StaticResource DarkTile}"></UniformGrid>
+                <UniformGrid Grid.Row="3" Grid.Column="1" Background="{StaticResource LightTile}"></UniformGrid>
+                <UniformGrid Grid.Row="3" Grid.Column="2" Background="{StaticResource DarkTile}"></UniformGrid>
+                <UniformGrid Grid.Row="3" Grid.Column="3" Background="{StaticResource LightTile}"></UniformGrid>
+                <UniformGrid Grid.Row="3" Grid.Column="4" Background="{StaticResource DarkTile}"></UniformGrid>
+                <UniformGrid Grid.Row="3" Grid.Column="5" Background="{StaticResource LightTile}"></UniformGrid>
+                <UniformGrid Grid.Row="3" Grid.Column="6" Background="{StaticResource DarkTile}"></UniformGrid>
+                <UniformGrid Grid.Row="3" Grid.Column="7" Background="{StaticResource LightTile}"></UniformGrid>
 
-                <Grid Grid.Row="6" Grid.Column="0" Background="{StaticResource LightTile}"></Grid>
-                <Grid Grid.Row="6" Grid.Column="1" Background="{StaticResource DarkTile}"></Grid>
-                <Grid Grid.Row="6" Grid.Column="2" Background="{StaticResource LightTile}"></Grid>
-                <Grid Grid.Row="6" Grid.Column="3" Background="{StaticResource DarkTile}"></Grid>
-                <Grid Grid.Row="6" Grid.Column="4" Background="{StaticResource LightTile}"></Grid>
-                <Grid Grid.Row="6" Grid.Column="5" Background="{StaticResource DarkTile}"></Grid>
-                <Grid Grid.Row="6" Grid.Column="6" Background="{StaticResource LightTile}"></Grid>
-                <Grid Grid.Row="6" Grid.Column="7" Background="{StaticResource DarkTile}"></Grid>
+                <UniformGrid Grid.Row="4" Grid.Column="0" Background="{StaticResource LightTile}"></UniformGrid>
+                <UniformGrid Grid.Row="4" Grid.Column="1" Background="{StaticResource DarkTile}"></UniformGrid>
+                <UniformGrid Grid.Row="4" Grid.Column="2" Background="{StaticResource LightTile}"></UniformGrid>
+                <UniformGrid Grid.Row="4" Grid.Column="3" Background="{StaticResource DarkTile}"></UniformGrid>
+                <UniformGrid Grid.Row="4" Grid.Column="4" Background="{StaticResource LightTile}"></UniformGrid>
+                <UniformGrid Grid.Row="4" Grid.Column="5" Background="{StaticResource DarkTile}"></UniformGrid>
+                <UniformGrid Grid.Row="4" Grid.Column="6" Background="{StaticResource LightTile}"></UniformGrid>
+                <UniformGrid Grid.Row="4" Grid.Column="7" Background="{StaticResource DarkTile}"></UniformGrid>
 
-                <Grid Grid.Row="7" Grid.Column="0" Background="{StaticResource DarkTile}"></Grid>
-                <Grid Grid.Row="7" Grid.Column="1" Background="{StaticResource LightTile}"></Grid>
-                <Grid Grid.Row="7" Grid.Column="2" Background="{StaticResource DarkTile}"></Grid>
-                <Grid Grid.Row="7" Grid.Column="3" Background="{StaticResource LightTile}"></Grid>
-                <Grid Grid.Row="7" Grid.Column="4" Background="{StaticResource DarkTile}"></Grid>
-                <Grid Grid.Row="7" Grid.Column="5" Background="{StaticResource LightTile}"></Grid>
-                <Grid Grid.Row="7" Grid.Column="6" Background="{StaticResource DarkTile}"></Grid>
-                <Grid Grid.Row="7" Grid.Column="7" Background="{StaticResource LightTile}"></Grid>
+                <UniformGrid Grid.Row="5" Grid.Column="0" Background="{StaticResource DarkTile}"></UniformGrid>
+                <UniformGrid Grid.Row="5" Grid.Column="1" Background="{StaticResource LightTile}"></UniformGrid>
+                <UniformGrid Grid.Row="5" Grid.Column="2" Background="{StaticResource DarkTile}"></UniformGrid>
+                <UniformGrid Grid.Row="5" Grid.Column="3" Background="{StaticResource LightTile}"></UniformGrid>
+                <UniformGrid Grid.Row="5" Grid.Column="4" Background="{StaticResource DarkTile}"></UniformGrid>
+                <UniformGrid Grid.Row="5" Grid.Column="5" Background="{StaticResource LightTile}"></UniformGrid>
+                <UniformGrid Grid.Row="5" Grid.Column="6" Background="{StaticResource DarkTile}"></UniformGrid>
+                <UniformGrid Grid.Row="5" Grid.Column="7" Background="{StaticResource LightTile}"></UniformGrid>
 
-            </Grid>
+                <UniformGrid Grid.Row="6" Grid.Column="0" Background="{StaticResource LightTile}"></UniformGrid>
+                <UniformGrid Grid.Row="6" Grid.Column="1" Background="{StaticResource DarkTile}"></UniformGrid>
+                <UniformGrid Grid.Row="6" Grid.Column="2" Background="{StaticResource LightTile}"></UniformGrid>
+                <UniformGrid Grid.Row="6" Grid.Column="3" Background="{StaticResource DarkTile}"></UniformGrid>
+                <UniformGrid Grid.Row="6" Grid.Column="4" Background="{StaticResource LightTile}"></UniformGrid>
+                <UniformGrid Grid.Row="6" Grid.Column="5" Background="{StaticResource DarkTile}"></UniformGrid>
+                <UniformGrid Grid.Row="6" Grid.Column="6" Background="{StaticResource LightTile}"></UniformGrid>
+                <UniformGrid Grid.Row="6" Grid.Column="7" Background="{StaticResource DarkTile}"></UniformGrid>
+
+                <UniformGrid Grid.Row="7" Grid.Column="0" Background="{StaticResource DarkTile}"></UniformGrid>
+                <UniformGrid Grid.Row="7" Grid.Column="1" Background="{StaticResource LightTile}"></UniformGrid>
+                <UniformGrid Grid.Row="7" Grid.Column="2" Background="{StaticResource DarkTile}"></UniformGrid>
+                <UniformGrid Grid.Row="7" Grid.Column="3" Background="{StaticResource LightTile}"></UniformGrid>
+                <UniformGrid Grid.Row="7" Grid.Column="4" Background="{StaticResource DarkTile}"></UniformGrid>
+                <UniformGrid Grid.Row="7" Grid.Column="5" Background="{StaticResource LightTile}"></UniformGrid>
+                <UniformGrid Grid.Row="7" Grid.Column="6" Background="{StaticResource DarkTile}"></UniformGrid>
+                <UniformGrid Grid.Row="7" Grid.Column="7" Background="{StaticResource LightTile}"></UniformGrid>
+
+
+            </UniformGrid> 
         </Border>
     </Grid>
 </Window>
-
-<!--<Rectangle Name="DarkTile" Stroke="{StaticResource DarkTile}" Fill="{StaticResource DarkTile}" />
-<Rectangle Name="LightTile" Stroke="{StaticResource LightTile}" Fill="{StaticResource LightTile}" />-->

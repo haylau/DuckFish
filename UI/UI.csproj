@@ -7,4 +7,21 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="Assets\Empty.png" />
+    <None Remove="Assets\King_White.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\Empty.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Engine\Engine.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\King_White.png" />
+  </ItemGroup>
+
 </Project>
