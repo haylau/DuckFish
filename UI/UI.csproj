@@ -8,11 +8,25 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\Bishop_Black.png" />
+    <None Remove="Assets\Bishop_White.png" />
     <None Remove="Assets\Empty.png" />
+    <None Remove="Assets\King_Black.png" />
     <None Remove="Assets\King_White.png" />
+    <None Remove="Assets\King_White2.png" />
+    <None Remove="Assets\Knight_Black.png" />
+    <None Remove="Assets\Knight_White.png" />
+    <None Remove="Assets\Pawn_Black.png" />
+    <None Remove="Assets\Pawn_White.png" />
+    <None Remove="Assets\Queen_Black.png" />
+    <None Remove="Assets\Queen_White.png" />
+    <None Remove="Assets\Rook_Black.png" />
+    <None Remove="Assets\Rook_White.png" />
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Assets\Bishop_Black.png" />
+    <Resource Include="Assets\Bishop_White.png" />
     <Resource Include="Assets\Empty.png" />
   </ItemGroup>
 
@@ -21,7 +35,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Assets\King_Black.png" />
     <Resource Include="Assets\King_White.png" />
+    <Resource Include="Assets\Knight_Black.png" />
+    <Resource Include="Assets\Knight_White.png" />
+    <Resource Include="Assets\Pawn_Black.png" />
+    <Resource Include="Assets\Pawn_White.png" />
+    <Resource Include="Assets\Queen_Black.png" />
+    <Resource Include="Assets\Queen_White.png" />
+    <Resource Include="Assets\Rook_Black.png" />
+    <Resource Include="Assets\Rook_White.png" />
   </ItemGroup>
 
 </Project>

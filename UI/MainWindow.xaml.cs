@@ -35,7 +35,7 @@ namespace UI
 
         public MainWindow()
         {
-            _chessboard.setBoard(Board.debug);
+            _chessboard.setBoard(Board.start);
             DataContext = this;
             InitializeComponent();
         }
@@ -51,26 +51,32 @@ namespace UI
             {
                 case Piece.Empty:
                     {
+                        img.Source = new BitmapImage(new Uri(@"pack://application:,,,/Assets/Empty.png", UriKind.Absolute));
                         break;
                     }
                 case Piece.White + Piece.Pawn:
                     {
+                        img.Source = new BitmapImage(new Uri(@"pack://application:,,,/Assets/Pawn_White.png", UriKind.Absolute));
                         break;
                     }
                 case Piece.White + Piece.Knight:
                     {
+                        img.Source = new BitmapImage(new Uri(@"pack://application:,,,/Assets/Knight_White.png", UriKind.Absolute));
                         break;
                     }
                 case Piece.White + Piece.Bishop:
                     {
+                        img.Source = new BitmapImage(new Uri(@"pack://application:,,,/Assets/Bishop_White.png", UriKind.Absolute));
                         break;
                     }
                 case Piece.White + Piece.Rook:
                     {
+                        img.Source = new BitmapImage(new Uri(@"pack://application:,,,/Assets/Rook_White.png", UriKind.Absolute));
                         break;
                     }
                 case Piece.White + Piece.Queen:
                     {
+                        img.Source = new BitmapImage(new Uri(@"pack://application:,,,/Assets/Queen_White.png", UriKind.Absolute));
                         break;
                     }
                 case Piece.White + Piece.King:
@@ -80,26 +86,32 @@ namespace UI
                     }
                 case Piece.Black + Piece.Pawn:
                     {
+                        img.Source = new BitmapImage(new Uri(@"pack://application:,,,/Assets/Pawn_Black.png", UriKind.Absolute));
                         break;
                     }
                 case Piece.Black + Piece.Knight:
                     {
+                        img.Source = new BitmapImage(new Uri(@"pack://application:,,,/Assets/Knight_Black.png", UriKind.Absolute));
                         break;
                     }
                 case Piece.Black + Piece.Bishop:
                     {
+                        img.Source = new BitmapImage(new Uri(@"pack://application:,,,/Assets/Bishop_Black.png", UriKind.Absolute));
                         break;
                     }
                 case Piece.Black + Piece.Rook:
                     {
+                        img.Source = new BitmapImage(new Uri(@"pack://application:,,,/Assets/Rook_Black.png", UriKind.Absolute));
                         break;
                     }
                 case Piece.Black + Piece.Queen:
                     {
+                        img.Source = new BitmapImage(new Uri(@"pack://application:,,,/Assets/Queen_Black.png", UriKind.Absolute));
                         break;
                     }
                 case Piece.Black + Piece.King:
                     {
+                        img.Source = new BitmapImage(new Uri(@"pack://application:,,,/Assets/King_Black.png", UriKind.Absolute));
                         break;
                     }
             }

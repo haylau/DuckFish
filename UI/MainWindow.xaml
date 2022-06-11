@@ -29,76 +29,202 @@
                 <UniformGrid Grid.Row="0" Grid.Column="0" Background="{StaticResource LightTile}">
                     <Image Tag="a8" Loaded="Image_Loaded" Margin="2"  />
                 </UniformGrid>
-                <UniformGrid Grid.Row="0" Grid.Column="1" Background="{StaticResource DarkTile}"></UniformGrid>
-                <UniformGrid Grid.Row="0" Grid.Column="2" Background="{StaticResource LightTile}"></UniformGrid>
-                <UniformGrid Grid.Row="0" Grid.Column="3" Background="{StaticResource DarkTile}"></UniformGrid>
-                <UniformGrid Grid.Row="0" Grid.Column="4" Background="{StaticResource LightTile}"></UniformGrid>
-                <UniformGrid Grid.Row="0" Grid.Column="5" Background="{StaticResource DarkTile}"></UniformGrid>
-                <UniformGrid Grid.Row="0" Grid.Column="6" Background="{StaticResource LightTile}"></UniformGrid>
-                <UniformGrid Grid.Row="0" Grid.Column="7" Background="{StaticResource DarkTile}"></UniformGrid>
+                <UniformGrid Grid.Row="0" Grid.Column="1" Background="{StaticResource DarkTile}">
+                    <Image Tag="b8" Loaded="Image_Loaded" Margin="2"  />
+                </UniformGrid>
+                <UniformGrid Grid.Row="0" Grid.Column="2" Background="{StaticResource LightTile}">
+                    <Image Tag="c8" Loaded="Image_Loaded" Margin="2"  />
+                </UniformGrid>
+                <UniformGrid Grid.Row="0" Grid.Column="3" Background="{StaticResource DarkTile}">
+                    <Image Tag="d8" Loaded="Image_Loaded" Margin="2"  />
+                </UniformGrid>
+                <UniformGrid Grid.Row="0" Grid.Column="4" Background="{StaticResource LightTile}">
+                    <Image Tag="e8" Loaded="Image_Loaded" Margin="2"  />
+                </UniformGrid>
+                <UniformGrid Grid.Row="0" Grid.Column="5" Background="{StaticResource DarkTile}">
+                    <Image Tag="f8" Loaded="Image_Loaded" Margin="2"  />
+                </UniformGrid>
+                <UniformGrid Grid.Row="0" Grid.Column="6" Background="{StaticResource LightTile}">
+                    <Image Tag="g8" Loaded="Image_Loaded" Margin="2"  />
+                </UniformGrid>
+                <UniformGrid Grid.Row="0" Grid.Column="7" Background="{StaticResource DarkTile}">
+                    <Image Tag="h8" Loaded="Image_Loaded" Margin="2"  />
+                </UniformGrid>
 
-                <UniformGrid Grid.Row="1" Grid.Column="0" Background="{StaticResource DarkTile}"></UniformGrid>
-                <UniformGrid Grid.Row="1" Grid.Column="1" Background="{StaticResource LightTile}"></UniformGrid>
-                <UniformGrid Grid.Row="1" Grid.Column="2" Background="{StaticResource DarkTile}"></UniformGrid>
-                <UniformGrid Grid.Row="1" Grid.Column="3" Background="{StaticResource LightTile}"></UniformGrid>
-                <UniformGrid Grid.Row="1" Grid.Column="4" Background="{StaticResource DarkTile}"></UniformGrid>
-                <UniformGrid Grid.Row="1" Grid.Column="5" Background="{StaticResource LightTile}"></UniformGrid>
-                <UniformGrid Grid.Row="1" Grid.Column="6" Background="{StaticResource DarkTile}"></UniformGrid>
-                <UniformGrid Grid.Row="1" Grid.Column="7" Background="{StaticResource LightTile}"></UniformGrid>
+                <UniformGrid Grid.Row="1" Grid.Column="0" Background="{StaticResource DarkTile}">
+                    <Image Tag="a7" Loaded="Image_Loaded" Margin="2"  />
+                </UniformGrid>
+                <UniformGrid Grid.Row="1" Grid.Column="1" Background="{StaticResource LightTile}">
+                    <Image Tag="b7" Loaded="Image_Loaded" Margin="2"  />
+                </UniformGrid>
+                <UniformGrid Grid.Row="1" Grid.Column="2" Background="{StaticResource DarkTile}">
+                    <Image Tag="c7" Loaded="Image_Loaded" Margin="2"  />
+                </UniformGrid>
+                <UniformGrid Grid.Row="1" Grid.Column="3" Background="{StaticResource LightTile}">
+                    <Image Tag="d7" Loaded="Image_Loaded" Margin="2"  />
+                </UniformGrid>
+                <UniformGrid Grid.Row="1" Grid.Column="4" Background="{StaticResource DarkTile}">
+                    <Image Tag="e7" Loaded="Image_Loaded" Margin="2"  />
+                </UniformGrid>
+                <UniformGrid Grid.Row="1" Grid.Column="5" Background="{StaticResource LightTile}">
+                    <Image Tag="f7" Loaded="Image_Loaded" Margin="2"  />
+                </UniformGrid>
+                <UniformGrid Grid.Row="1" Grid.Column="6" Background="{StaticResource DarkTile}">
+                    <Image Tag="g7" Loaded="Image_Loaded" Margin="2"  />
+                </UniformGrid>
+                <UniformGrid Grid.Row="1" Grid.Column="7" Background="{StaticResource LightTile}">
+                    <Image Tag="h7" Loaded="Image_Loaded" Margin="2"  />
+                </UniformGrid>
 
-                <UniformGrid Grid.Row="2" Grid.Column="0" Background="{StaticResource LightTile}"></UniformGrid>
-                <UniformGrid Grid.Row="2" Grid.Column="1" Background="{StaticResource DarkTile}"></UniformGrid>
-                <UniformGrid Grid.Row="2" Grid.Column="2" Background="{StaticResource LightTile}"></UniformGrid>
-                <UniformGrid Grid.Row="2" Grid.Column="3" Background="{StaticResource DarkTile}"></UniformGrid>
-                <UniformGrid Grid.Row="2" Grid.Column="4" Background="{StaticResource LightTile}"></UniformGrid>
-                <UniformGrid Grid.Row="2" Grid.Column="5" Background="{StaticResource DarkTile}"></UniformGrid>
-                <UniformGrid Grid.Row="2" Grid.Column="6" Background="{StaticResource LightTile}"></UniformGrid>
-                <UniformGrid Grid.Row="2" Grid.Column="7" Background="{StaticResource DarkTile}"></UniformGrid>
+                <UniformGrid Grid.Row="2" Grid.Column="0" Background="{StaticResource LightTile}">
+                    <Image Tag="a6" Loaded="Image_Loaded" Margin="2"  />
+                </UniformGrid>
+                <UniformGrid Grid.Row="2" Grid.Column="1" Background="{StaticResource DarkTile}">
+                    <Image Tag="b6" Loaded="Image_Loaded" Margin="2"  />
+                </UniformGrid>
+                <UniformGrid Grid.Row="2" Grid.Column="2" Background="{StaticResource LightTile}">
+                    <Image Tag="c6" Loaded="Image_Loaded" Margin="2"  />
+                </UniformGrid>
+                <UniformGrid Grid.Row="2" Grid.Column="3" Background="{StaticResource DarkTile}">
+                    <Image Tag="d6" Loaded="Image_Loaded" Margin="2"  />
+                </UniformGrid>
+                <UniformGrid Grid.Row="2" Grid.Column="4" Background="{StaticResource LightTile}">
+                    <Image Tag="e6" Loaded="Image_Loaded" Margin="2"  />
+                </UniformGrid>
+                <UniformGrid Grid.Row="2" Grid.Column="5" Background="{StaticResource DarkTile}">
+                    <Image Tag="f6" Loaded="Image_Loaded" Margin="2"  />
+                </UniformGrid>
+                <UniformGrid Grid.Row="2" Grid.Column="6" Background="{StaticResource LightTile}">
+                    <Image Tag="g6" Loaded="Image_Loaded" Margin="2"  />
+                </UniformGrid>
+                <UniformGrid Grid.Row="2" Grid.Column="7" Background="{StaticResource DarkTile}">
+                    <Image Tag="h6" Loaded="Image_Loaded" Margin="2"  />
+                </UniformGrid>
 
-                <UniformGrid Grid.Row="3" Grid.Column="0" Background="{StaticResource DarkTile}"></UniformGrid>
-                <UniformGrid Grid.Row="3" Grid.Column="1" Background="{StaticResource LightTile}"></UniformGrid>
-                <UniformGrid Grid.Row="3" Grid.Column="2" Background="{StaticResource DarkTile}"></UniformGrid>
-                <UniformGrid Grid.Row="3" Grid.Column="3" Background="{StaticResource LightTile}"></UniformGrid>
-                <UniformGrid Grid.Row="3" Grid.Column="4" Background="{StaticResource DarkTile}"></UniformGrid>
-                <UniformGrid Grid.Row="3" Grid.Column="5" Background="{StaticResource LightTile}"></UniformGrid>
-                <UniformGrid Grid.Row="3" Grid.Column="6" Background="{StaticResource DarkTile}"></UniformGrid>
-                <UniformGrid Grid.Row="3" Grid.Column="7" Background="{StaticResource LightTile}"></UniformGrid>
+                <UniformGrid Grid.Row="3" Grid.Column="0" Background="{StaticResource DarkTile}">
+                    <Image Tag="a5" Loaded="Image_Loaded" Margin="2"  />
+                </UniformGrid>
+                <UniformGrid Grid.Row="3" Grid.Column="1" Background="{StaticResource LightTile}">
+                    <Image Tag="b5" Loaded="Image_Loaded" Margin="2"  />
+                </UniformGrid>
+                <UniformGrid Grid.Row="3" Grid.Column="2" Background="{StaticResource DarkTile}">
+                    <Image Tag="c5" Loaded="Image_Loaded" Margin="2"  />
+                </UniformGrid>
+                <UniformGrid Grid.Row="3" Grid.Column="3" Background="{StaticResource LightTile}">
+                    <Image Tag="d5" Loaded="Image_Loaded" Margin="2"  />
+                </UniformGrid>
+                <UniformGrid Grid.Row="3" Grid.Column="4" Background="{StaticResource DarkTile}">
+                    <Image Tag="e5" Loaded="Image_Loaded" Margin="2"  />
+                </UniformGrid>
+                <UniformGrid Grid.Row="3" Grid.Column="5" Background="{StaticResource LightTile}">
+                    <Image Tag="f5" Loaded="Image_Loaded" Margin="2"  />
+                </UniformGrid>
+                <UniformGrid Grid.Row="3" Grid.Column="6" Background="{StaticResource DarkTile}">
+                    <Image Tag="g5" Loaded="Image_Loaded" Margin="2"  />
+                </UniformGrid>
+                <UniformGrid Grid.Row="3" Grid.Column="7" Background="{StaticResource LightTile}">
+                    <Image Tag="h5" Loaded="Image_Loaded" Margin="2"  />
+                </UniformGrid>
 
-                <UniformGrid Grid.Row="4" Grid.Column="0" Background="{StaticResource LightTile}"></UniformGrid>
-                <UniformGrid Grid.Row="4" Grid.Column="1" Background="{StaticResource DarkTile}"></UniformGrid>
-                <UniformGrid Grid.Row="4" Grid.Column="2" Background="{StaticResource LightTile}"></UniformGrid>
-                <UniformGrid Grid.Row="4" Grid.Column="3" Background="{StaticResource DarkTile}"></UniformGrid>
-                <UniformGrid Grid.Row="4" Grid.Column="4" Background="{StaticResource LightTile}"></UniformGrid>
-                <UniformGrid Grid.Row="4" Grid.Column="5" Background="{StaticResource DarkTile}"></UniformGrid>
-                <UniformGrid Grid.Row="4" Grid.Column="6" Background="{StaticResource LightTile}"></UniformGrid>
-                <UniformGrid Grid.Row="4" Grid.Column="7" Background="{StaticResource DarkTile}"></UniformGrid>
+                <UniformGrid Grid.Row="4" Grid.Column="0" Background="{StaticResource LightTile}">
+                    <Image Tag="a4" Loaded="Image_Loaded" Margin="2"  />
+                </UniformGrid>
+                <UniformGrid Grid.Row="4" Grid.Column="1" Background="{StaticResource DarkTile}">
+                    <Image Tag="b4" Loaded="Image_Loaded" Margin="2"  />
+                </UniformGrid>
+                <UniformGrid Grid.Row="4" Grid.Column="2" Background="{StaticResource LightTile}">
+                    <Image Tag="c4" Loaded="Image_Loaded" Margin="2"  />
+                </UniformGrid>
+                <UniformGrid Grid.Row="4" Grid.Column="3" Background="{StaticResource DarkTile}">
+                    <Image Tag="d4" Loaded="Image_Loaded" Margin="2"  />
+                </UniformGrid>
+                <UniformGrid Grid.Row="4" Grid.Column="4" Background="{StaticResource LightTile}">
+                    <Image Tag="e4" Loaded="Image_Loaded" Margin="2"  />
+                </UniformGrid>
+                <UniformGrid Grid.Row="4" Grid.Column="5" Background="{StaticResource DarkTile}">
+                    <Image Tag="f4" Loaded="Image_Loaded" Margin="2"  />
+                </UniformGrid>
+                <UniformGrid Grid.Row="4" Grid.Column="6" Background="{StaticResource LightTile}">
+                    <Image Tag="g4" Loaded="Image_Loaded" Margin="2"  />
+                </UniformGrid>
+                <UniformGrid Grid.Row="4" Grid.Column="7" Background="{StaticResource DarkTile}">
+                    <Image Tag="h4" Loaded="Image_Loaded" Margin="2"  />
+                </UniformGrid>
 
-                <UniformGrid Grid.Row="5" Grid.Column="0" Background="{StaticResource DarkTile}"></UniformGrid>
-                <UniformGrid Grid.Row="5" Grid.Column="1" Background="{StaticResource LightTile}"></UniformGrid>
-                <UniformGrid Grid.Row="5" Grid.Column="2" Background="{StaticResource DarkTile}"></UniformGrid>
-                <UniformGrid Grid.Row="5" Grid.Column="3" Background="{StaticResource LightTile}"></UniformGrid>
-                <UniformGrid Grid.Row="5" Grid.Column="4" Background="{StaticResource DarkTile}"></UniformGrid>
-                <UniformGrid Grid.Row="5" Grid.Column="5" Background="{StaticResource LightTile}"></UniformGrid>
-                <UniformGrid Grid.Row="5" Grid.Column="6" Background="{StaticResource DarkTile}"></UniformGrid>
-                <UniformGrid Grid.Row="5" Grid.Column="7" Background="{StaticResource LightTile}"></UniformGrid>
+                <UniformGrid Grid.Row="5" Grid.Column="0" Background="{StaticResource DarkTile}">
+                    <Image Tag="a3" Loaded="Image_Loaded" Margin="2"  />
+                </UniformGrid>
+                <UniformGrid Grid.Row="5" Grid.Column="1" Background="{StaticResource LightTile}">
+                    <Image Tag="b3" Loaded="Image_Loaded" Margin="2"  />
+                </UniformGrid>
+                <UniformGrid Grid.Row="5" Grid.Column="2" Background="{StaticResource DarkTile}">
+                    <Image Tag="c3" Loaded="Image_Loaded" Margin="2"  />
+                </UniformGrid>
+                <UniformGrid Grid.Row="5" Grid.Column="3" Background="{StaticResource LightTile}">
+                    <Image Tag="d3" Loaded="Image_Loaded" Margin="2"  />
+                </UniformGrid>
+                <UniformGrid Grid.Row="5" Grid.Column="4" Background="{StaticResource DarkTile}">
+                    <Image Tag="e3" Loaded="Image_Loaded" Margin="2"  />
+                </UniformGrid>
+                <UniformGrid Grid.Row="5" Grid.Column="5" Background="{StaticResource LightTile}">
+                    <Image Tag="f3" Loaded="Image_Loaded" Margin="2"  />
+                </UniformGrid>
+                <UniformGrid Grid.Row="5" Grid.Column="6" Background="{StaticResource DarkTile}">
+                    <Image Tag="g3" Loaded="Image_Loaded" Margin="2"  />
+                </UniformGrid>
+                <UniformGrid Grid.Row="5" Grid.Column="7" Background="{StaticResource LightTile}">
+                    <Image Tag="h3" Loaded="Image_Loaded" Margin="2"  />
+                </UniformGrid>
 
-                <UniformGrid Grid.Row="6" Grid.Column="0" Background="{StaticResource LightTile}"></UniformGrid>
-                <UniformGrid Grid.Row="6" Grid.Column="1" Background="{StaticResource DarkTile}"></UniformGrid>
-                <UniformGrid Grid.Row="6" Grid.Column="2" Background="{StaticResource LightTile}"></UniformGrid>
-                <UniformGrid Grid.Row="6" Grid.Column="3" Background="{StaticResource DarkTile}"></UniformGrid>
-                <UniformGrid Grid.Row="6" Grid.Column="4" Background="{StaticResource LightTile}"></UniformGrid>
-                <UniformGrid Grid.Row="6" Grid.Column="5" Background="{StaticResource DarkTile}"></UniformGrid>
-                <UniformGrid Grid.Row="6" Grid.Column="6" Background="{StaticResource LightTile}"></UniformGrid>
-                <UniformGrid Grid.Row="6" Grid.Column="7" Background="{StaticResource DarkTile}"></UniformGrid>
+                <UniformGrid Grid.Row="6" Grid.Column="0" Background="{StaticResource LightTile}">
+                    <Image Tag="a2" Loaded="Image_Loaded" Margin="2"  />
+                </UniformGrid>
+                <UniformGrid Grid.Row="6" Grid.Column="1" Background="{StaticResource DarkTile}">
+                    <Image Tag="b2" Loaded="Image_Loaded" Margin="2"  />
+                </UniformGrid>
+                <UniformGrid Grid.Row="6" Grid.Column="2" Background="{StaticResource LightTile}">
+                    <Image Tag="c2" Loaded="Image_Loaded" Margin="2"  />
+                </UniformGrid>
+                <UniformGrid Grid.Row="6" Grid.Column="3" Background="{StaticResource DarkTile}">
+                    <Image Tag="d2" Loaded="Image_Loaded" Margin="2"  />
+                </UniformGrid>
+                <UniformGrid Grid.Row="6" Grid.Column="4" Background="{StaticResource LightTile}">
+                    <Image Tag="e2" Loaded="Image_Loaded" Margin="2"  />
+                </UniformGrid>
+                <UniformGrid Grid.Row="6" Grid.Column="5" Background="{StaticResource DarkTile}">
+                    <Image Tag="f2" Loaded="Image_Loaded" Margin="2"  />
+                </UniformGrid>
+                <UniformGrid Grid.Row="6" Grid.Column="6" Background="{StaticResource LightTile}">
+                    <Image Tag="g2" Loaded="Image_Loaded" Margin="2"  />
+                </UniformGrid>
+                <UniformGrid Grid.Row="6" Grid.Column="7" Background="{StaticResource DarkTile}">
+                    <Image Tag="h2" Loaded="Image_Loaded" Margin="2"  />
+                </UniformGrid>
 
-                <UniformGrid Grid.Row="7" Grid.Column="0" Background="{StaticResource DarkTile}"></UniformGrid>
-                <UniformGrid Grid.Row="7" Grid.Column="1" Background="{StaticResource LightTile}"></UniformGrid>
-                <UniformGrid Grid.Row="7" Grid.Column="2" Background="{StaticResource DarkTile}"></UniformGrid>
-                <UniformGrid Grid.Row="7" Grid.Column="3" Background="{StaticResource LightTile}"></UniformGrid>
-                <UniformGrid Grid.Row="7" Grid.Column="4" Background="{StaticResource DarkTile}"></UniformGrid>
-                <UniformGrid Grid.Row="7" Grid.Column="5" Background="{StaticResource LightTile}"></UniformGrid>
-                <UniformGrid Grid.Row="7" Grid.Column="6" Background="{StaticResource DarkTile}"></UniformGrid>
-                <UniformGrid Grid.Row="7" Grid.Column="7" Background="{StaticResource LightTile}"></UniformGrid>
+                <UniformGrid Grid.Row="7" Grid.Column="0" Background="{StaticResource DarkTile}">
+                    <Image Tag="a1" Loaded="Image_Loaded" Margin="2"  />
+                </UniformGrid>
+                <UniformGrid Grid.Row="7" Grid.Column="1" Background="{StaticResource LightTile}">
+                    <Image Tag="b1" Loaded="Image_Loaded" Margin="2"  />
+                </UniformGrid>
+                <UniformGrid Grid.Row="7" Grid.Column="2" Background="{StaticResource DarkTile}">
+                    <Image Tag="c1" Loaded="Image_Loaded" Margin="2"  />
+                </UniformGrid>
+                <UniformGrid Grid.Row="7" Grid.Column="3" Background="{StaticResource LightTile}">
+                    <Image Tag="d1" Loaded="Image_Loaded" Margin="2"  />
+                </UniformGrid>
+                <UniformGrid Grid.Row="7" Grid.Column="4" Background="{StaticResource DarkTile}">
+                    <Image Tag="e1" Loaded="Image_Loaded" Margin="2"  />
+                </UniformGrid>
+                <UniformGrid Grid.Row="7" Grid.Column="5" Background="{StaticResource LightTile}">
+                    <Image Tag="f1" Loaded="Image_Loaded" Margin="2"  />
+                </UniformGrid>
+                <UniformGrid Grid.Row="7" Grid.Column="6" Background="{StaticResource DarkTile}">
+                    <Image Tag="g1" Loaded="Image_Loaded" Margin="2"  />
+                </UniformGrid>
+                <UniformGrid Grid.Row="7" Grid.Column="7" Background="{StaticResource LightTile}">
+                    <Image Tag="h1" Loaded="Image_Loaded" Margin="2"  />
+                </UniformGrid>
 
 
             </UniformGrid> 
