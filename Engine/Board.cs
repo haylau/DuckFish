@@ -27,7 +27,7 @@ namespace Engine
         };
 
         public const string start = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
-        public const string debug = "KKKKKKKK/KKKKKKKK/8/8/8/8/KKKKKKKK/KKKKKKKK";
+        public const string debug = "Rq6/5N2/5r2/Rp5K/3Bp1P1/Q3n1Pp/3kP2P/1N5b";
         private int[] Square = default!;
 
         public Board()
