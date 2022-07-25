@@ -5,7 +5,8 @@ namespace Engine
     public class Board
     {
 
-        private static Dictionary<char, int> files = new Dictionary<char, int> {
+        private static readonly Dictionary<char, int> files = new()
+        {
             {'a', 0},
             {'b', 1},
             {'c', 2},
@@ -15,7 +16,8 @@ namespace Engine
             {'g', 6},
             {'h', 7}
         };
-        private static Dictionary<char, int> rows = new Dictionary<char, int> {
+        private static readonly Dictionary<char, int> rows = new() 
+        {
             {'8', 0},
             {'7', 8},
             {'6', 16},
@@ -28,25 +30,44 @@ namespace Engine
 
         public const string start = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
         public const string debug = "Rq6/5N2/5r2/Rp5K/3Bp1P1/Q3n1Pp/3kP2P/1N5b";
-        private int[] Square = default!;
+        private readonly int[] boardData = default!;
 
         public Board()
         {
-            Square = new int[64];
+            boardData = new int[64];
         }
 
-        public int getTile(int tile)
+        public int GetTile(int tile)
         {
             if (tile < 0 || tile > 64) return -1;
-            return Square[tile];
+            return boardData[tile];
         }
 
-        public int getTile(string tile)
+        public int GetTile(string tile)
         {
-            return getTile(tileToIndex(tile));
+            return GetTile(TileToIndex(tile));
         }
 
-        private int tileToIndex(string tile)
+        public bool SetTile(int piece, string tile)
+        {
+            int idx = TileToIndex(tile);
+            if (idx < 0 || idx > 63) return false; // illegal idx
+            boardData[idx] = piece;
+            return true;
+        }
+
+        public bool Move(string fromTile, string toTile)
+        {
+            // Move should already be checked to be legal 
+            int idxFrom = TileToIndex(fromTile);
+            int idxTo = TileToIndex(toTile);
+            if (idxFrom < 0 || idxFrom > 63 || idxTo < 0 || idxTo > 63) return false; // illegal idx
+            boardData[idxTo] = boardData[idxFrom]; // from -> to
+            boardData[idxFrom] = Piece.Empty; // from is now empty
+            return true;
+        }
+
+        private static int TileToIndex(string tile) // converts tile name to the corresponding index value in the array
         {
             if (!Regex.IsMatch(tile, @"^([a-h]{1}[1-8]{1})$")) return -1;
             try
@@ -72,7 +93,7 @@ namespace Engine
 
         }
 
-        public void setBoard(string fen)
+        public void SetBoard(string fen)
         {
             int idx = 0;
             foreach (char token in fen)
@@ -95,37 +116,37 @@ namespace Engine
                 // token is a piece
                 if (char.IsLetter(token))
                 {
-                    Square[idx] += char.IsUpper(token) ? Piece.White : Piece.Black;
+                    boardData[idx] += char.IsUpper(token) ? Piece.White : Piece.Black;
                     switch (char.ToUpper(token))
                     {
                         case 'P':
                             {
-                                Square[idx] += Piece.Pawn;
+                                boardData[idx] += Piece.Pawn;
                                 break;
                             }
                         case 'N':
                             {
-                                Square[idx] += Piece.Knight;
+                                boardData[idx] += Piece.Knight;
                                 break;
                             }
                         case 'B':
                             {
-                                Square[idx] += Piece.Bishop;
+                                boardData[idx] += Piece.Bishop;
                                 break;
                             }
                         case 'R':
                             {
-                                Square[idx] += Piece.Rook;
+                                boardData[idx] += Piece.Rook;
                                 break;
                             }
                         case 'Q':
                             {
-                                Square[idx] += Piece.Queen;
+                                boardData[idx] += Piece.Queen;
                                 break;
                             }
                         case 'K':
                             {
-                                Square[idx] += Piece.King;
+                                boardData[idx] += Piece.King;
                                 break;
                             }
                     }
@@ -134,6 +155,22 @@ namespace Engine
                 }
 
             }
+        }
+
+        public bool IsMoveable(string tile) {
+            int idx = TileToIndex(tile);
+            if (idx < 0 || idx > 63) return false; // illegal idx
+            return true;
+        }
+        public bool IsLegal(string fromTile, string toTile)
+        {
+            int idxFrom = TileToIndex(fromTile);
+            int idxTo = TileToIndex(toTile);
+            if (idxFrom < 0 || idxFrom > 63 || idxTo < 0 || idxTo > 63) return false; // illegal idx
+            // check piece type/color
+            // check valid movement
+            // check legal board state
+            return true;
         }
 
     }
