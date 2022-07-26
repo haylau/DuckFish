@@ -26,7 +26,8 @@ namespace UI
 
         public MainWindow()
         {
-            _chessboard.SetBoard(Board.start);
+            _chessboard.EnableDebug(); // Testing
+            _chessboard.SetBoard(); // starts as random color
             DataContext = this;
             InitializeComponent();
         }
@@ -44,8 +45,7 @@ namespace UI
         {
             UpdateImage(to);
 
-            Image? fromImg = from.Data.GetData(DataFormats.Serializable) as Image;
-            if (fromImg == null) return;
+            if (from.Data.GetData(DataFormats.Serializable) is not Image fromImg) return;
             string? fromTile = fromImg.Tag.ToString();
             if (fromTile == null) return;
             UpdateImage(fromImg);
@@ -53,8 +53,7 @@ namespace UI
 
         private void UpdateImage(object sender)
         {
-            Image? img = sender as Image;
-            if (img == null) return;
+            if (sender is not Image img) return;
             string? tile = img.Tag.ToString();
             if (tile == null) return;
             int piece = _chessboard.GetTile(tile);
@@ -130,8 +129,7 @@ namespace UI
 
         private bool IsMoveable(object sender, MouseEventArgs e)
         {
-            Image? img = sender as Image;
-            if (img == null) return false;
+            if (sender is not Image img) return false;
             string? tile = img.Tag.ToString();
             if (tile == null) return false;
             return e.LeftButton == MouseButtonState.Pressed && _chessboard.IsMoveable(tile);
@@ -139,8 +137,7 @@ namespace UI
 
         private bool IsLegal(DragEventArgs e, string tile)
         {
-            Image? fromImg = e.Data.GetData(DataFormats.Serializable) as Image;
-            if (fromImg == null) return false;
+            if (e.Data.GetData(DataFormats.Serializable) is not Image fromImg) return false;
             string? fromTile = fromImg.Tag.ToString();
             if (fromTile == null) return false;
 
