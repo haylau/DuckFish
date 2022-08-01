@@ -42,104 +42,159 @@ namespace UI
         {
             UpdateImage(sender);
         }
-        private void UpdateMove(DragEventArgs from, object to)
+        private void UpdateMove(object sender, DragEventArgs e)
         {
-            UpdateImage(to);
-
-            if (from.Data.GetData(DataFormats.Serializable) is not Image fromImg) return;
-            string? fromTile = fromImg.Tag.ToString();
-            if (fromTile == null) return;
+            ClearBoardColors();
+            if (sender is not Image toImg) return;
+            UpdateImage(toImg);
+            if (e.Data.GetData(DataFormats.Serializable) is not Image fromImg) return;
+            if (fromImg.Tag.ToString() is not string fromTile) return;
             UpdateImage(fromImg);
+            if (toImg.Parent is not UniformGrid toGrid) return;
+            if (fromImg.Parent is not UniformGrid fromGrid) return;
+            var prevTileColor = new SolidColorBrush(Colors.LightCoral);
+            toGrid.Background = prevTileColor;
+            fromGrid.Background = prevTileColor;
+        }
+
+        private void ClearBoardColors()
+        {
+            int rows = board.Rows;
+            int columns = board.Columns;
+
+            foreach (var children in board.Children)
+            {
+                if (children is UniformGrid grid)
+                {
+                    int index = board.Children.IndexOf(grid);
+
+                    int row = index / columns;  // divide
+                    int column = index % columns;  // modulus
+
+                    var lightTile = App.Current.Resources["LightTile"].ToString();
+                    var darkTile = App.Current.Resources["DarkTile"].ToString();
+
+                    if (row % 2 == 0)
+                    {
+                        if (column % 2 == 0)
+                        {
+
+                            grid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(lightTile));
+                        }
+                        else
+                        {
+                            grid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(darkTile));
+                        }
+                    }
+                    else
+                    {
+                        if (column % 2 != 0)
+                        {
+                            grid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(lightTile));
+                        }
+                        else
+                        {
+                            grid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(darkTile));
+                        }
+                    }
+                }
+            }
         }
 
         private void UpdateImage(object sender)
         {
-            if (sender is not Image img) return;
-            string? tile = img.Tag.ToString();
-            if (tile == null) return;
-            int piece = _chessboard.GetTile(tile);
-            switch (piece)
+            if (sender is Image img)
             {
-                case Piece.Empty:
-                    {
-                        img.Source = new BitmapImage(new Uri(@"pack://application:,,,/Assets/Empty.png", UriKind.Absolute));
-                        break;
-                    }
-                case Piece.White + Piece.Pawn:
-                    {
-                        img.Source = new BitmapImage(new Uri(@"pack://application:,,,/Assets/Pawn_White.png", UriKind.Absolute));
-                        break;
-                    }
-                case Piece.White + Piece.Knight:
-                    {
-                        img.Source = new BitmapImage(new Uri(@"pack://application:,,,/Assets/Knight_White.png", UriKind.Absolute));
-                        break;
-                    }
-                case Piece.White + Piece.Bishop:
-                    {
-                        img.Source = new BitmapImage(new Uri(@"pack://application:,,,/Assets/Bishop_White.png", UriKind.Absolute));
-                        break;
-                    }
-                case Piece.White + Piece.Rook:
-                    {
-                        img.Source = new BitmapImage(new Uri(@"pack://application:,,,/Assets/Rook_White.png", UriKind.Absolute));
-                        break;
-                    }
-                case Piece.White + Piece.Queen:
-                    {
-                        img.Source = new BitmapImage(new Uri(@"pack://application:,,,/Assets/Queen_White.png", UriKind.Absolute));
-                        break;
-                    }
-                case Piece.White + Piece.King:
-                    {
-                        img.Source = new BitmapImage(new Uri(@"pack://application:,,,/Assets/King_White.png", UriKind.Absolute));
-                        break;
-                    }
-                case Piece.Black + Piece.Pawn:
-                    {
-                        img.Source = new BitmapImage(new Uri(@"pack://application:,,,/Assets/Pawn_Black.png", UriKind.Absolute));
-                        break;
-                    }
-                case Piece.Black + Piece.Knight:
-                    {
-                        img.Source = new BitmapImage(new Uri(@"pack://application:,,,/Assets/Knight_Black.png", UriKind.Absolute));
-                        break;
-                    }
-                case Piece.Black + Piece.Bishop:
-                    {
-                        img.Source = new BitmapImage(new Uri(@"pack://application:,,,/Assets/Bishop_Black.png", UriKind.Absolute));
-                        break;
-                    }
-                case Piece.Black + Piece.Rook:
-                    {
-                        img.Source = new BitmapImage(new Uri(@"pack://application:,,,/Assets/Rook_Black.png", UriKind.Absolute));
-                        break;
-                    }
-                case Piece.Black + Piece.Queen:
-                    {
-                        img.Source = new BitmapImage(new Uri(@"pack://application:,,,/Assets/Queen_Black.png", UriKind.Absolute));
-                        break;
-                    }
-                case Piece.Black + Piece.King:
-                    {
-                        img.Source = new BitmapImage(new Uri(@"pack://application:,,,/Assets/King_Black.png", UriKind.Absolute));
-                        break;
-                    }
+                string? tile = img.Tag.ToString();
+                if (tile == null) return;
+                int piece = _chessboard.GetTile(tile);
+                switch (piece)
+                {
+                    case Piece.Empty:
+                        {
+                            img.Source = new BitmapImage(new Uri(@"pack://application:,,,/Assets/Empty.png", UriKind.Absolute));
+                            break;
+                        }
+                    case Piece.White + Piece.Pawn:
+                        {
+                            img.Source = new BitmapImage(new Uri(@"pack://application:,,,/Assets/Pawn_White.png", UriKind.Absolute));
+                            break;
+                        }
+                    case Piece.White + Piece.Knight:
+                        {
+                            img.Source = new BitmapImage(new Uri(@"pack://application:,,,/Assets/Knight_White.png", UriKind.Absolute));
+                            break;
+                        }
+                    case Piece.White + Piece.Bishop:
+                        {
+                            img.Source = new BitmapImage(new Uri(@"pack://application:,,,/Assets/Bishop_White.png", UriKind.Absolute));
+                            break;
+                        }
+                    case Piece.White + Piece.Rook:
+                        {
+                            img.Source = new BitmapImage(new Uri(@"pack://application:,,,/Assets/Rook_White.png", UriKind.Absolute));
+                            break;
+                        }
+                    case Piece.White + Piece.Queen:
+                        {
+                            img.Source = new BitmapImage(new Uri(@"pack://application:,,,/Assets/Queen_White.png", UriKind.Absolute));
+                            break;
+                        }
+                    case Piece.White + Piece.King:
+                        {
+                            img.Source = new BitmapImage(new Uri(@"pack://application:,,,/Assets/King_White.png", UriKind.Absolute));
+                            break;
+                        }
+                    case Piece.Black + Piece.Pawn:
+                        {
+                            img.Source = new BitmapImage(new Uri(@"pack://application:,,,/Assets/Pawn_Black.png", UriKind.Absolute));
+                            break;
+                        }
+                    case Piece.Black + Piece.Knight:
+                        {
+                            img.Source = new BitmapImage(new Uri(@"pack://application:,,,/Assets/Knight_Black.png", UriKind.Absolute));
+                            break;
+                        }
+                    case Piece.Black + Piece.Bishop:
+                        {
+                            img.Source = new BitmapImage(new Uri(@"pack://application:,,,/Assets/Bishop_Black.png", UriKind.Absolute));
+                            break;
+                        }
+                    case Piece.Black + Piece.Rook:
+                        {
+                            img.Source = new BitmapImage(new Uri(@"pack://application:,,,/Assets/Rook_Black.png", UriKind.Absolute));
+                            break;
+                        }
+                    case Piece.Black + Piece.Queen:
+                        {
+                            img.Source = new BitmapImage(new Uri(@"pack://application:,,,/Assets/Queen_Black.png", UriKind.Absolute));
+                            break;
+                        }
+                    case Piece.Black + Piece.King:
+                        {
+                            img.Source = new BitmapImage(new Uri(@"pack://application:,,,/Assets/King_Black.png", UriKind.Absolute));
+                            break;
+                        }
+                }
             }
+        }
+
+        private bool IsMoveable(object sender, MouseEventArgs e)
+        {
+            if (sender is not Image img) return false;
+            if (img.Tag.ToString() is not string tile) return false;
+            return e.LeftButton == MouseButtonState.Pressed && _chessboard.IsMoveable(tile);
         }
 
         private bool IsLegal(DragEventArgs e, string tile)
         {
             if (e.Data.GetData(DataFormats.Serializable) is not Image fromImg) return false;
-            string? fromTile = fromImg.Tag.ToString();
-            if (fromTile == null) return false;
-
+            if (fromImg.Tag.ToString() is not string fromTile) return false;
             if (_chessboard.IsLegal(fromTile, tile))
             {
                 _chessboard.Move(fromTile, tile);
                 return true;
             }
-
             return false;
         }
 
@@ -165,7 +220,7 @@ namespace UI
             if (_chessboard.IsLegal(fromTile, toTile))
             {
                 _chessboard.Move(fromTile, toTile);
-                UpdateMove(e, toImg);
+                UpdateMove(toImg, e);
             }
             return;
         }

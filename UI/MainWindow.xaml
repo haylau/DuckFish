@@ -22,7 +22,7 @@
             <RowDefinition Height="20"/>
         </Grid.RowDefinitions>
         <Border Grid.Column="2" Grid.Row="2" BorderThickness="40" BorderBrush="{StaticResource BorderColor}">
-            <UniformGrid Grid.Column="2" Grid.Row="2" Columns="8" Rows="8">
+            <UniformGrid Name="board" Grid.Column="2" Grid.Row="2" Columns="8" Rows="8">
 
                 <!--ROW 8-->
 
