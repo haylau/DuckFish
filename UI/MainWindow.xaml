@@ -27,217 +27,217 @@
                 <!--ROW 8-->
 
                 <UniformGrid Grid.Row="0" Grid.Column="0" Background="{StaticResource LightTile}" AllowDrop="True" Drop="a8_Drop">
-                    <Image x:Name="tile_a8" Tag="a8" Loaded="Image_Loaded" Margin="2" MouseMove="a8_MouseMove"/>
+                    <Image x:Name="tile_a8" Tag="a8" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="1" Background="{StaticResource DarkTile}" AllowDrop="True" Drop="b8_Drop">
-                    <Image x:Name="tile_b8" Tag="b8" Loaded="Image_Loaded" Margin="2" MouseMove="b8_MouseMove"/>
+                    <Image x:Name="tile_b8" Tag="b8" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="2" Background="{StaticResource LightTile}" AllowDrop="True" Drop="c8_Drop">
-                    <Image x:Name="tile_c8" Tag="c8" Loaded="Image_Loaded" Margin="2" MouseMove="c8_MouseMove"/>
+                    <Image x:Name="tile_c8" Tag="c8" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="3" Background="{StaticResource DarkTile}" AllowDrop="True" Drop="d8_Drop">
-                    <Image x:Name="tile_d8" Tag="d8" Loaded="Image_Loaded" Margin="2" MouseMove="d8_MouseMove"/>
+                    <Image x:Name="tile_d8" Tag="d8" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="4" Background="{StaticResource LightTile}" AllowDrop="True" Drop="e8_Drop">
-                    <Image x:Name="tile_e8" Tag="e8" Loaded="Image_Loaded" Margin="2" MouseMove="e8_MouseMove"/>
+                    <Image x:Name="tile_e8" Tag="e8" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="5" Background="{StaticResource DarkTile}" AllowDrop="True" Drop="f8_Drop">
-                    <Image x:Name="tile_f8" Tag="f8" Loaded="Image_Loaded" Margin="2" MouseMove="f8_MouseMove"/>
+                    <Image x:Name="tile_f8" Tag="f8" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="6" Background="{StaticResource LightTile}" AllowDrop="True" Drop="g8_Drop">
-                    <Image x:Name="tile_g8" Tag="g8" Loaded="Image_Loaded" Margin="2" MouseMove="g8_MouseMove"/>
+                    <Image x:Name="tile_g8" Tag="g8" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="7" Background="{StaticResource DarkTile}" AllowDrop="True" Drop="h8_Drop">
-                    <Image x:Name="tile_h8" Tag="h8" Loaded="Image_Loaded" Margin="2" MouseMove="h8_MouseMove"/>
+                    <Image x:Name="tile_h8" Tag="h8" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
                 </UniformGrid>
                 
                 <!--ROW 7-->
 
                 <UniformGrid Grid.Row="1" Grid.Column="0" Background="{StaticResource DarkTile}" AllowDrop="True" Drop="a7_Drop">
-                    <Image x:Name="tile_a7" Tag="a7" Loaded="Image_Loaded" Margin="2" MouseMove="a7_MouseMove"/>
+                    <Image x:Name="tile_a7" Tag="a7" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
                 </UniformGrid>
                 <UniformGrid Grid.Row="1" Grid.Column="1" Background="{StaticResource LightTile}" AllowDrop="True" Drop="b7_Drop">
-                    <Image x:Name="tile_b7" Tag="b7" Loaded="Image_Loaded" Margin="2" MouseMove="b7_MouseMove"/>
+                    <Image x:Name="tile_b7" Tag="b7" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
                 </UniformGrid>
                 <UniformGrid Grid.Row="1" Grid.Column="2" Background="{StaticResource DarkTile}" AllowDrop="True" Drop="c7_Drop">
-                    <Image x:Name="tile_c7" Tag="c7" Loaded="Image_Loaded" Margin="2" MouseMove="c7_MouseMove"/>
+                    <Image x:Name="tile_c7" Tag="c7" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
                 </UniformGrid>
                 <UniformGrid Grid.Row="1" Grid.Column="3" Background="{StaticResource LightTile}" AllowDrop="True" Drop="d7_Drop">
-                    <Image x:Name="tile_d7" Tag="d7" Loaded="Image_Loaded" Margin="2" MouseMove="d7_MouseMove"/>
+                    <Image x:Name="tile_d7" Tag="d7" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
                 </UniformGrid>
                 <UniformGrid Grid.Row="1" Grid.Column="4" Background="{StaticResource DarkTile}" AllowDrop="True" Drop="e7_Drop">
-                    <Image x:Name="tile_e7" Tag="e7" Loaded="Image_Loaded" Margin="2" MouseMove="e7_MouseMove"/>
+                    <Image x:Name="tile_e7" Tag="e7" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
                 </UniformGrid>
                 <UniformGrid Grid.Row="1" Grid.Column="5" Background="{StaticResource LightTile}" AllowDrop="True" Drop="f7_Drop">
-                    <Image x:Name="tile_f7" Tag="f7" Loaded="Image_Loaded" Margin="2" MouseMove="f7_MouseMove"/>
+                    <Image x:Name="tile_f7" Tag="f7" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
                 </UniformGrid>
                 <UniformGrid Grid.Row="1" Grid.Column="6" Background="{StaticResource DarkTile}" AllowDrop="True" Drop="g7_Drop">
-                    <Image x:Name="tile_g7" Tag="g7" Loaded="Image_Loaded" Margin="2" MouseMove="g7_MouseMove"/>
+                    <Image x:Name="tile_g7" Tag="g7" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
                 </UniformGrid>
                 <UniformGrid Grid.Row="1" Grid.Column="7" Background="{StaticResource LightTile}" AllowDrop="True" Drop="h7_Drop">
-                    <Image x:Name="tile_h7" Tag="h7" Loaded="Image_Loaded" Margin="2" MouseMove="h7_MouseMove"/>
+                    <Image x:Name="tile_h7" Tag="h7" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
                 </UniformGrid>
                 
                 <!--ROW 6-->
 
                 <UniformGrid Grid.Row="0" Grid.Column="0" Background="{StaticResource LightTile}" AllowDrop="True" Drop="a6_Drop">
-                    <Image x:Name="tile_a6" Tag="a6" Loaded="Image_Loaded" Margin="2" MouseMove="a6_MouseMove"/>
+                    <Image x:Name="tile_a6" Tag="a6" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="1" Background="{StaticResource DarkTile}" AllowDrop="True" Drop="b6_Drop">
-                    <Image x:Name="tile_b6" Tag="b6" Loaded="Image_Loaded" Margin="2" MouseMove="b6_MouseMove"/>
+                    <Image x:Name="tile_b6" Tag="b6" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="2" Background="{StaticResource LightTile}" AllowDrop="True" Drop="c6_Drop">
-                    <Image x:Name="tile_c6" Tag="c6" Loaded="Image_Loaded" Margin="2" MouseMove="c6_MouseMove"/>
+                    <Image x:Name="tile_c6" Tag="c6" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="3" Background="{StaticResource DarkTile}" AllowDrop="True" Drop="d6_Drop">
-                    <Image x:Name="tile_d6" Tag="d6" Loaded="Image_Loaded" Margin="2" MouseMove="d6_MouseMove"/>
+                    <Image x:Name="tile_d6" Tag="d6" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="4" Background="{StaticResource LightTile}" AllowDrop="True" Drop="e6_Drop">
-                    <Image x:Name="tile_e6" Tag="e6" Loaded="Image_Loaded" Margin="2" MouseMove="e6_MouseMove"/>
+                    <Image x:Name="tile_e6" Tag="e6" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="5" Background="{StaticResource DarkTile}" AllowDrop="True" Drop="f6_Drop">
-                    <Image x:Name="tile_f6" Tag="f6" Loaded="Image_Loaded" Margin="2" MouseMove="f6_MouseMove"/>
+                    <Image x:Name="tile_f6" Tag="f6" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="6" Background="{StaticResource LightTile}" AllowDrop="True" Drop="g6_Drop">
-                    <Image x:Name="tile_g6" Tag="g6" Loaded="Image_Loaded" Margin="2" MouseMove="g6_MouseMove"/>
+                    <Image x:Name="tile_g6" Tag="g6" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="7" Background="{StaticResource DarkTile}" AllowDrop="True" Drop="h6_Drop">
-                    <Image x:Name="tile_h6" Tag="h6" Loaded="Image_Loaded" Margin="2" MouseMove="h6_MouseMove"/>
+                    <Image x:Name="tile_h6" Tag="h6" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
                 </UniformGrid>
 
                 <!--ROW 5-->
 
                 <UniformGrid Grid.Row="0" Grid.Column="0" Background="{StaticResource DarkTile}" AllowDrop="True" Drop="a5_Drop">
-                    <Image x:Name="tile_a5" Tag="a5" Loaded="Image_Loaded" Margin="2" MouseMove="a5_MouseMove"/>
+                    <Image x:Name="tile_a5" Tag="a5" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="1" Background="{StaticResource LightTile}" AllowDrop="True" Drop="b5_Drop">
-                    <Image x:Name="tile_b5" Tag="b5" Loaded="Image_Loaded" Margin="2" MouseMove="b5_MouseMove"/>
+                    <Image x:Name="tile_b5" Tag="b5" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="2" Background="{StaticResource DarkTile}" AllowDrop="True" Drop="c5_Drop">
-                    <Image x:Name="tile_c5" Tag="c5" Loaded="Image_Loaded" Margin="2" MouseMove="c5_MouseMove"/>
+                    <Image x:Name="tile_c5" Tag="c5" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="3" Background="{StaticResource LightTile}" AllowDrop="True" Drop="d5_Drop">
-                    <Image x:Name="tile_d5" Tag="d5" Loaded="Image_Loaded" Margin="2" MouseMove="d5_MouseMove"/>
+                    <Image x:Name="tile_d5" Tag="d5" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="4" Background="{StaticResource DarkTile}" AllowDrop="True" Drop="e5_Drop">
-                    <Image x:Name="tile_e5" Tag="e5" Loaded="Image_Loaded" Margin="2" MouseMove="e5_MouseMove"/>
+                    <Image x:Name="tile_e5" Tag="e5" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="5" Background="{StaticResource LightTile}" AllowDrop="True" Drop="f5_Drop">
-                    <Image x:Name="tile_f5" Tag="f5" Loaded="Image_Loaded" Margin="2" MouseMove="f5_MouseMove"/>
+                    <Image x:Name="tile_f5" Tag="f5" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="6" Background="{StaticResource DarkTile}" AllowDrop="True" Drop="g5_Drop">
-                    <Image x:Name="tile_g5" Tag="g5" Loaded="Image_Loaded" Margin="2" MouseMove="g5_MouseMove"/>
+                    <Image x:Name="tile_g5" Tag="g5" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="7" Background="{StaticResource LightTile}" AllowDrop="True" Drop="h5_Drop">
-                    <Image x:Name="tile_h5" Tag="h5" Loaded="Image_Loaded" Margin="2" MouseMove="h5_MouseMove"/>
+                    <Image x:Name="tile_h5" Tag="h5" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
                 </UniformGrid>
 
                 <!--ROW 4-->
 
                 <UniformGrid Grid.Row="0" Grid.Column="0" Background="{StaticResource LightTile}" AllowDrop="True" Drop="a4_Drop">
-                    <Image x:Name="tile_a4" Tag="a4" Loaded="Image_Loaded" Margin="2" MouseMove="a4_MouseMove"/>
+                    <Image x:Name="tile_a4" Tag="a4" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="1" Background="{StaticResource DarkTile}" AllowDrop="True" Drop="b4_Drop">
-                    <Image x:Name="tile_b4" Tag="b4" Loaded="Image_Loaded" Margin="2" MouseMove="b4_MouseMove"/>
+                    <Image x:Name="tile_b4" Tag="b4" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="2" Background="{StaticResource LightTile}" AllowDrop="True" Drop="c4_Drop">
-                    <Image x:Name="tile_c4" Tag="c4" Loaded="Image_Loaded" Margin="2" MouseMove="c4_MouseMove"/>
+                    <Image x:Name="tile_c4" Tag="c4" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="3" Background="{StaticResource DarkTile}" AllowDrop="True" Drop="d4_Drop">
-                    <Image x:Name="tile_d4" Tag="d4" Loaded="Image_Loaded" Margin="2" MouseMove="d4_MouseMove"/>
+                    <Image x:Name="tile_d4" Tag="d4" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="4" Background="{StaticResource LightTile}" AllowDrop="True" Drop="e4_Drop">
-                    <Image x:Name="tile_e4" Tag="e4" Loaded="Image_Loaded" Margin="2" MouseMove="e4_MouseMove"/>
+                    <Image x:Name="tile_e4" Tag="e4" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="5" Background="{StaticResource DarkTile}" AllowDrop="True" Drop="f4_Drop">
-                    <Image x:Name="tile_f4" Tag="f4" Loaded="Image_Loaded" Margin="2" MouseMove="f4_MouseMove"/>
+                    <Image x:Name="tile_f4" Tag="f4" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="6" Background="{StaticResource LightTile}" AllowDrop="True" Drop="g4_Drop">
-                    <Image x:Name="tile_g4" Tag="g4" Loaded="Image_Loaded" Margin="2" MouseMove="g4_MouseMove"/>
+                    <Image x:Name="tile_g4" Tag="g4" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="7" Background="{StaticResource DarkTile}" AllowDrop="True" Drop="h4_Drop">
-                    <Image x:Name="tile_h4" Tag="h4" Loaded="Image_Loaded" Margin="2" MouseMove="h4_MouseMove"/>
+                    <Image x:Name="tile_h4" Tag="h4" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
                 </UniformGrid>
 
                 <!--ROW 3-->
 
                 <UniformGrid Grid.Row="0" Grid.Column="0" Background="{StaticResource DarkTile}" AllowDrop="True" Drop="a3_Drop">
-                    <Image x:Name="tile_a3" Tag="a3" Loaded="Image_Loaded" Margin="2" MouseMove="a3_MouseMove"/>
+                    <Image x:Name="tile_a3" Tag="a3" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="1" Background="{StaticResource LightTile}" AllowDrop="True" Drop="b3_Drop">
-                    <Image x:Name="tile_b3" Tag="b3" Loaded="Image_Loaded" Margin="2" MouseMove="b3_MouseMove"/>
+                    <Image x:Name="tile_b3" Tag="b3" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="2" Background="{StaticResource DarkTile}" AllowDrop="True" Drop="c3_Drop">
-                    <Image x:Name="tile_c3" Tag="c3" Loaded="Image_Loaded" Margin="2" MouseMove="c3_MouseMove"/>
+                    <Image x:Name="tile_c3" Tag="c3" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="3" Background="{StaticResource LightTile}" AllowDrop="True" Drop="d3_Drop">
-                    <Image x:Name="tile_d3" Tag="d3" Loaded="Image_Loaded" Margin="2" MouseMove="d3_MouseMove"/>
+                    <Image x:Name="tile_d3" Tag="d3" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="4" Background="{StaticResource DarkTile}" AllowDrop="True" Drop="e3_Drop">
-                    <Image x:Name="tile_e3" Tag="e3" Loaded="Image_Loaded" Margin="2" MouseMove="e3_MouseMove"/>
+                    <Image x:Name="tile_e3" Tag="e3" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="5" Background="{StaticResource LightTile}" AllowDrop="True" Drop="f3_Drop">
-                    <Image x:Name="tile_f3" Tag="f3" Loaded="Image_Loaded" Margin="2" MouseMove="f3_MouseMove"/>
+                    <Image x:Name="tile_f3" Tag="f3" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="6" Background="{StaticResource DarkTile}" AllowDrop="True" Drop="g3_Drop">
-                    <Image x:Name="tile_g3" Tag="g3" Loaded="Image_Loaded" Margin="2" MouseMove="g3_MouseMove"/>
+                    <Image x:Name="tile_g3" Tag="g3" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="7" Background="{StaticResource LightTile}" AllowDrop="True" Drop="h3_Drop">
-                    <Image x:Name="tile_h3" Tag="h3" Loaded="Image_Loaded" Margin="2" MouseMove="h3_MouseMove"/>
+                    <Image x:Name="tile_h3" Tag="h3" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
                 </UniformGrid>
 
                 <!--ROW 2-->
 
                 <UniformGrid Grid.Row="0" Grid.Column="0" Background="{StaticResource LightTile}" AllowDrop="True" Drop="a2_Drop">
-                    <Image x:Name="tile_a2" Tag="a2" Loaded="Image_Loaded" Margin="2" MouseMove="a2_MouseMove"/>
+                    <Image x:Name="tile_a2" Tag="a2" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="1" Background="{StaticResource DarkTile}" AllowDrop="True" Drop="b2_Drop">
-                    <Image x:Name="tile_b2" Tag="b2" Loaded="Image_Loaded" Margin="2" MouseMove="b2_MouseMove"/>
+                    <Image x:Name="tile_b2" Tag="b2" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="2" Background="{StaticResource LightTile}" AllowDrop="True" Drop="c2_Drop">
-                    <Image x:Name="tile_c2" Tag="c2" Loaded="Image_Loaded" Margin="2" MouseMove="c2_MouseMove"/>
+                    <Image x:Name="tile_c2" Tag="c2" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="3" Background="{StaticResource DarkTile}" AllowDrop="True" Drop="d2_Drop">
-                    <Image x:Name="tile_d2" Tag="d2" Loaded="Image_Loaded" Margin="2" MouseMove="d2_MouseMove"/>
+                    <Image x:Name="tile_d2" Tag="d2" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="4" Background="{StaticResource LightTile}" AllowDrop="True" Drop="e2_Drop">
-                    <Image x:Name="tile_e2" Tag="e2" Loaded="Image_Loaded" Margin="2" MouseMove="e2_MouseMove"/>
+                    <Image x:Name="tile_e2" Tag="e2" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="5" Background="{StaticResource DarkTile}" AllowDrop="True" Drop="f2_Drop">
-                    <Image x:Name="tile_f2" Tag="f2" Loaded="Image_Loaded" Margin="2" MouseMove="f2_MouseMove"/>
+                    <Image x:Name="tile_f2" Tag="f2" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="6" Background="{StaticResource LightTile}" AllowDrop="True" Drop="g2_Drop">
-                    <Image x:Name="tile_g2" Tag="g2" Loaded="Image_Loaded" Margin="2" MouseMove="g2_MouseMove"/>
+                    <Image x:Name="tile_g2" Tag="g2" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="7" Background="{StaticResource DarkTile}" AllowDrop="True" Drop="h2_Drop">
-                    <Image x:Name="tile_h2" Tag="h2" Loaded="Image_Loaded" Margin="2" MouseMove="h2_MouseMove"/>
+                    <Image x:Name="tile_h2" Tag="h2" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
                 </UniformGrid>
                 
                 <!--ROW 1-->
 
                 <UniformGrid Grid.Row="0" Grid.Column="0" Background="{StaticResource DarkTile}" AllowDrop="True" Drop="a1_Drop">
-                    <Image x:Name="tile_a1" Tag="a1" Loaded="Image_Loaded" Margin="2" MouseMove="a1_MouseMove"/>
+                    <Image x:Name="tile_a1" Tag="a1" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="1" Background="{StaticResource LightTile}" AllowDrop="True" Drop="b1_Drop">
-                    <Image x:Name="tile_b1" Tag="b1" Loaded="Image_Loaded" Margin="2" MouseMove="b1_MouseMove"/>
+                    <Image x:Name="tile_b1" Tag="b1" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="2" Background="{StaticResource DarkTile}" AllowDrop="True" Drop="c1_Drop">
-                    <Image x:Name="tile_c1" Tag="c1" Loaded="Image_Loaded" Margin="2" MouseMove="c1_MouseMove"/>
+                    <Image x:Name="tile_c1" Tag="c1" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="3" Background="{StaticResource LightTile}" AllowDrop="True" Drop="d1_Drop">
-                    <Image x:Name="tile_d1" Tag="d1" Loaded="Image_Loaded" Margin="2" MouseMove="d1_MouseMove"/>
+                    <Image x:Name="tile_d1" Tag="d1" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="4" Background="{StaticResource DarkTile}" AllowDrop="True" Drop="e1_Drop">
-                    <Image x:Name="tile_e1" Tag="e1" Loaded="Image_Loaded" Margin="2" MouseMove="e1_MouseMove"/>
+                    <Image x:Name="tile_e1" Tag="e1" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="5" Background="{StaticResource LightTile}" AllowDrop="True" Drop="f1_Drop">
-                    <Image x:Name="tile_f1" Tag="f1" Loaded="Image_Loaded" Margin="2" MouseMove="f1_MouseMove"/>
+                    <Image x:Name="tile_f1" Tag="f1" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="6" Background="{StaticResource DarkTile}" AllowDrop="True" Drop="g1_Drop">
-                    <Image x:Name="tile_g1" Tag="g1" Loaded="Image_Loaded" Margin="2" MouseMove="g1_MouseMove"/>
+                    <Image x:Name="tile_g1" Tag="g1" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="7" Background="{StaticResource LightTile}" AllowDrop="True" Drop="h1_Drop">
-                    <Image x:Name="tile_h1" Tag="h1" Loaded="Image_Loaded" Margin="2" MouseMove="h1_MouseMove"/>
+                    <Image x:Name="tile_h1" Tag="h1" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
                 </UniformGrid>
             </UniformGrid> 
         </Border>
