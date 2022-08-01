@@ -99,8 +99,8 @@ namespace Engine
         public const string DEBUG = "Rq6/5N2/5r2/Rp5K/3Bp1P1/Q3n1Pp/3kP2P/1N5b";
         private bool debug;
         private readonly int[] boardData;
-        private static readonly MoveGenerator playerMoveGen = new();
         private List<Move> playerMoves = default!;
+        private static MoveGenerator moveGenerator = default!;
         private int boardOrientation = Piece.White;
         private int curTurn;
         private int playerColor;
@@ -250,7 +250,8 @@ namespace Engine
                     continue;
                 }
             }
-            playerMoves = playerMoveGen.GenerateMoves(boardData, curTurn);
+            moveGenerator = new MoveGenerator(boardData, curTurn, playerMoves);
+            playerMoves = moveGenerator.possibleMoves;
         }
 
         public bool IsMoveable(string tile) // checks if a piece is able to be moved
@@ -295,16 +296,38 @@ namespace Engine
                 idxFrom = flippedBoard[idxFrom];
                 idxTo = flippedBoard[idxTo];
             }
+            playerMoves.Add(new Move(idxFrom, idxTo, MoveFlag(idxFrom, idxTo)));
             boardData[idxTo] = boardData[idxFrom]; // from -> to
             boardData[idxFrom] = Piece.Empty; // from is now empty
             curTurn = curTurn == Piece.White ? Piece.Black : Piece.White; // swap game turn
+
             // CalculateAIMove();
             if (debug == true) // player moves both
             {
                 playerColor = curTurn;
-                playerMoves = playerMoveGen.GenerateMoves(boardData, curTurn);
+                moveGenerator = new MoveGenerator(boardData, curTurn, playerMoves);
+                playerMoves = moveGenerator.possibleMoves;
             }
             return true;
+        }
+
+        private int MoveFlag(int idxFrom, int idxTo)
+        {
+            if (Piece.Type(boardData[idxFrom]) == Piece.Pawn)
+            {
+                // En passant
+                if(Math.Abs(idxFrom - idxTo) == 16)
+                {
+                    return Engine.Move.Flag.PawnTwoForward;
+                }
+                // En passant
+                if(Math.Abs(idxFrom - idxTo) == 15 || Math.Abs(idxFrom - idxTo) == 17) 
+                {
+                    return Engine.Move.Flag.EnPassantCapture;
+                }
+                // TODO rest
+            }
+            return 0;
         }
     }
 }
