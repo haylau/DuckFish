@@ -4,8 +4,14 @@ namespace Engine
     using static MoveData;
     public class MoveGenerator
     {
-        List<Move> moves = default!;
-
+        public int curTurnColor;
+        public int opponentTurnColor;
+        public List<Move>? prevMoves;
+        public List<Move> possibleMoves;
+        public int[] boardData;
+        public int[] attackedSquares;
+        public int whiteKingSquare;
+        public int blackKingSquare;
         /* 
             * a8 b8 c8 d8 e8 f8 g8 h8 | 00 01 02 03 04 05 06 07
             * a7 b7 c7 d7 e7 f7 g7 h7 | 08 09 10 11 12 13 14 15
@@ -18,11 +24,22 @@ namespace Engine
             * a1 b1 c1 d1 e1 f1 g1 h1 | 56 57 58 59 60 61 62 63
             */
 
-        public List<Move> GenerateMoves(int[] boardData, int curTurnColor) // generates a list of all current legal moves
+
+        public MoveGenerator(int[] boardData, int curTurnColor, List<Move> prevMoves)
         {
-            this.moves = new();
-            int opponentColor;
-            opponentColor = curTurnColor == Piece.White ? Piece.Black : Piece.White;
+            this.boardData = boardData;
+            this.prevMoves = prevMoves;
+            this.curTurnColor = curTurnColor;
+            this.opponentTurnColor = curTurnColor == Piece.White ? Piece.Black : Piece.White;
+            possibleMoves = new();
+            attackedSquares = new int[64];
+            CalculateKingDanger();
+            GenerateMoves();
+        }
+
+        public List<Move> GenerateMoves() // generates a list of all current legal moves
+        {
+
             for (int idx = 0; idx < 64; ++idx)
             {
                 // in check check?
@@ -49,12 +66,12 @@ namespace Engine
                             {
                                 int target = idx + moveOffsets[direction] * (dist + 1); // num moves in a given direction
                                 if (Piece.Color(boardData[target]) == curTurnColor) break; // cannot capture any further from own pieces
-                                if (Piece.Color(boardData[target]) == opponentColor)
+                                if (Piece.Color(boardData[target]) == opponentTurnColor)
                                 {
-                                    moves.Add(new Move(idx, target));
+                                    possibleMoves.Add(new Move(idx, target));
                                     break;
                                 }
-                                moves.Add(new Move(idx, target));
+                                possibleMoves.Add(new Move(idx, target));
                             }
                         }
                     }
@@ -63,7 +80,7 @@ namespace Engine
                         foreach (int target in knightMoves[idx]) // checking all legal knight moves
                         {
                             if (Piece.Color(boardData[target]) == curTurnColor) continue; // cannot capture own piece
-                            moves.Add(new Move(idx, target));
+                            possibleMoves.Add(new Move(idx, target));
                         }
                     }
                     if (type == Piece.Pawn)
@@ -74,16 +91,16 @@ namespace Engine
                             // Forward
                             if (idx - 8 >= 0 && idx - 8 < 64 && Piece.Type(boardData[idx - 8]) == Piece.Empty) // Can only move into empty tiles
                             {
-                                moves.Add(new Move(idx, idx - 8));
+                                possibleMoves.Add(new Move(idx, idx - 8));
                             }
                             // Adjacent capture
-                            if (idx - 7 >= 0 && idx - 7 < 64 && Piece.Color(boardData[idx - 7]) == opponentColor) // Can only capture enemy pieces
+                            if (idx - 7 >= 0 && idx - 7 < 64 && Piece.Color(boardData[idx - 7]) == opponentTurnColor) // Can only capture enemy pieces
                             {
-                                moves.Add(new Move(idx, idx - 7));
+                                possibleMoves.Add(new Move(idx, idx - 7));
                             }
-                            if (idx - 9 >= 0 && idx - 9 < 64 && Piece.Color(boardData[idx - 9]) == opponentColor) // Can only capture enemy pieces
+                            if (idx - 9 >= 0 && idx - 9 < 64 && Piece.Color(boardData[idx - 9]) == opponentTurnColor) // Can only capture enemy pieces
                             {
-                                moves.Add(new Move(idx, idx - 9));
+                                possibleMoves.Add(new Move(idx, idx - 9));
                             }
                             // Forward twice
                             if (idx >= 48 && idx <= 55)
@@ -91,7 +108,7 @@ namespace Engine
                                 // Can only move into/through empty tiles
                                 if (idx - 16 >= 0 && idx - 16 < 64 && Piece.Type(boardData[idx - 8]) == Piece.Empty && Piece.Type(boardData[idx - 16]) == Piece.Empty)
                                 {
-                                    moves.Add(new Move(idx, idx - 16));
+                                    possibleMoves.Add(new Move(idx, idx - 16));
                                 }
                             }
                         }
@@ -100,16 +117,16 @@ namespace Engine
                             // Forward
                             if (idx + 8 >= 0 && idx + 8 < 64 && Piece.Type(boardData[idx + 8]) == Piece.Empty) // Can only move into empty tiles
                             {
-                                moves.Add(new Move(idx, idx + 8));
+                                possibleMoves.Add(new Move(idx, idx + 8));
                             }
                             // Adjacent capture
-                            if (idx + 7 >= 0 && idx + 7 < 64 && Piece.Color(boardData[idx + 7]) == opponentColor) // Can only capture enemy pieces
+                            if (idx + 7 >= 0 && idx + 7 < 64 && Piece.Color(boardData[idx + 7]) == opponentTurnColor) // Can only capture enemy pieces
                             {
-                                moves.Add(new Move(idx, idx + 7));
+                                possibleMoves.Add(new Move(idx, idx + 7));
                             }
-                            if (idx + 9 >= 0 && idx + 9 < 64 && Piece.Color(boardData[idx + 9]) == opponentColor) // Can only capture enemy pieces
+                            if (idx + 9 >= 0 && idx + 9 < 64 && Piece.Color(boardData[idx + 9]) == opponentTurnColor) // Can only capture enemy pieces
                             {
-                                moves.Add(new Move(idx, idx + 9));
+                                possibleMoves.Add(new Move(idx, idx + 9));
                             }
                             // Forward twice
                             if (idx >= 8 && idx <= 15)
@@ -117,14 +134,33 @@ namespace Engine
                                 // Can only move into/through empty tiles
                                 if (idx + 16 >= 0 && idx + 16 < 64 && Piece.Type(boardData[idx + 8]) == Piece.Empty && Piece.Type(boardData[idx + 16]) == Piece.Empty)
                                 {
-                                    moves.Add(new Move(idx, idx + 16));
+                                    possibleMoves.Add(new Move(idx, idx + 16));
                                 }
                             }
                         }
                     }
                 }
             }
-            return moves;
+            return possibleMoves;
+        }
+
+        private void CalculateKingDanger()
+        {
+            for (int idx = 0; idx < 64; ++idx)
+            {
+                // Locate Kings
+                if (Piece.Type(boardData[idx]) == Piece.King)
+                {
+                    if (Piece.Color(boardData[idx]) == Piece.White)
+                    {
+                        whiteKingSquare = idx;
+                    }
+                    if (Piece.Color(boardData[idx]) == Piece.Black)
+                    {
+                        blackKingSquare = idx;
+                    }
+                }
+            }
         }
     }
 }
