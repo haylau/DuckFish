@@ -1,3 +1,4 @@
+using System;
 using System.Text.RegularExpressions;
 
 namespace Engine
@@ -96,10 +97,13 @@ namespace Engine
             {63, 7}
         };
         public const string START = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
-        public const string DEBUG = "Rq6/5N2/5r2/Rp5K/3Bp1P1/Q3n1Pp/3kP2P/1N5b";
+        public const string DEBUG = "Rq6/5N2/5r2/Rp5K/3Bp1P1/Q3n1Pp/3kP2P/1N5b w";
         private bool debug;
+        private bool lockWhite;
+        private bool lockBlack;
         private readonly int[] boardData;
         private List<Move> playerMoves = default!;
+        private List<Move> prevMoves;
         private static MoveGenerator moveGenerator = default!;
         private int boardOrientation = Piece.White;
         private int curTurn;
@@ -108,6 +112,15 @@ namespace Engine
         public Board()
         {
             boardData = new int[64];
+            prevMoves = new();
+        }
+
+        public int playerTurn
+        {
+            get
+            {
+                return curTurn;
+            }
         }
 
         public int GetTile(int tile)
@@ -133,7 +146,7 @@ namespace Engine
             return true;
         }
 
-        private static int TileToIndex(string tile) // converts tile name to the corresponding index value in the array
+        public int TileToIndex(string tile) // converts tile name to the corresponding index value in the array
         {
             if (!Regex.IsMatch(tile, @"^([a-h]{1}[1-8]{1})$")) return -1; // is not a1-h8 
             try
@@ -164,16 +177,21 @@ namespace Engine
             debug = true;
         }
 
+        public void SelectColor(int color)
+        {
+            if (color == Piece.White) lockWhite = true;
+            if (color == Piece.Bishop) lockBlack = true;
+        }
+
         public void SetBoard() // Default board setup and random turn
         {
             // Decide Turn
             this.curTurn = Piece.White;
             Random rdm = new();
-            if (rdm.Next() % 2 == 0)
+            if (lockWhite || (!lockBlack && rdm.Next() % 2 == 0))
             {
                 this.boardOrientation = Piece.White;
                 this.playerColor = Piece.White;
-
             }
             else
             {
@@ -185,32 +203,45 @@ namespace Engine
         }
 
         /* 
-            Todo: 
-            Active Color
-            + Castle Rights + Legal En Passant (not too important) 
+            #TODO Castle Rights + Legal En Passant (not too important) 
         */
         public void SetBoard(string fen)
         {
+            this.boardOrientation = Piece.White;
+            this.playerColor = Piece.White;
             int idx = 0;
+            bool rules = false;
             foreach (char token in fen)
             {
+                if (idx >= 64 || token.Equals(' '))
+                {
+                    rules = true;
+                }
+                if (rules)
+                {
+                    if (token.Equals('b'))
+                    {
+                        this.boardOrientation = Piece.White;
+                        this.playerColor = Piece.White;
+                    }
+                }
                 // token is a newline
-                if (token.Equals('/'))
+                if (token.Equals('/') && !rules)
                 {
                     if (idx % 8 == 0) continue; // already at end of row
                     idx += 8 - (idx % 8);
-                    if (idx >= 64) return; // end of board
+                    if (idx >= 64) rules = true; // end of board
                     continue;
                 }
                 // token empty space
-                if (char.IsDigit(token))
+                if (char.IsDigit(token) && !rules)
                 {
                     idx += (int)char.GetNumericValue(token);
-                    if (idx >= 64) return; // end of board
+                    if (idx >= 64) rules = true; // end of board
                     continue;
                 }
                 // token is a piece
-                if (char.IsLetter(token))
+                if (char.IsLetter(token) && !rules)
                 {
                     boardData[idx] += char.IsUpper(token) ? Piece.White : Piece.Black;
                     switch (char.ToUpper(token))
@@ -250,7 +281,8 @@ namespace Engine
                     continue;
                 }
             }
-            moveGenerator = new MoveGenerator(boardData, curTurn, playerMoves);
+            if (debug) this.playerColor = curTurn;
+            moveGenerator = new MoveGenerator(boardData, curTurn, prevMoves);
             playerMoves = moveGenerator.possibleMoves;
         }
 
@@ -266,7 +298,7 @@ namespace Engine
             if (idx < 0 || idx > 63) return false; // illegal idx
             return true;
         }
-        public bool IsLegal(string fromTile, string toTile) // checks if a move is legal
+        public bool IsLegal(string fromTile, string toTile, int flag) // checks if a move is legal
         {
             if (fromTile == toTile) return false; // cannot move to itself
             int idxFrom = TileToIndex(fromTile);
@@ -282,10 +314,10 @@ namespace Engine
             int toColor = Piece.Color(boardData[idxTo]);
             if (fromColor == toColor) return false; // cannot capture your own pieces
             int fromPiece = Piece.Type(boardData[idxFrom]);
-            if (playerMoves.Contains(new Move(idxFrom, idxTo))) return true;
+            if (playerMoves.Contains(new Move(idxFrom, idxTo, flag))) return true;
             return false;
         }
-        public bool Move(string fromTile, string toTile)
+        public bool PlayerMove(string fromTile, string toTile, int flag)
         {
             // Move should already be checked to be legal 
             int idxFrom = TileToIndex(fromTile);
@@ -296,38 +328,107 @@ namespace Engine
                 idxFrom = flippedBoard[idxFrom];
                 idxTo = flippedBoard[idxTo];
             }
-            playerMoves.Add(new Move(idxFrom, idxTo, MoveFlag(idxFrom, idxTo)));
+            prevMoves.Add(new Move(idxFrom, idxTo, flag));
             boardData[idxTo] = boardData[idxFrom]; // from -> to
             boardData[idxFrom] = Piece.Empty; // from is now empty
+            if (flag == Engine.Move.Flag.EnPassantCapture)
+            {
+                // Remove pawn captured en passant
+                if (curTurn == Piece.White)
+                {
+                    boardData[idxTo - pawnForward] = Piece.Empty;
+                }
+                if (curTurn == Piece.Black)
+                {
+                    boardData[idxTo + pawnForward] = Piece.Empty;
+                }
+            }
+            if (flag == Engine.Move.Flag.Castling)
+            {
+                // Move Rook
+                if (curTurn == Piece.White)
+                {
+                    if (idxTo == startingWhiteKingSquare - 2)
+                    {
+                        boardData[59] = Piece.White + Piece.Rook;
+                        boardData[56] = Piece.Empty;
+                    }
+                    if (idxTo == startingWhiteKingSquare + 2)
+                    {
+                        boardData[61] = Piece.White + Piece.Rook;
+                        boardData[63] = Piece.Empty;
+                    }
+                }
+                if (curTurn == Piece.Black)
+                {
+                    if (idxTo == startingBlackKingSquare - 2)
+                    {
+                        boardData[3] = Piece.Black + Piece.Rook;
+                        boardData[0] = Piece.Empty;
+                    }
+                    if (idxTo == startingWhiteKingSquare + 2)
+                    {
+                        boardData[5] = Piece.Black + Piece.Rook;
+                        boardData[7] = Piece.Empty;
+                    }
+                }
+            }
             curTurn = curTurn == Piece.White ? Piece.Black : Piece.White; // swap game turn
-
-            // CalculateAIMove();
             if (debug == true) // player moves both
             {
                 playerColor = curTurn;
-                moveGenerator = new MoveGenerator(boardData, curTurn, playerMoves);
-                playerMoves = moveGenerator.possibleMoves;
             }
+            else
+            {
+                // CalculateAIMove();
+
+            }
+            moveGenerator = new MoveGenerator(boardData, curTurn, prevMoves);
+            playerMoves = moveGenerator.possibleMoves;
             return true;
         }
 
-        private int MoveFlag(int idxFrom, int idxTo)
+        public int MoveFlag(string tileFrom, string tileTo)
         {
+            return MoveFlag(TileToIndex(tileFrom), TileToIndex(tileTo));
+        }
+        public int MoveFlag(int idxFrom, int idxTo)
+        {
+            if (boardOrientation == Piece.Black)
+            {
+                idxFrom = flippedBoard[idxFrom];
+                idxTo = flippedBoard[idxTo];
+            }
             if (Piece.Type(boardData[idxFrom]) == Piece.Pawn)
             {
-                // En passant
-                if(Math.Abs(idxFrom - idxTo) == 16)
+                // En TwoForward
+                if (Math.Abs(idxFrom - idxTo) == 16)
                 {
                     return Engine.Move.Flag.PawnTwoForward;
                 }
                 // En passant
-                if(Math.Abs(idxFrom - idxTo) == 15 || Math.Abs(idxFrom - idxTo) == 17) 
+                if (prevMoves.Count > 0 && prevMoves.Last().MoveFlag == Engine.Move.Flag.PawnTwoForward)
                 {
-                    return Engine.Move.Flag.EnPassantCapture;
+                    int enPassantTarget = prevMoves.Last().TargetSquare;
+                    if (Math.Abs(enPassantTarget - idxTo) == 8)
+                    {
+                        return Engine.Move.Flag.EnPassantCapture;
+                    }
                 }
                 // TODO rest
             }
-            return 0;
+            if (Piece.Type(boardData[idxFrom]) == Piece.King)
+            {
+                if (curTurn == Piece.White && idxFrom == startingWhiteKingSquare)
+                {
+                    if (idxTo == startingWhiteKingSquare - 2 || idxTo == startingWhiteKingSquare + 2) return Engine.Move.Flag.Castling;
+                }
+                if (curTurn == Piece.Black && idxFrom == startingBlackKingSquare)
+                {
+                    if (idxTo == startingBlackKingSquare - 2 || idxTo == startingBlackKingSquare + 2) return Engine.Move.Flag.Castling;
+                }
+            }
+            return Engine.Move.Flag.None;
         }
     }
 }
