@@ -100,6 +100,7 @@ namespace Engine
         private bool debug;
         private readonly int[] boardData;
         private List<Move> playerMoves = default!;
+        private List<Move> prevMoves;
         private static MoveGenerator moveGenerator = default!;
         private int boardOrientation = Piece.White;
         private int curTurn;
@@ -108,6 +109,15 @@ namespace Engine
         public Board()
         {
             boardData = new int[64];
+            prevMoves = new();
+        }
+
+        public int playerTurn
+        {
+            get
+            {
+                return curTurn;
+            }
         }
 
         public int GetTile(int tile)
@@ -133,7 +143,7 @@ namespace Engine
             return true;
         }
 
-        private static int TileToIndex(string tile) // converts tile name to the corresponding index value in the array
+        public int TileToIndex(string tile) // converts tile name to the corresponding index value in the array
         {
             if (!Regex.IsMatch(tile, @"^([a-h]{1}[1-8]{1})$")) return -1; // is not a1-h8 
             try
@@ -250,7 +260,7 @@ namespace Engine
                     continue;
                 }
             }
-            moveGenerator = new MoveGenerator(boardData, curTurn, playerMoves);
+            moveGenerator = new MoveGenerator(boardData, curTurn, prevMoves);
             playerMoves = moveGenerator.possibleMoves;
         }
 
@@ -266,7 +276,7 @@ namespace Engine
             if (idx < 0 || idx > 63) return false; // illegal idx
             return true;
         }
-        public bool IsLegal(string fromTile, string toTile) // checks if a move is legal
+        public bool IsLegal(string fromTile, string toTile, int flag) // checks if a move is legal
         {
             if (fromTile == toTile) return false; // cannot move to itself
             int idxFrom = TileToIndex(fromTile);
@@ -282,10 +292,10 @@ namespace Engine
             int toColor = Piece.Color(boardData[idxTo]);
             if (fromColor == toColor) return false; // cannot capture your own pieces
             int fromPiece = Piece.Type(boardData[idxFrom]);
-            if (playerMoves.Contains(new Move(idxFrom, idxTo))) return true;
+            if (playerMoves.Contains(new Move(idxFrom, idxTo, flag))) return true;
             return false;
         }
-        public bool Move(string fromTile, string toTile)
+        public bool Move(string fromTile, string toTile, int flag)
         {
             // Move should already be checked to be legal 
             int idxFrom = TileToIndex(fromTile);
@@ -296,38 +306,64 @@ namespace Engine
                 idxFrom = flippedBoard[idxFrom];
                 idxTo = flippedBoard[idxTo];
             }
-            playerMoves.Add(new Move(idxFrom, idxTo, MoveFlag(idxFrom, idxTo)));
+            prevMoves.Add(new Move(idxFrom, idxTo, flag));
             boardData[idxTo] = boardData[idxFrom]; // from -> to
             boardData[idxFrom] = Piece.Empty; // from is now empty
+            if (flag == Engine.Move.Flag.EnPassantCapture)
+            {
+                // Remove pawn captured en passant
+                if (curTurn == Piece.White)
+                {
+                    boardData[idxTo - pawnForward] = Piece.Empty;
+                }
+                if (curTurn == Piece.Black)
+                {
+                    boardData[idxTo + pawnForward] = Piece.Empty;
+                }
+            }
             curTurn = curTurn == Piece.White ? Piece.Black : Piece.White; // swap game turn
 
             // CalculateAIMove();
             if (debug == true) // player moves both
             {
                 playerColor = curTurn;
-                moveGenerator = new MoveGenerator(boardData, curTurn, playerMoves);
+                moveGenerator = new MoveGenerator(boardData, curTurn, prevMoves);
                 playerMoves = moveGenerator.possibleMoves;
             }
             return true;
         }
 
-        private int MoveFlag(int idxFrom, int idxTo)
+        public int MoveFlag(string tileFrom, string tileTo)
         {
+            return MoveFlag(TileToIndex(tileFrom), TileToIndex(tileTo));
+        }
+
+        public int MoveFlag(int idxFrom, int idxTo)
+        {
+            if (boardOrientation == Piece.Black)
+            {
+                idxFrom = flippedBoard[idxFrom];
+                idxTo = flippedBoard[idxTo];
+            }
             if (Piece.Type(boardData[idxFrom]) == Piece.Pawn)
             {
-                // En passant
-                if(Math.Abs(idxFrom - idxTo) == 16)
+                // En TwoForward
+                if (Math.Abs(idxFrom - idxTo) == 16)
                 {
                     return Engine.Move.Flag.PawnTwoForward;
                 }
                 // En passant
-                if(Math.Abs(idxFrom - idxTo) == 15 || Math.Abs(idxFrom - idxTo) == 17) 
+                if (prevMoves.Count > 0 && prevMoves.Last().MoveFlag == Engine.Move.Flag.PawnTwoForward)
                 {
-                    return Engine.Move.Flag.EnPassantCapture;
+                    int enPassantTarget = prevMoves.Last().TargetSquare;
+                    if (Math.Abs(enPassantTarget - idxTo) == 8)
+                    {
+                        return Engine.Move.Flag.EnPassantCapture;
+                    }
                 }
                 // TODO rest
             }
-            return 0;
+            return Engine.Move.Flag.None;
         }
     }
 }

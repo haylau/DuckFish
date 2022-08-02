@@ -20,9 +20,14 @@ namespace Engine
         *   --- +17 --- +15 ---
         */
         public static readonly int[] knightOffsets = { -17, -15, -10, -6, 10, 6, 17, 15 };
-
         public static readonly int[][] distToEdge; // Distance from every tile to every other tile
         public static readonly int[][] knightMoves; // Valid knight moves from every tile to every other tile
+        public const int pawnForward = -8;
+        public const int pawnTwoForward = -16;
+        public const int pawnLeftCapture = -9;
+        public const int pawnRightCapture = -7;
+        public const int pawnLeftEnPassant = -1;
+        public const int pawnRightEnPassant = +1;
 
         static MoveData()
         {

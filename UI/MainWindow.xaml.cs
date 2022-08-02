@@ -42,20 +42,6 @@ namespace UI
         {
             UpdateImage(sender);
         }
-        private void UpdateMove(object sender, DragEventArgs e)
-        {
-            ClearBoardColors();
-            if (sender is not Image toImg) return;
-            UpdateImage(toImg);
-            if (e.Data.GetData(DataFormats.Serializable) is not Image fromImg) return;
-            if (fromImg.Tag.ToString() is not string fromTile) return;
-            UpdateImage(fromImg);
-            if (toImg.Parent is not UniformGrid toGrid) return;
-            if (fromImg.Parent is not UniformGrid fromGrid) return;
-            var prevTileColor = new SolidColorBrush(Colors.LightCoral);
-            toGrid.Background = prevTileColor;
-            fromGrid.Background = prevTileColor;
-        }
 
         private void ClearBoardColors()
         {
@@ -78,7 +64,6 @@ namespace UI
                     {
                         if (column % 2 == 0)
                         {
-
                             grid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(lightTile));
                         }
                         else
@@ -100,7 +85,16 @@ namespace UI
                 }
             }
         }
-
+        private void ReloadBoard()
+        {
+            foreach (UniformGrid grid in board.Children)
+            {
+                foreach (Image img in grid.Children)
+                {
+                    UpdateImage(img);
+                }
+            }
+        }
         private void UpdateImage(object sender)
         {
             if (sender is Image img)
@@ -178,28 +172,84 @@ namespace UI
                 }
             }
         }
-
-        private bool IsMoveable(object sender, MouseEventArgs e)
+        private void UpdateMove(object sender, DragEventArgs e, int flag)
         {
-            if (sender is not Image img) return false;
-            if (img.Tag.ToString() is not string tile) return false;
-            return e.LeftButton == MouseButtonState.Pressed && _chessboard.IsMoveable(tile);
-        }
-
-        private bool IsLegal(DragEventArgs e, string tile)
-        {
-            if (e.Data.GetData(DataFormats.Serializable) is not Image fromImg) return false;
-            if (fromImg.Tag.ToString() is not string fromTile) return false;
-            if (_chessboard.IsLegal(fromTile, tile))
+            if (sender is not Image toImg) return;
+            if (e.Data.GetData(DataFormats.Serializable) is not Image fromImg) return;
+            // #TODO handle capture rendering
+            if (flag == Move.Flag.EnPassantCapture)
             {
-                _chessboard.Move(fromTile, tile);
-                return true;
+                ReloadBoard();
             }
-            return false;
+            else
+            {
+                UpdateImage(toImg);
+                UpdateImage(fromImg);
+            }
+            ClearBoardColors();
+
+            if (fromImg.Tag.ToString() is not string fromTile) return;
+            if (toImg.Tag.ToString() is not string toTile) return;
+            int fromIdx = _chessboard.TileToIndex(fromTile);
+            int toIdx = _chessboard.TileToIndex(fromTile);
+
+            if (toImg.Parent is not UniformGrid toGrid) return;
+            if (fromImg.Parent is not UniformGrid fromGrid) return;
+
+            var lightTile = App.Current.Resources["PrevMoveLight"].ToString();
+            var darkTile = App.Current.Resources["PrevMoveDark"].ToString();
+            int fromRow = fromIdx / 8;
+            int fromCol = fromIdx % 8;
+            int toRow = toIdx / 8;
+            int toCol = toIdx % 8;
+
+            // set From
+            if (fromRow % 2 == 0)
+            {
+                if (fromCol % 2 == 0)
+                {
+                    fromGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(lightTile));
+                }
+                else
+                {
+                    fromGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(darkTile));
+                }
+            }
+            else
+            {
+                if (fromCol % 2 != 0)
+                {
+                    fromGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(lightTile));
+                }
+                else
+                {
+                    fromGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(darkTile));
+                }
+            }
+            // set To
+            if (toRow % 2 == 0)
+            {
+                if (toCol % 2 == 0)
+                {
+                    toGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(lightTile));
+                }
+                else
+                {
+                    toGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(darkTile));
+                }
+            }
+            else
+            {
+                if (toCol % 2 != 0)
+                {
+                    toGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(lightTile));
+                }
+                else
+                {
+                    toGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(darkTile));
+                }
+            }
         }
-
-        // Begin drag/drop hell as I couldn't find a better way to do this
-
         private void PieceMove(object sender, MouseEventArgs e)
         {
             if (sender is not Image img) return;
@@ -217,10 +267,12 @@ namespace UI
             if (grid.Children[0] is not Image toImg) return;
             if (fromImg.Tag.ToString() is not string fromTile) return;
             if (toImg.Tag.ToString() is not string toTile) return;
-            if (_chessboard.IsLegal(fromTile, toTile))
+            int flag = _chessboard.MoveFlag(fromTile, toTile);
+            // #TODO ask for promotion type if promotion flag
+            if (_chessboard.IsLegal(fromTile, toTile, flag))
             {
-                _chessboard.Move(fromTile, toTile);
-                UpdateMove(toImg, e);
+                _chessboard.Move(fromTile, toTile, flag);
+                UpdateMove(toImg, e, flag);
             }
             return;
         }

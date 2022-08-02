@@ -8,7 +8,9 @@
             <SolidColorBrush x:Key="BorderColor" Color="#51504D"/>
             <SolidColorBrush x:Key="LightTile" Color="#EFEFEF"/>
             <SolidColorBrush x:Key="DarkTile" Color="#C2D7E2"/>
-            <SolidColorBrush x:Key="PrevMove" Color="LightCoral"/>
+            <SolidColorBrush x:Key="PrevMoveDark" Color="#93D9EC"/>
+            <SolidColorBrush x:Key="PrevMoveLight" Color="#AAE5F3"/>
+            <SolidColorBrush x:Key="MovePreview" Color="#F6B2B2"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>
