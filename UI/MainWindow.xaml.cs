@@ -178,7 +178,7 @@ namespace UI
             if (sender is not Image toImg) return;
             if (e.Data.GetData(DataFormats.Serializable) is not Image fromImg) return;
             // #TODO handle capture rendering
-            if (flag == Move.Flag.EnPassantCapture)
+            if (flag != Move.Flag.None)
             {
                 ReloadBoard();
             }
@@ -272,8 +272,9 @@ namespace UI
             // #TODO ask for promotion type if promotion flag
             if (_chessboard.IsLegal(fromTile, toTile, flag))
             {
-                _chessboard.Move(fromTile, toTile, flag);
+                _chessboard.PlayerMove(fromTile, toTile, flag);
                 UpdateMove(toImg, e, flag);
+
             }
             return;
         }

@@ -317,7 +317,7 @@ namespace Engine
             if (playerMoves.Contains(new Move(idxFrom, idxTo, flag))) return true;
             return false;
         }
-        public bool Move(string fromTile, string toTile, int flag)
+        public bool PlayerMove(string fromTile, string toTile, int flag)
         {
             // Move should already be checked to be legal 
             int idxFrom = TileToIndex(fromTile);
@@ -343,15 +343,48 @@ namespace Engine
                     boardData[idxTo + pawnForward] = Piece.Empty;
                 }
             }
+            if (flag == Engine.Move.Flag.Castling)
+            {
+                // Move Rook
+                if (curTurn == Piece.White)
+                {
+                    if (idxTo == startingWhiteKingSquare - 2)
+                    {
+                        boardData[59] = Piece.White + Piece.Rook;
+                        boardData[56] = Piece.Empty;
+                    }
+                    if (idxTo == startingWhiteKingSquare + 2)
+                    {
+                        boardData[61] = Piece.White + Piece.Rook;
+                        boardData[63] = Piece.Empty;
+                    }
+                }
+                if (curTurn == Piece.Black)
+                {
+                    if (idxTo == startingBlackKingSquare - 2)
+                    {
+                        boardData[3] = Piece.Black + Piece.Rook;
+                        boardData[0] = Piece.Empty;
+                    }
+                    if (idxTo == startingWhiteKingSquare + 2)
+                    {
+                        boardData[5] = Piece.Black + Piece.Rook;
+                        boardData[7] = Piece.Empty;
+                    }
+                }
+            }
             curTurn = curTurn == Piece.White ? Piece.Black : Piece.White; // swap game turn
-
-            // CalculateAIMove();
             if (debug == true) // player moves both
             {
                 playerColor = curTurn;
-                moveGenerator = new MoveGenerator(boardData, curTurn, prevMoves);
-                playerMoves = moveGenerator.possibleMoves;
             }
+            else
+            {
+                // CalculateAIMove();
+
+            }
+            moveGenerator = new MoveGenerator(boardData, curTurn, prevMoves);
+            playerMoves = moveGenerator.possibleMoves;
             return true;
         }
 
@@ -359,7 +392,6 @@ namespace Engine
         {
             return MoveFlag(TileToIndex(tileFrom), TileToIndex(tileTo));
         }
-
         public int MoveFlag(int idxFrom, int idxTo)
         {
             if (boardOrientation == Piece.Black)
@@ -384,6 +416,17 @@ namespace Engine
                     }
                 }
                 // TODO rest
+            }
+            if (Piece.Type(boardData[idxFrom]) == Piece.King)
+            {
+                if (curTurn == Piece.White && idxFrom == startingWhiteKingSquare)
+                {
+                    if (idxTo == startingWhiteKingSquare - 2 || idxTo == startingWhiteKingSquare + 2) return Engine.Move.Flag.Castling;
+                }
+                if (curTurn == Piece.Black && idxFrom == startingBlackKingSquare)
+                {
+                    if (idxTo == startingBlackKingSquare - 2 || idxTo == startingBlackKingSquare + 2) return Engine.Move.Flag.Castling;
+                }
             }
             return Engine.Move.Flag.None;
         }

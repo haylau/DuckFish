@@ -3,9 +3,9 @@ namespace Engine
     public static class MoveData
     {
         /*     
-        *   -9 -8 -7 
-        *   -1 () +1
-        *   +7 +8 +9
+        *   -9 -8 -7  7 0 1 
+        *   -1 () +1  6 - 2
+        *   +7 +8 +9  5 4 3
         */
         public static readonly int[] moveOffsets = { -8, -7, 1, 9, 8, 7, -1, -9 }; // Clockwise from Up  
         public static readonly int[] queenOffsets = { -8, -7, 1, 9, 8, 7, -1, -9 };
@@ -28,6 +28,12 @@ namespace Engine
         public const int pawnRightCapture = -7;
         public const int pawnLeftEnPassant = -1;
         public const int pawnRightEnPassant = +1;
+        public const int startingWhiteKingSquare = 60;
+        public const int startingBlackKingSquare = 4;
+        public const int startingWhiteKingRook = 56;
+        public const int startingWhiteQueenRook = 63;
+        public const int startingBlackKingRook = 7;
+        public const int startingBlackQueenRook = 0;
 
         static MoveData()
         {
