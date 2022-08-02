@@ -244,7 +244,7 @@ namespace Engine
                     for (int direction = 0; direction < moveOffsets.Length; ++direction)
                     {
                         int target = idx + moveOffsets[direction];
-                        if (distToEdge[idx][direction] > 1 && attackedSquares[target] == false)
+                        if (distToEdge[idx][direction] > 0 && attackedSquares[target] == false)
                         {
                             if (Piece.Color(boardData[target]) == curTurnColor) continue; // cannot capture own piece
                             possibleMoves.Add(new Move(idx, target));
