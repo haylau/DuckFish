@@ -1,3 +1,4 @@
+using System;
 using System.Text.RegularExpressions;
 
 namespace Engine
@@ -96,8 +97,10 @@ namespace Engine
             {63, 7}
         };
         public const string START = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
-        public const string DEBUG = "Rq6/5N2/5r2/Rp5K/3Bp1P1/Q3n1Pp/3kP2P/1N5b";
+        public const string DEBUG = "Rq6/5N2/5r2/Rp5K/3Bp1P1/Q3n1Pp/3kP2P/1N5b w";
         private bool debug;
+        private bool lockWhite;
+        private bool lockBlack;
         private readonly int[] boardData;
         private List<Move> playerMoves = default!;
         private List<Move> prevMoves;
@@ -174,16 +177,21 @@ namespace Engine
             debug = true;
         }
 
+        public void SelectColor(int color)
+        {
+            if (color == Piece.White) lockWhite = true;
+            if (color == Piece.Bishop) lockBlack = true;
+        }
+
         public void SetBoard() // Default board setup and random turn
         {
             // Decide Turn
             this.curTurn = Piece.White;
             Random rdm = new();
-            if (rdm.Next() % 2 == 0)
+            if (lockWhite || (!lockBlack && rdm.Next() % 2 == 0))
             {
                 this.boardOrientation = Piece.White;
                 this.playerColor = Piece.White;
-
             }
             else
             {
@@ -195,32 +203,45 @@ namespace Engine
         }
 
         /* 
-            Todo: 
-            Active Color
-            + Castle Rights + Legal En Passant (not too important) 
+            #TODO Castle Rights + Legal En Passant (not too important) 
         */
         public void SetBoard(string fen)
         {
+            this.boardOrientation = Piece.White;
+            this.playerColor = Piece.White;
             int idx = 0;
+            bool rules = false;
             foreach (char token in fen)
             {
+                if (idx >= 64 || token.Equals(' '))
+                {
+                    rules = true;
+                }
+                if (rules)
+                {
+                    if (token.Equals('b'))
+                    {
+                        this.boardOrientation = Piece.White;
+                        this.playerColor = Piece.White;
+                    }
+                }
                 // token is a newline
-                if (token.Equals('/'))
+                if (token.Equals('/') && !rules)
                 {
                     if (idx % 8 == 0) continue; // already at end of row
                     idx += 8 - (idx % 8);
-                    if (idx >= 64) return; // end of board
+                    if (idx >= 64) rules = true; // end of board
                     continue;
                 }
                 // token empty space
-                if (char.IsDigit(token))
+                if (char.IsDigit(token) && !rules)
                 {
                     idx += (int)char.GetNumericValue(token);
-                    if (idx >= 64) return; // end of board
+                    if (idx >= 64) rules = true; // end of board
                     continue;
                 }
                 // token is a piece
-                if (char.IsLetter(token))
+                if (char.IsLetter(token) && !rules)
                 {
                     boardData[idx] += char.IsUpper(token) ? Piece.White : Piece.Black;
                     switch (char.ToUpper(token))
@@ -260,6 +281,7 @@ namespace Engine
                     continue;
                 }
             }
+            if (debug) this.playerColor = curTurn;
             moveGenerator = new MoveGenerator(boardData, curTurn, prevMoves);
             playerMoves = moveGenerator.possibleMoves;
         }

@@ -28,7 +28,8 @@ namespace UI
         public MainWindow()
         {
             _chessboard.EnableDebug(); // Testing
-            _chessboard.SetBoard(); // starts as random color
+            _chessboard.SelectColor(Piece.White); // locks to white
+            _chessboard.SetBoard(); // normally starts as random color
             DataContext = this;
             InitializeComponent();
         }
