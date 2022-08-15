@@ -214,7 +214,7 @@ namespace Engine
                         }
                         // Adjacent capture
                         target = idx - pawnLeftCapture;
-                        if (idx % 8 != 0 && Piece.Color(boardData[target]) == opponentTurnColor)
+                        if ((idx + 1) % 8 != 0 && Piece.Color(boardData[target]) == opponentTurnColor)
                         {
                             if (pinnedSquares[idx] == -1 || pinnedSquares[idx] == 3)
                             {
@@ -229,7 +229,7 @@ namespace Engine
                             }
                         }
                         target = idx - pawnRightCapture;
-                        if ((idx - 1) % 8 != 0 && Piece.Color(boardData[target]) == opponentTurnColor)
+                        if (idx % 8 != 0 && Piece.Color(boardData[target]) == opponentTurnColor)
                         {
                             if (pinnedSquares[idx] == -1 || pinnedSquares[idx] == 5)
                             {

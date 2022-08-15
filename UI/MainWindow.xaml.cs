@@ -19,15 +19,13 @@ using Engine;
 
 namespace UI
 {
-
     public partial class MainWindow : INotifyPropertyChanged
     {
-
         private readonly Board _chessboard = new();
 
         public MainWindow()
         {
-            _chessboard.EnableDebug(); // Testing
+            _chessboard.DisableAI(); // Testing
             _chessboard.SelectColor(Piece.White); // locks to white
             _chessboard.SetBoard(); // normally starts as random color
             DataContext = this;
@@ -177,7 +175,6 @@ namespace UI
         {
             if (sender is not Image toImg) return;
             if (e.Data.GetData(DataFormats.Serializable) is not Image fromImg) return;
-            // #TODO handle capture rendering
             if (flag != Move.Flag.None)
             {
                 ReloadBoard();
@@ -268,13 +265,23 @@ namespace UI
             if (grid.Children[0] is not Image toImg) return;
             if (fromImg.Tag.ToString() is not string fromTile) return;
             if (toImg.Tag.ToString() is not string toTile) return;
-            int flag = _chessboard.MoveFlag(fromTile, toTile);
-            // #TODO ask for promotion type if promotion flag
+            int flag;
+            if (_chessboard.IsPromotion(fromTile, toTile))
+            {
+                // #TODO prompt promotion type
+                flag = _chessboard.MoveFlag(fromTile, toTile, Engine.Piece.Queen); // default queen until #TODO promotion prompt 
+            }
+            else
+            {
+                flag = _chessboard.MoveFlag(fromTile, toTile);
+            }
             if (_chessboard.IsLegal(fromTile, toTile, flag))
             {
                 _chessboard.PlayerMove(fromTile, toTile, flag);
                 UpdateMove(toImg, e, flag);
-
+                if(_chessboard.Checkmate) {} // #TODO handle player has won
+                _chessboard.OpponentMove();
+                if(_chessboard.Checkmate) {} // #TODO handle opponent has won
             }
             return;
         }

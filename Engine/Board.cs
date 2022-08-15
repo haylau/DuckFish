@@ -98,7 +98,7 @@ namespace Engine
         };
         public const string START = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
         public const string DEBUG = "Rq6/5N2/5r2/Rp5K/3Bp1P1/Q3n1Pp/3kP2P/1N5b w";
-        private bool debug;
+        private bool AIDisabled;
         private bool lockWhite;
         private bool lockBlack;
         private readonly int[] boardData;
@@ -108,13 +108,20 @@ namespace Engine
         private int boardOrientation = Piece.White;
         private int curTurn;
         private int playerColor;
+        private int gameState;
 
         public Board()
         {
             boardData = new int[64];
             prevMoves = new();
         }
-
+        public bool Checkmate
+        {
+            get
+            {
+                return gameState != 0;
+            }
+        }
         public int playerTurn
         {
             get
@@ -172,9 +179,9 @@ namespace Engine
 
         }
 
-        public void EnableDebug()
+        public void DisableAI()
         {
-            debug = true;
+            AIDisabled = true;
         }
 
         public void SelectColor(int color)
@@ -197,7 +204,7 @@ namespace Engine
             {
                 this.boardOrientation = Piece.Black;
                 this.playerColor = Piece.Black;
-                if (debug) this.playerColor = curTurn; // Lets player move opponent 
+                if (AIDisabled) this.playerColor = curTurn; // Lets player move opponent 
             }
             SetBoard(START);
         }
@@ -281,7 +288,7 @@ namespace Engine
                     continue;
                 }
             }
-            if (debug) this.playerColor = curTurn;
+            if (AIDisabled) this.playerColor = curTurn;
             moveGenerator = new MoveGenerator(boardData, curTurn, prevMoves);
             playerMoves = moveGenerator.possibleMoves;
         }
@@ -298,7 +305,7 @@ namespace Engine
             if (idx < 0 || idx > 63) return false; // illegal idx
             return true;
         }
-        public bool IsLegal(string fromTile, string toTile, int flag) // checks if a move is legal
+        public bool IsLegal(string fromTile, string toTile, int flag = Move.Flag.None) // checks if a move is legal
         {
             if (fromTile == toTile) return false; // cannot move to itself
             int idxFrom = TileToIndex(fromTile);
@@ -317,12 +324,96 @@ namespace Engine
             if (playerMoves.Contains(new Move(idxFrom, idxTo, flag))) return true;
             return false;
         }
-        public bool PlayerMove(string fromTile, string toTile, int flag)
+        public bool IsPromotion(string fromTile, string toTile)
+        {
+            int idxFrom = TileToIndex(fromTile);
+            int idxTo = TileToIndex(toTile);
+            if (boardOrientation == Piece.Black)
+            {
+                idxFrom = flippedBoard[idxFrom];
+                idxTo = flippedBoard[idxTo];
+            }
+            if (Piece.Type(boardData[idxTo]) != Piece.Empty) return false; // cannot promote into a piece
+            if (Piece.Type(boardData[idxFrom]) == Piece.Pawn) // pawn is being moved
+            {
+                if (idxFrom >= 8 && idxFrom <= 15 && idxTo >= 0 && idxTo <= 7)
+                {
+                    return true;
+                }
+                else if (idxFrom >= 48 && idxFrom <= 55 && idxTo >= 56 && idxTo <= 63)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public int MoveFlag(string tileFrom, string tileTo, int promotion = Piece.Empty)
+        {
+            return MoveFlag(TileToIndex(tileFrom), TileToIndex(tileTo), promotion);
+        }
+        public int MoveFlag(int idxFrom, int idxTo, int promotion)
+        {
+            if (boardOrientation == Piece.Black)
+            {
+                idxFrom = flippedBoard[idxFrom];
+                idxTo = flippedBoard[idxTo];
+            }
+            if (Piece.Type(boardData[idxFrom]) == Piece.Pawn)
+            {
+                // Two forward
+                if (Math.Abs(idxFrom - idxTo) == 16)
+                {
+                    return Move.Flag.PawnTwoForward;
+                }
+                // En passant
+                if (prevMoves.Count > 0 && prevMoves.Last().MoveFlag == Move.Flag.PawnTwoForward)
+                {
+                    int enPassantTarget = prevMoves.Last().TargetSquare;
+                    if (Math.Abs(enPassantTarget - idxTo) == 8)
+                    {
+                        return Move.Flag.EnPassantCapture;
+                    }
+                }
+                // Promotion
+                if (promotion != Piece.Empty && (idxTo >= 0 && idxTo <= 7) || (idxTo >= 56 && idxTo <= 63))
+                {
+                    if (promotion == Piece.Queen) return Move.Flag.PromoteToQueen;
+                    if (promotion == Piece.Rook) return Move.Flag.PromoteToRook;
+                    if (promotion == Piece.Knight) return Move.Flag.PromoteToKnight;
+                    if (promotion == Piece.Bishop) return Move.Flag.PromoteToBishop;
+                }
+            }
+            if (Piece.Type(boardData[idxFrom]) == Piece.King)
+            {
+                if (curTurn == Piece.White && idxFrom == startingWhiteKingSquare)
+                {
+                    if (idxTo == startingWhiteKingSquare - 2 || idxTo == startingWhiteKingSquare + 2) return Move.Flag.Castling;
+                }
+                if (curTurn == Piece.Black && idxFrom == startingBlackKingSquare)
+                {
+                    if (idxTo == startingBlackKingSquare - 2 || idxTo == startingBlackKingSquare + 2) return Move.Flag.Castling;
+                }
+            }
+            return Move.Flag.None;
+        }
+
+        private void ResolveGame()
+        {
+            if (moveGenerator.inCheck) // curTurn player is in check with no legal moves
+            {
+                if (curTurn == Piece.White) gameState = blackCheckmate;
+                else if (curTurn == Piece.Black) gameState = whiteCheckmate;
+                else throw new Exception("Invalid Player State");
+            }
+            else gameState = stalemate; // curTurn player is NOT in check with no legal moves
+        }
+
+        public void PlayerMove(string fromTile, string toTile, int flag)
         {
             // Move should already be checked to be legal 
             int idxFrom = TileToIndex(fromTile);
             int idxTo = TileToIndex(toTile);
-            if (idxFrom < 0 || idxFrom > 63 || idxTo < 0 || idxTo > 63) return false; // illegal idx
             if (boardOrientation == Piece.Black)
             {
                 idxFrom = flippedBoard[idxFrom];
@@ -331,23 +422,23 @@ namespace Engine
             prevMoves.Add(new Move(idxFrom, idxTo, flag));
             boardData[idxTo] = boardData[idxFrom]; // from -> to
             boardData[idxFrom] = Piece.Empty; // from is now empty
-            if (flag == Engine.Move.Flag.PromoteToQueen)
+            if (flag == Move.Flag.PromoteToQueen)
             {
                 boardData[idxTo] = curTurn + Piece.Queen;
             }
-            if (flag == Engine.Move.Flag.PromoteToRook)
+            if (flag == Move.Flag.PromoteToRook)
             {
                 boardData[idxTo] = curTurn + Piece.Rook;
             }
-            if (flag == Engine.Move.Flag.PromoteToKnight)
+            if (flag == Move.Flag.PromoteToKnight)
             {
                 boardData[idxTo] = curTurn + Piece.Knight;
             }
-            if (flag == Engine.Move.Flag.PromoteToBishop)
+            if (flag == Move.Flag.PromoteToBishop)
             {
                 boardData[idxTo] = curTurn + Piece.Bishop;
             }
-            if (flag == Engine.Move.Flag.EnPassantCapture)
+            if (flag == Move.Flag.EnPassantCapture)
             {
                 // Remove pawn captured en passant
                 if (curTurn == Piece.White)
@@ -359,7 +450,7 @@ namespace Engine
                     boardData[idxTo + pawnForward] = Piece.Empty;
                 }
             }
-            if (flag == Engine.Move.Flag.Castling)
+            if (flag == Move.Flag.Castling)
             {
                 // Move Rook
                 if (curTurn == Piece.White)
@@ -382,7 +473,7 @@ namespace Engine
                         boardData[3] = Piece.Black + Piece.Rook;
                         boardData[0] = Piece.Empty;
                     }
-                    if (idxTo == startingWhiteKingSquare + 2)
+                    if (idxTo == startingBlackKingSquare + 2)
                     {
                         boardData[5] = Piece.Black + Piece.Rook;
                         boardData[7] = Piece.Empty;
@@ -390,61 +481,26 @@ namespace Engine
                 }
             }
             curTurn = curTurn == Piece.White ? Piece.Black : Piece.White; // swap game turn
-            if (debug == true) // player moves both
-            {
-                playerColor = curTurn;
-            }
-            else
-            {
-                // CalculateAIMove();
-
-            }
+            // generate opponent legal moves
             moveGenerator = new MoveGenerator(boardData, curTurn, prevMoves);
-            playerMoves = moveGenerator.possibleMoves;
-            return true;
+            if (moveGenerator.possibleMoves.Count == 0) ResolveGame(); // checkmate or stalemate is on board
+            if (AIDisabled)
+            {
+                playerColor = curTurn; // player moves both
+                playerMoves = moveGenerator.possibleMoves;
+            }
         }
+        public void OpponentMove()
+        {
+            if (AIDisabled) return; // player will reuse PlayerMove() 
 
-        public int MoveFlag(string tileFrom, string tileTo)
-        {
-            return MoveFlag(TileToIndex(tileFrom), TileToIndex(tileTo));
-        }
-        public int MoveFlag(int idxFrom, int idxTo)
-        {
-            if (boardOrientation == Piece.Black)
-            {
-                idxFrom = flippedBoard[idxFrom];
-                idxTo = flippedBoard[idxTo];
-            }
-            if (Piece.Type(boardData[idxFrom]) == Piece.Pawn)
-            {
-                // En TwoForward
-                if (Math.Abs(idxFrom - idxTo) == 16)
-                {
-                    return Engine.Move.Flag.PawnTwoForward;
-                }
-                // En passant
-                if (prevMoves.Count > 0 && prevMoves.Last().MoveFlag == Engine.Move.Flag.PawnTwoForward)
-                {
-                    int enPassantTarget = prevMoves.Last().TargetSquare;
-                    if (Math.Abs(enPassantTarget - idxTo) == 8)
-                    {
-                        return Engine.Move.Flag.EnPassantCapture;
-                    }
-                }
-                // TODO rest
-            }
-            if (Piece.Type(boardData[idxFrom]) == Piece.King)
-            {
-                if (curTurn == Piece.White && idxFrom == startingWhiteKingSquare)
-                {
-                    if (idxTo == startingWhiteKingSquare - 2 || idxTo == startingWhiteKingSquare + 2) return Engine.Move.Flag.Castling;
-                }
-                if (curTurn == Piece.Black && idxFrom == startingBlackKingSquare)
-                {
-                    if (idxTo == startingBlackKingSquare - 2 || idxTo == startingBlackKingSquare + 2) return Engine.Move.Flag.Castling;
-                }
-            }
-            return Engine.Move.Flag.None;
+            // #TODO Make AI Move
+
+            curTurn = curTurn == Piece.White ? Piece.Black : Piece.White; // swap game turn
+
+            // generate player legal moves
+            moveGenerator = new MoveGenerator(boardData, curTurn, prevMoves);
+            if (moveGenerator.possibleMoves.Count == 0) ResolveGame(); // checkmate or stalemate is on board
         }
     }
 }
