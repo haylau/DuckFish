@@ -116,7 +116,14 @@ namespace Engine
                         {
                             if (pinnedSquares[idx] == -1 || pinnedSquares[idx] == 0) // can move toward pinning piece
                             {
-                                possibleMoves.Add(new Move(idx, target));
+                                if (target >= 0 && target <= 7) // promotion square
+                                {
+                                    AddPromotionMoves(idx, target);
+                                }
+                                else
+                                {
+                                    possibleMoves.Add(new Move(idx, target));
+                                }
                             }
                         }
                         // Adjacent capture
@@ -125,7 +132,14 @@ namespace Engine
                         {
                             if (pinnedSquares[idx] == -1 || pinnedSquares[idx] == 7) // can capture pinning piece
                             {
-                                possibleMoves.Add(new Move(idx, target));
+                                if (target >= 0 && target <= 7) // promotion square
+                                {
+                                    AddPromotionMoves(idx, target);
+                                }
+                                else
+                                {
+                                    possibleMoves.Add(new Move(idx, target));
+                                }
                             }
                         }
                         target = idx + pawnRightCapture;
@@ -133,7 +147,14 @@ namespace Engine
                         {
                             if (pinnedSquares[idx] == -1 || pinnedSquares[idx] == 1) // can capture pinning piece
                             {
-                                possibleMoves.Add(new Move(idx, target));
+                                if (target >= 0 && target <= 7) // promotion square
+                                {
+                                    AddPromotionMoves(idx, target);
+                                }
+                                else
+                                {
+                                    possibleMoves.Add(new Move(idx, target));
+                                }
                             }
                         }
                         // Forward Twice only legal on original pawn positions
@@ -181,24 +202,45 @@ namespace Engine
                         {
                             if (pinnedSquares[idx] == -1 || pinnedSquares[idx] == 4) // can move toward pinning piece
                             {
-                                possibleMoves.Add(new Move(idx, target));
+                                if (target >= 56 && target <= 63) // promotion square
+                                {
+                                    AddPromotionMoves(idx, target);
+                                }
+                                else
+                                {
+                                    possibleMoves.Add(new Move(idx, target));
+                                }
                             }
                         }
                         // Adjacent capture
                         target = idx - pawnLeftCapture;
-                        if (idx % 8 != 0 && Piece.Color(boardData[target]) == opponentTurnColor)
+                        if ((idx + 1) % 8 != 0 && Piece.Color(boardData[target]) == opponentTurnColor)
                         {
                             if (pinnedSquares[idx] == -1 || pinnedSquares[idx] == 3)
                             {
-                                possibleMoves.Add(new Move(idx, target));
+                                if (target >= 56 && target <= 63) // promotion square
+                                {
+                                    AddPromotionMoves(idx, target);
+                                }
+                                else
+                                {
+                                    possibleMoves.Add(new Move(idx, target));
+                                }
                             }
                         }
                         target = idx - pawnRightCapture;
-                        if ((idx - 1) % 8 != 0 && Piece.Color(boardData[target]) == opponentTurnColor)
+                        if (idx % 8 != 0 && Piece.Color(boardData[target]) == opponentTurnColor)
                         {
                             if (pinnedSquares[idx] == -1 || pinnedSquares[idx] == 5)
                             {
-                                possibleMoves.Add(new Move(idx, target));
+                                if (target >= 56 && target <= 63) // promotion square
+                                {
+                                    AddPromotionMoves(idx, target);
+                                }
+                                else
+                                {
+                                    possibleMoves.Add(new Move(idx, target));
+                                }
                             }
                         }
                         // Forward Twice and En Passant only legal on original pawn positions
@@ -244,7 +286,7 @@ namespace Engine
                     for (int direction = 0; direction < moveOffsets.Length; ++direction)
                     {
                         int target = idx + moveOffsets[direction];
-                        if (distToEdge[idx][direction] > 1 && attackedSquares[target] == false)
+                        if (distToEdge[idx][direction] > 0 && attackedSquares[target] == false)
                         {
                             if (Piece.Color(boardData[target]) == curTurnColor) continue; // cannot capture own piece
                             possibleMoves.Add(new Move(idx, target));
@@ -494,6 +536,13 @@ namespace Engine
                 // No enemy pieces attack this square
                 attackedSquares[idx] = false;
             }
+        }
+        private void AddPromotionMoves(int idx, int target)
+        {
+            this.possibleMoves.Add(new Move(idx, target, Move.Flag.PromoteToQueen));
+            this.possibleMoves.Add(new Move(idx, target, Move.Flag.PromoteToRook));
+            this.possibleMoves.Add(new Move(idx, target, Move.Flag.PromoteToKnight));
+            this.possibleMoves.Add(new Move(idx, target, Move.Flag.PromoteToBishop));
         }
         private void CalculatePinnedSquares()
         {

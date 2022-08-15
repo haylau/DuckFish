@@ -30,11 +30,13 @@ namespace Engine
         public const int pawnRightEnPassant = +1;
         public const int startingWhiteKingSquare = 60;
         public const int startingBlackKingSquare = 4;
-        public const int startingWhiteKingRook = 56;
-        public const int startingWhiteQueenRook = 63;
+        public const int startingWhiteKingRook = 63;
+        public const int startingWhiteQueenRook = 56;
         public const int startingBlackKingRook = 7;
         public const int startingBlackQueenRook = 0;
-
+        public const int whiteCheckmate = 1; // White has a victory
+        public const int blackCheckmate = 2; // Black has a victory
+        public const int stalemate = 3;
         static MoveData()
         {
             /* 
