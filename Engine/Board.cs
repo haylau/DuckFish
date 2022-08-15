@@ -331,6 +331,22 @@ namespace Engine
             prevMoves.Add(new Move(idxFrom, idxTo, flag));
             boardData[idxTo] = boardData[idxFrom]; // from -> to
             boardData[idxFrom] = Piece.Empty; // from is now empty
+            if (flag == Engine.Move.Flag.PromoteToQueen)
+            {
+                boardData[idxTo] = curTurn + Piece.Queen;
+            }
+            if (flag == Engine.Move.Flag.PromoteToRook)
+            {
+                boardData[idxTo] = curTurn + Piece.Rook;
+            }
+            if (flag == Engine.Move.Flag.PromoteToKnight)
+            {
+                boardData[idxTo] = curTurn + Piece.Knight;
+            }
+            if (flag == Engine.Move.Flag.PromoteToBishop)
+            {
+                boardData[idxTo] = curTurn + Piece.Bishop;
+            }
             if (flag == Engine.Move.Flag.EnPassantCapture)
             {
                 // Remove pawn captured en passant
