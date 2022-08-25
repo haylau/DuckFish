@@ -117,11 +117,25 @@ namespace Engine
             boardData = new int[64];
             prevMoves = new();
         }
+        public bool InCheck
+        {
+            get
+            {
+                return gameState == whiteCheck || gameState == blackCheck || gameState == whiteCheckmate || gameState == blackCheckmate;
+            }
+        }
         public bool Checkmate
         {
             get
             {
-                return gameState != 0;
+                return gameState == whiteCheckmate || gameState == blackCheckmate;
+            }
+        }
+        public bool Stalemate
+        {
+            get
+            {
+                return gameState == stalemate;
             }
         }
         public int playerTurn
@@ -129,6 +143,13 @@ namespace Engine
             get
             {
                 return curTurn;
+            }
+        }
+        public int KingTile
+        {
+            get
+            {
+                return curTurn == Piece.White ? moveGenerator.whiteKingSquare : moveGenerator.blackKingSquare;
             }
         }
 
@@ -162,7 +183,6 @@ namespace Engine
             }
             return legalTargets;
         }
-
         public bool SetTile(int piece, string tile)
         {
             int idx = TileToIndex(tile);
@@ -508,6 +528,14 @@ namespace Engine
             // generate opponent legal moves
             moveGenerator = new MoveGenerator(boardData, curTurn, prevMoves);
             if (moveGenerator.possibleMoves.Count == 0) ResolveGame(); // player has checkmate or stalemate is on board 
+            else if (moveGenerator.inCheck)
+            {
+                gameState = playerTurn == Piece.White ? blackCheck : whiteCheck;
+            }
+            else
+            {
+                gameState = 0;
+            }
             if (AIDisabled)
             {
                 playerColor = curTurn; // player moves both
@@ -529,6 +557,15 @@ namespace Engine
             moveGenerator = new MoveGenerator(boardData, curTurn, prevMoves);
             playerMoves = moveGenerator.possibleMoves;
             if (moveGenerator.possibleMoves.Count == 0) ResolveGame(); // opponent has checkmate or stalemate is on board
+            else if (moveGenerator.inCheck)
+            {
+                gameState = playerTurn == Piece.White ? whiteCheck : blackCheck;
+            }
+            else
+            {
+                gameState = 0;
+            }
+
         }
     }
 }

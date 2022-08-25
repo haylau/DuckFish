@@ -34,9 +34,11 @@ namespace Engine
         public const int startingWhiteQueenRook = 56;
         public const int startingBlackKingRook = 7;
         public const int startingBlackQueenRook = 0;
-        public const int whiteCheckmate = 1; // White has a victory
-        public const int blackCheckmate = 2; // Black has a victory
-        public const int stalemate = 3;
+        public const int whiteCheck = 1;
+        public const int blackCheck = 2;
+        public const int whiteCheckmate = 3; // White has a victory
+        public const int blackCheckmate = 4; // Black has a victory
+        public const int stalemate = 5;
         static MoveData()
         {
             /* 

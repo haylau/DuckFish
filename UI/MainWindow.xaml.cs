@@ -52,14 +52,13 @@ namespace UI
             int rows = board.Rows;
             int columns = board.Columns;
 
-            foreach (var children in board.Children)
+            foreach (UniformGrid uniformGrid in board.Children)
             {
-                if (children is UniformGrid grid)
                 {
-                    int index = board.Children.IndexOf(grid);
+                    int index = board.Children.IndexOf(uniformGrid);
 
-                    int row = index / columns;  // divide
-                    int column = index % columns;  // modulus
+                    int row = index / columns;
+                    int column = index % columns;
 
                     var lightTile = App.Current.Resources["LightTile"].ToString();
                     var darkTile = App.Current.Resources["DarkTile"].ToString();
@@ -68,22 +67,22 @@ namespace UI
                     {
                         if (column % 2 == 0)
                         {
-                            grid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(lightTile));
+                            uniformGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(lightTile));
                         }
                         else
                         {
-                            grid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(darkTile));
+                            uniformGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(darkTile));
                         }
                     }
                     else
                     {
                         if (column % 2 != 0)
                         {
-                            grid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(lightTile));
+                            uniformGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(lightTile));
                         }
                         else
                         {
-                            grid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(darkTile));
+                            uniformGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(darkTile));
                         }
                     }
                 }
@@ -272,6 +271,11 @@ namespace UI
                 }
             }
         }
+        private void HighlightPiece(int tile)
+        {
+            if (board.Children[tile] is not UniformGrid uniformGrid) return;
+            uniformGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(App.Current.Resources["CheckHighlight"].ToString()));
+        }
         private void PieceMove(object sender, MouseEventArgs e)
         {
             if (sender is not Image img) return;
@@ -308,10 +312,24 @@ namespace UI
             {
                 _chessboard.PlayerMove(fromTile, toTile, flag);
                 UpdateMove(toImg, e, flag);
-                if (_chessboard.Checkmate) { return; } // #TODO handle player has won
-                _chessboard.OpponentMove();
+                ReloadBoardColors();
+                if (_chessboard.InCheck)
+                {
+                    HighlightPiece(_chessboard.KingTile); // opponent in check
+                    if (_chessboard.Checkmate) { return; } // #TODO handle player has won  
+                    _chessboard.OpponentMove();
+                    ReloadBoardColors();
+                }
+                else
+                {
+                    _chessboard.OpponentMove();
+                }
                 ReloadBoardPieces();
-                if (_chessboard.Checkmate) { return; } // #TODO handle opponent has won
+                if (_chessboard.InCheck)
+                {
+                    HighlightPiece(_chessboard.KingTile); // player in check
+                    if (_chessboard.Checkmate) { return; } // #TODO handle player has won  
+                }
             }
             return;
         }
