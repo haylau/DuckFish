@@ -11,6 +11,7 @@
             <SolidColorBrush x:Key="PrevMoveDark" Color="#93D9EC"/>
             <SolidColorBrush x:Key="PrevMoveLight" Color="#AAE5F3"/>
             <SolidColorBrush x:Key="MovePreview" Color="#A7D7A7"/>
+            <SolidColorBrush x:Key="CheckHighlight" Color="#FF6060"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>
