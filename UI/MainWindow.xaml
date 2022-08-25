@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:UI"
         mc:Ignorable="d"
+        Icon="Assets\duckfish.ico"
         Title="DuckFish" Height="800" Width="800">
     <Grid>
         <Grid.ColumnDefinitions>
