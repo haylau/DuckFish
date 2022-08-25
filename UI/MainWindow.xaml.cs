@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,7 +24,7 @@ namespace UI
 
         public MainWindow()
         {
-            _chessboard.DisableAI(); // Testing
+            _chessboard.SetAIMovGen("random");
             _chessboard.SelectColor(Piece.White); // locks to white
             _chessboard.SetBoard(); // normally starts as random color
             DataContext = this;
@@ -37,12 +36,18 @@ namespace UI
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-        private void Image_Loaded(object sender, RoutedEventArgs e)
+        private void ReloadMoveIndicators()
         {
-            UpdateImage(sender);
+            foreach (UniformGrid uniformGrid in board.Children)
+            {
+                foreach (Grid grid in uniformGrid.Children)
+                {
+                    if (grid.Children[1] is not Ellipse indicator) return;
+                    indicator.Fill = new SolidColorBrush((Color)ColorConverter.ConvertFromString("Transparent"));
+                }
+            }
         }
-
-        private void ClearBoardColors()
+        private void ReloadBoardColors()
         {
             int rows = board.Rows;
             int columns = board.Columns;
@@ -84,14 +89,33 @@ namespace UI
                 }
             }
         }
-        private void ReloadBoard()
+        private void ReloadBoardPieces()
         {
-            foreach (UniformGrid grid in board.Children)
+            foreach (UniformGrid uniformGrid in board.Children)
             {
-                foreach (Image img in grid.Children)
+                foreach (Grid grid in uniformGrid.Children)
                 {
-                    UpdateImage(img);
+                    foreach (var child in grid.Children)
+                    {
+                        if (child is not Image img) continue;
+                        UpdateImage(img);
+                    }
+
                 }
+            }
+        }
+        private void UpdateMoveIndicators(Grid fromGrid)
+        {
+            if (fromGrid.Children[0] is not Image img) return;
+            if (img.Tag.ToString() is not string tile) return;
+
+            foreach (int target in _chessboard.GetLegalTargets(tile))
+            {
+                if (board.Children[target] is not UniformGrid uniformGrid) return;
+                if (uniformGrid.Children[0] is not Grid grid) return;
+                if (grid.Children[1] is not Ellipse indicator) return;
+                var fillColor = App.Current.Resources["MovePreview"].ToString();
+                indicator.Fill = new SolidColorBrush((Color)ColorConverter.ConvertFromString(fillColor));
             }
         }
         private void UpdateImage(object sender)
@@ -177,14 +201,14 @@ namespace UI
             if (e.Data.GetData(DataFormats.Serializable) is not Image fromImg) return;
             if (flag != Move.Flag.None)
             {
-                ReloadBoard();
+                ReloadBoardPieces();
             }
             else
             {
                 UpdateImage(toImg);
                 UpdateImage(fromImg);
             }
-            ClearBoardColors();
+            ReloadBoardColors();
 
             if (fromImg.Tag.ToString() is not string fromTile) return;
             if (toImg.Tag.ToString() is not string toTile) return;
@@ -251,17 +275,22 @@ namespace UI
         private void PieceMove(object sender, MouseEventArgs e)
         {
             if (sender is not Image img) return;
+            if (img.Parent is not Grid grid) return;
             if (img.Tag.ToString() is not string tile) return;
             if (e.LeftButton == MouseButtonState.Pressed && _chessboard.IsMoveable(tile))
             {
+                UpdateMoveIndicators(grid);
                 DragDrop.DoDragDrop(img, new DataObject(DataFormats.Serializable, img), DragDropEffects.Move);
             }
+            ReloadMoveIndicators();
         }
 
         private void PieceDrop(object sender, DragEventArgs e)
         {
             if (e.Data.GetData(DataFormats.Serializable) is not Image fromImg) return;
-            if (sender is not UniformGrid grid) return;
+
+            if (sender is not UniformGrid uniformGrid) return;
+            if (uniformGrid.Children[0] is not Grid grid) return;
             if (grid.Children[0] is not Image toImg) return;
             if (fromImg.Tag.ToString() is not string fromTile) return;
             if (toImg.Tag.ToString() is not string toTile) return;
@@ -269,7 +298,7 @@ namespace UI
             if (_chessboard.IsPromotion(fromTile, toTile))
             {
                 // #TODO prompt promotion type
-                flag = _chessboard.MoveFlag(fromTile, toTile, Engine.Piece.Queen); // default queen until #TODO promotion prompt 
+                flag = _chessboard.MoveFlag(fromTile, toTile, Engine.Piece.Queen); // defaults queen until promotion prompt 
             }
             else
             {
@@ -279,9 +308,10 @@ namespace UI
             {
                 _chessboard.PlayerMove(fromTile, toTile, flag);
                 UpdateMove(toImg, e, flag);
-                if(_chessboard.Checkmate) {} // #TODO handle player has won
+                if (_chessboard.Checkmate) { return; } // #TODO handle player has won
                 _chessboard.OpponentMove();
-                if(_chessboard.Checkmate) {} // #TODO handle opponent has won
+                ReloadBoardPieces();
+                if (_chessboard.Checkmate) { return; } // #TODO handle opponent has won
             }
             return;
         }

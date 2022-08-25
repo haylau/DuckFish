@@ -5,6 +5,7 @@
     <TargetFramework>net6.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
   </PropertyGroup>
 
   <ItemGroup>
@@ -45,6 +46,14 @@
     <Resource Include="Assets\Queen_White.png" />
     <Resource Include="Assets\Rook_Black.png" />
     <Resource Include="Assets\Rook_White.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\duckfish.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Assets\duckfish.ico" />
   </ItemGroup>
 
 </Project>
