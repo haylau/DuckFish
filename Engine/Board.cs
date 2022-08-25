@@ -431,8 +431,8 @@ namespace Engine
                         return Engine.Move.Flag.EnPassantCapture;
                     }
                 }
-                // TODO rest
             }
+            // Castling
             if (Piece.Type(boardData[idxFrom]) == Piece.King)
             {
                 if (curTurn == Piece.White && idxFrom == startingWhiteKingSquare)
