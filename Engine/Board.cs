@@ -183,6 +183,14 @@ namespace Engine
             }
             return legalTargets;
         }
+        public List<int> GetPrevMove()
+        {
+            List<int> prevMove = new();
+            prevMove.Add(prevMoves.Last().StartSquare);
+            prevMove.Add(prevMoves.Last().TargetSquare);
+            prevMove.Add(prevMoves.Last().MoveFlag);
+            return prevMove;
+        }
         public bool SetTile(int piece, string tile)
         {
             int idx = TileToIndex(tile);
