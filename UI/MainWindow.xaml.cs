@@ -121,8 +121,7 @@ namespace UI
         {
             if (sender is Image img)
             {
-                string? tile = img.Tag.ToString();
-                if (tile == null) return;
+                if (img.Tag.ToString() is not string tile) return;
                 int piece = _chessboard.GetTile(tile);
                 switch (piece)
                 {
@@ -194,28 +193,14 @@ namespace UI
                 }
             }
         }
-        private void UpdateMove(object sender, DragEventArgs e, int flag)
+        private void UpdateMoveHighlight(string fromTile, string toTile)
         {
-            if (sender is not Image toImg) return;
-            if (e.Data.GetData(DataFormats.Serializable) is not Image fromImg) return;
-            if (flag != Move.Flag.None)
-            {
-                ReloadBoardPieces();
-            }
-            else
-            {
-                UpdateImage(toImg);
-                UpdateImage(fromImg);
-            }
+            UpdateMoveHighlight(_chessboard.TileToIndex(fromTile), _chessboard.TileToIndex(toTile));
+        }
+        private void UpdateMoveHighlight(int fromIdx, int toIdx)
+        {
+
             ReloadBoardColors();
-
-            if (fromImg.Tag.ToString() is not string fromTile) return;
-            if (toImg.Tag.ToString() is not string toTile) return;
-            int fromIdx = _chessboard.TileToIndex(fromTile);
-            int toIdx = _chessboard.TileToIndex(fromTile);
-
-            if (toImg.Parent is not UniformGrid toGrid) return;
-            if (fromImg.Parent is not UniformGrid fromGrid) return;
 
             var lightTile = App.Current.Resources["PrevMoveLight"].ToString();
             var darkTile = App.Current.Resources["PrevMoveDark"].ToString();
@@ -224,27 +209,30 @@ namespace UI
             int toRow = toIdx / 8;
             int toCol = toIdx % 8;
 
+            if (board.Children[fromIdx] is not UniformGrid fromUniformGrid) return;
+            if (board.Children[toIdx] is not UniformGrid toUniformGrid) return;
+
             // set From
             if (fromRow % 2 == 0)
             {
                 if (fromCol % 2 == 0)
                 {
-                    fromGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(lightTile));
+                    fromUniformGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(lightTile));
                 }
                 else
                 {
-                    fromGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(darkTile));
+                    fromUniformGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(darkTile));
                 }
             }
             else
             {
                 if (fromCol % 2 != 0)
                 {
-                    fromGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(lightTile));
+                    fromUniformGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(lightTile));
                 }
                 else
                 {
-                    fromGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(darkTile));
+                    fromUniformGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(darkTile));
                 }
             }
             // set To
@@ -252,25 +240,26 @@ namespace UI
             {
                 if (toCol % 2 == 0)
                 {
-                    toGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(lightTile));
+                    toUniformGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(lightTile));
                 }
                 else
                 {
-                    toGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(darkTile));
+                    toUniformGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(darkTile));
                 }
             }
             else
             {
                 if (toCol % 2 != 0)
                 {
-                    toGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(lightTile));
+                    toUniformGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(lightTile));
                 }
                 else
                 {
-                    toGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(darkTile));
+                    toUniformGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(darkTile));
                 }
             }
         }
+
         private void HighlightPiece(int tile)
         {
             if (board.Children[tile] is not UniformGrid uniformGrid) return;
@@ -311,8 +300,8 @@ namespace UI
             if (_chessboard.IsLegal(fromTile, toTile, flag))
             {
                 _chessboard.PlayerMove(fromTile, toTile, flag);
-                UpdateMove(toImg, e, flag);
-                ReloadBoardColors();
+                ReloadBoardPieces();
+                UpdateMoveHighlight(fromTile, toTile);
                 if (_chessboard.InCheck)
                 {
                     HighlightPiece(_chessboard.KingTile); // opponent in check
@@ -324,7 +313,9 @@ namespace UI
                 {
                     _chessboard.OpponentMove();
                 }
+                List<int> prevMove = _chessboard.GetPrevMove();
                 ReloadBoardPieces();
+                UpdateMoveHighlight(prevMove[0], prevMove[1]);
                 if (_chessboard.InCheck)
                 {
                     HighlightPiece(_chessboard.KingTile); // player in check
