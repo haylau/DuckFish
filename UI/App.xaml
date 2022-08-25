@@ -10,7 +10,7 @@
             <SolidColorBrush x:Key="DarkTile" Color="#C2D7E2"/>
             <SolidColorBrush x:Key="PrevMoveDark" Color="#93D9EC"/>
             <SolidColorBrush x:Key="PrevMoveLight" Color="#AAE5F3"/>
-            <SolidColorBrush x:Key="MovePreview" Color="#F6B2B2"/>
+            <SolidColorBrush x:Key="MovePreview" Color="#A7D7A7"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

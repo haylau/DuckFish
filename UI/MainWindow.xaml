@@ -28,217 +28,409 @@
                 <!--ROW 8-->
 
                 <UniformGrid Grid.Row="0" Grid.Column="0" Background="{StaticResource LightTile}" AllowDrop="True" Drop="PieceDrop">
-                    <Image x:Name="tile_a8" Tag="a8" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
+                    <Grid>
+                        <Image x:Name="tile_a8" Tag="a8" Source="/Assets/Rook_Black.png" Margin="2" MouseMove="PieceMove"/>
+                        <Ellipse Fill="Transparent" Height="25" Width="25" Opacity=".8"/>
+                    </Grid>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="1" Background="{StaticResource DarkTile}" AllowDrop="True" Drop="PieceDrop">
-                    <Image x:Name="tile_b8" Tag="b8" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
+                    <Grid>
+                        <Image x:Name="tile_b8" Tag="b8" Source="/Assets/Knight_Black.png" Margin="2" MouseMove="PieceMove"/>
+                        <Ellipse Fill="Transparent" Height="25" Width="25" Opacity=".8"/>
+                    </Grid>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="2" Background="{StaticResource LightTile}" AllowDrop="True" Drop="PieceDrop">
-                    <Image x:Name="tile_c8" Tag="c8" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
+                    <Grid>
+                        <Image x:Name="tile_c8" Tag="c8" Source="/Assets/Bishop_Black.png" Margin="2" MouseMove="PieceMove"/>
+                        <Ellipse Fill="Transparent" Height="25" Width="25" Opacity=".8"/>
+                    </Grid>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="3" Background="{StaticResource DarkTile}" AllowDrop="True" Drop="PieceDrop">
-                    <Image x:Name="tile_d8" Tag="d8" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
+                    <Grid>
+                        <Image x:Name="tile_d8" Tag="d8" Source="/Assets/Queen_Black.png" Margin="2" MouseMove="PieceMove"/>
+                        <Ellipse Fill="Transparent" Height="25" Width="25" Opacity=".8"/>
+                    </Grid>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="4" Background="{StaticResource LightTile}" AllowDrop="True" Drop="PieceDrop">
-                    <Image x:Name="tile_e8" Tag="e8" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
+                    <Grid>
+                        <Image x:Name="tile_e8" Tag="e8" Source="/Assets/King_Black.png" Margin="2" MouseMove="PieceMove"/>
+                        <Ellipse Fill="Transparent" Height="25" Width="25" Opacity=".8"/>
+                    </Grid>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="5" Background="{StaticResource DarkTile}" AllowDrop="True" Drop="PieceDrop">
-                    <Image x:Name="tile_f8" Tag="f8" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
+                    <Grid>
+                        <Image x:Name="tile_f8" Tag="f8" Source="/Assets/Bishop_Black.png" Margin="2" MouseMove="PieceMove"/>
+                        <Ellipse Fill="Transparent" Height="25" Width="25" Opacity=".8"/>
+                    </Grid>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="6" Background="{StaticResource LightTile}" AllowDrop="True" Drop="PieceDrop">
-                    <Image x:Name="tile_g8" Tag="g8" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
+                    <Grid>
+                        <Image x:Name="tile_g8" Tag="g8" Source="/Assets/Knight_Black.png" Margin="2" MouseMove="PieceMove"/>
+                        <Ellipse Fill="Transparent" Height="25" Width="25" Opacity=".8"/>
+                    </Grid>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="7" Background="{StaticResource DarkTile}" AllowDrop="True" Drop="PieceDrop">
-                    <Image x:Name="tile_h8" Tag="h8" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
+                    <Grid>
+                        <Image x:Name="tile_h8" Tag="h8" Source="/Assets/Rook_Black.png" Margin="2" MouseMove="PieceMove"/>
+                        <Ellipse Fill="Transparent" Height="25" Width="25" Opacity=".8"/>
+                    </Grid>
                 </UniformGrid>
                 
                 <!--ROW 7-->
 
                 <UniformGrid Grid.Row="1" Grid.Column="0" Background="{StaticResource DarkTile}" AllowDrop="True" Drop="PieceDrop">
-                    <Image x:Name="tile_a7" Tag="a7" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
+                    <Grid>
+                        <Image x:Name="tile_a7" Tag="a7" Source="/Assets/Pawn_Black.png" Margin="2" MouseMove="PieceMove"/>
+                        <Ellipse Fill="Transparent" Height="25" Width="25" Opacity=".8"/>
+                    </Grid>
                 </UniformGrid>
                 <UniformGrid Grid.Row="1" Grid.Column="1" Background="{StaticResource LightTile}" AllowDrop="True" Drop="PieceDrop">
-                    <Image x:Name="tile_b7" Tag="b7" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
+                    <Grid>
+                        <Image x:Name="tile_b7" Tag="b7" Source="/Assets/Pawn_Black.png" Margin="2" MouseMove="PieceMove"/>
+                        <Ellipse Fill="Transparent" Height="25" Width="25" Opacity=".8"/>
+                    </Grid>
                 </UniformGrid>
                 <UniformGrid Grid.Row="1" Grid.Column="2" Background="{StaticResource DarkTile}" AllowDrop="True" Drop="PieceDrop">
-                    <Image x:Name="tile_c7" Tag="c7" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
+                    <Grid>
+                        <Image x:Name="tile_c7" Tag="c7" Source="/Assets/Pawn_Black.png" Margin="2" MouseMove="PieceMove"/>
+                        <Ellipse Fill="Transparent" Height="25" Width="25" Opacity=".8"/>
+                    </Grid>
                 </UniformGrid>
                 <UniformGrid Grid.Row="1" Grid.Column="3" Background="{StaticResource LightTile}" AllowDrop="True" Drop="PieceDrop">
-                    <Image x:Name="tile_d7" Tag="d7" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
+                    <Grid>
+                        <Image x:Name="tile_d7" Tag="d7" Source="/Assets/Pawn_Black.png" Margin="2" MouseMove="PieceMove"/>
+                        <Ellipse Fill="Transparent" Height="25" Width="25" Opacity=".8"/>
+                    </Grid>
                 </UniformGrid>
                 <UniformGrid Grid.Row="1" Grid.Column="4" Background="{StaticResource DarkTile}" AllowDrop="True" Drop="PieceDrop">
-                    <Image x:Name="tile_e7" Tag="e7" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
+                    <Grid>
+                        <Image x:Name="tile_e7" Tag="e7" Source="/Assets/Pawn_Black.png" Margin="2" MouseMove="PieceMove"/>
+                        <Ellipse Fill="Transparent" Height="25" Width="25" Opacity=".8"/>
+                    </Grid>
                 </UniformGrid>
                 <UniformGrid Grid.Row="1" Grid.Column="5" Background="{StaticResource LightTile}" AllowDrop="True" Drop="PieceDrop">
-                    <Image x:Name="tile_f7" Tag="f7" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
+                    <Grid>
+                        <Image x:Name="tile_f7" Tag="f7" Source="/Assets/Pawn_Black.png" Margin="2" MouseMove="PieceMove"/>
+                        <Ellipse Fill="Transparent" Height="25" Width="25" Opacity=".8"/>
+                    </Grid>
                 </UniformGrid>
                 <UniformGrid Grid.Row="1" Grid.Column="6" Background="{StaticResource DarkTile}" AllowDrop="True" Drop="PieceDrop">
-                    <Image x:Name="tile_g7" Tag="g7" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
+                    <Grid>
+                        <Image x:Name="tile_g7" Tag="g7" Source="/Assets/Pawn_Black.png" Margin="2" MouseMove="PieceMove"/>
+                        <Ellipse Fill="Transparent" Height="25" Width="25" Opacity=".8"/>
+                    </Grid>
                 </UniformGrid>
                 <UniformGrid Grid.Row="1" Grid.Column="7" Background="{StaticResource LightTile}" AllowDrop="True" Drop="PieceDrop">
-                    <Image x:Name="tile_h7" Tag="h7" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
+                    <Grid>
+                        <Image x:Name="tile_h7" Tag="h7" Source="/Assets/Pawn_Black.png" Margin="2" MouseMove="PieceMove"/>
+                        <Ellipse Fill="Transparent" Height="25" Width="25" Opacity=".8"/>
+                    </Grid>
                 </UniformGrid>
                 
                 <!--ROW 6-->
 
                 <UniformGrid Grid.Row="0" Grid.Column="0" Background="{StaticResource LightTile}" AllowDrop="True" Drop="PieceDrop">
-                    <Image x:Name="tile_a6" Tag="a6" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
+                    <Grid>
+                        <Image x:Name="tile_a6" Tag="a6" Source="/Assets/Empty.png" Margin="2" MouseMove="PieceMove"/>
+                        <Ellipse Fill="Transparent" Height="25" Width="25" Opacity=".8"/>
+                    </Grid>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="1" Background="{StaticResource DarkTile}" AllowDrop="True" Drop="PieceDrop">
-                    <Image x:Name="tile_b6" Tag="b6" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
+                    <Grid>
+                        <Image x:Name="tile_b6" Tag="b6" Source="/Assets/Empty.png" Margin="2" MouseMove="PieceMove"/>
+                        <Ellipse Fill="Transparent" Height="25" Width="25" Opacity=".8"/>
+                    </Grid>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="2" Background="{StaticResource LightTile}" AllowDrop="True" Drop="PieceDrop">
-                    <Image x:Name="tile_c6" Tag="c6" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
+                    <Grid>
+                        <Image x:Name="tile_c6" Tag="c6" Source="/Assets/Empty.png" Margin="2" MouseMove="PieceMove"/>
+                        <Ellipse Fill="Transparent" Height="25" Width="25" Opacity=".8"/>
+                    </Grid>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="3" Background="{StaticResource DarkTile}" AllowDrop="True" Drop="PieceDrop">
-                    <Image x:Name="tile_d6" Tag="d6" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
+                    <Grid>
+                        <Image x:Name="tile_d6" Tag="d6" Source="/Assets/Empty.png" Margin="2" MouseMove="PieceMove"/>
+                        <Ellipse Fill="Transparent" Height="25" Width="25" Opacity=".8"/>
+                    </Grid>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="4" Background="{StaticResource LightTile}" AllowDrop="True" Drop="PieceDrop">
-                    <Image x:Name="tile_e6" Tag="e6" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
+                    <Grid>
+                        <Image x:Name="tile_e6" Tag="e6" Source="/Assets/Empty.png" Margin="2" MouseMove="PieceMove"/>
+                        <Ellipse Fill="Transparent" Height="25" Width="25" Opacity=".8"/>
+                    </Grid>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="5" Background="{StaticResource DarkTile}" AllowDrop="True" Drop="PieceDrop">
-                    <Image x:Name="tile_f6" Tag="f6" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
+                    <Grid>
+                        <Image x:Name="tile_f6" Tag="f6" Source="/Assets/Empty.png" Margin="2" MouseMove="PieceMove"/>
+                        <Ellipse Fill="Transparent" Height="25" Width="25" Opacity=".8"/>
+                    </Grid>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="6" Background="{StaticResource LightTile}" AllowDrop="True" Drop="PieceDrop">
-                    <Image x:Name="tile_g6" Tag="g6" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
+                    <Grid>
+                        <Image x:Name="tile_g6" Tag="g6" Source="/Assets/Empty.png" Margin="2" MouseMove="PieceMove"/>
+                        <Ellipse Fill="Transparent" Height="25" Width="25" Opacity=".8"/>
+                    </Grid>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="7" Background="{StaticResource DarkTile}" AllowDrop="True" Drop="PieceDrop">
-                    <Image x:Name="tile_h6" Tag="h6" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
+                    <Grid>
+                        <Image x:Name="tile_h6" Tag="h6" Source="/Assets/Empty.png" Margin="2" MouseMove="PieceMove"/>
+                        <Ellipse Fill="Transparent" Height="25" Width="25" Opacity=".8"/>
+                    </Grid>
                 </UniformGrid>
 
                 <!--ROW 5-->
 
                 <UniformGrid Grid.Row="0" Grid.Column="0" Background="{StaticResource DarkTile}" AllowDrop="True" Drop="PieceDrop">
-                    <Image x:Name="tile_a5" Tag="a5" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
+                    <Grid>
+                        <Image x:Name="tile_a5" Tag="a5" Source="/Assets/Empty.png" Margin="2" MouseMove="PieceMove"/>
+                        <Ellipse Fill="Transparent" Height="25" Width="25" Opacity=".8"/>
+                    </Grid>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="1" Background="{StaticResource LightTile}" AllowDrop="True" Drop="PieceDrop">
-                    <Image x:Name="tile_b5" Tag="b5" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
+                    <Grid>
+                        <Image x:Name="tile_b5" Tag="b5" Source="/Assets/Empty.png" Margin="2" MouseMove="PieceMove"/>
+                        <Ellipse Fill="Transparent" Height="25" Width="25" Opacity=".8"/>
+                    </Grid>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="2" Background="{StaticResource DarkTile}" AllowDrop="True" Drop="PieceDrop">
-                    <Image x:Name="tile_c5" Tag="c5" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
+                    <Grid>
+                        <Image x:Name="tile_c5" Tag="c5" Source="/Assets/Empty.png" Margin="2" MouseMove="PieceMove"/>
+                        <Ellipse Fill="Transparent" Height="25" Width="25" Opacity=".8"/>
+                    </Grid>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="3" Background="{StaticResource LightTile}" AllowDrop="True" Drop="PieceDrop">
-                    <Image x:Name="tile_d5" Tag="d5" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
+                    <Grid>
+                        <Image x:Name="tile_d5" Tag="d5" Source="/Assets/Empty.png" Margin="2" MouseMove="PieceMove"/>
+                        <Ellipse Fill="Transparent" Height="25" Width="25" Opacity=".8"/>
+                    </Grid>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="4" Background="{StaticResource DarkTile}" AllowDrop="True" Drop="PieceDrop">
-                    <Image x:Name="tile_e5" Tag="e5" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
+                    <Grid>
+                        <Image x:Name="tile_e5" Tag="e5" Source="/Assets/Empty.png" Margin="2" MouseMove="PieceMove"/>
+                        <Ellipse Fill="Transparent" Height="25" Width="25" Opacity=".8"/>
+                    </Grid>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="5" Background="{StaticResource LightTile}" AllowDrop="True" Drop="PieceDrop">
-                    <Image x:Name="tile_f5" Tag="f5" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
+                    <Grid>
+                        <Image x:Name="tile_f5" Tag="f5" Source="/Assets/Empty.png" Margin="2" MouseMove="PieceMove"/>
+                        <Ellipse Fill="Transparent" Height="25" Width="25" Opacity=".8"/>
+                    </Grid>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="6" Background="{StaticResource DarkTile}" AllowDrop="True" Drop="PieceDrop">
-                    <Image x:Name="tile_g5" Tag="g5" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
+                    <Grid>
+                        <Image x:Name="tile_g5" Tag="g5" Source="/Assets/Empty.png" Margin="2" MouseMove="PieceMove"/>
+                        <Ellipse Fill="Transparent" Height="25" Width="25" Opacity=".8"/>
+                    </Grid>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="7" Background="{StaticResource LightTile}" AllowDrop="True" Drop="PieceDrop">
-                    <Image x:Name="tile_h5" Tag="h5" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
+                    <Grid>
+                        <Image x:Name="tile_h5" Tag="h5" Source="/Assets/Empty.png" Margin="2" MouseMove="PieceMove"/>
+                        <Ellipse Fill="Transparent" Height="25" Width="25" Opacity=".8"/>
+                    </Grid>
                 </UniformGrid>
 
                 <!--ROW 4-->
 
                 <UniformGrid Grid.Row="0" Grid.Column="0" Background="{StaticResource LightTile}" AllowDrop="True" Drop="PieceDrop">
-                    <Image x:Name="tile_a4" Tag="a4" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
+                    <Grid>
+                        <Image x:Name="tile_a4" Tag="a4" Source="/Assets/Empty.png" Margin="2" MouseMove="PieceMove"/>
+                        <Ellipse Fill="Transparent" Height="25" Width="25" Opacity=".8"/>
+                    </Grid>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="1" Background="{StaticResource DarkTile}" AllowDrop="True" Drop="PieceDrop">
-                    <Image x:Name="tile_b4" Tag="b4" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
+                    <Grid>
+                        <Image x:Name="tile_b4" Tag="b4" Source="/Assets/Empty.png" Margin="2" MouseMove="PieceMove"/>
+                        <Ellipse Fill="Transparent" Height="25" Width="25" Opacity=".8"/>
+                    </Grid>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="2" Background="{StaticResource LightTile}" AllowDrop="True" Drop="PieceDrop">
-                    <Image x:Name="tile_c4" Tag="c4" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
+                    <Grid>
+                        <Image x:Name="tile_c4" Tag="c4" Source="/Assets/Empty.png" Margin="2" MouseMove="PieceMove"/>
+                        <Ellipse Fill="Transparent" Height="25" Width="25" Opacity=".8"/>
+                    </Grid>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="3" Background="{StaticResource DarkTile}" AllowDrop="True" Drop="PieceDrop">
-                    <Image x:Name="tile_d4" Tag="d4" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
+                    <Grid>
+                        <Image x:Name="tile_d4" Tag="d4" Source="/Assets/Empty.png" Margin="2" MouseMove="PieceMove"/>
+                        <Ellipse Fill="Transparent" Height="25" Width="25" Opacity=".8"/>
+                    </Grid>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="4" Background="{StaticResource LightTile}" AllowDrop="True" Drop="PieceDrop">
-                    <Image x:Name="tile_e4" Tag="e4" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
+                    <Grid>
+                        <Image x:Name="tile_e4" Tag="e4" Source="/Assets/Empty.png" Margin="2" MouseMove="PieceMove"/>
+                        <Ellipse Fill="Transparent" Height="25" Width="25" Opacity=".8"/>
+                    </Grid>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="5" Background="{StaticResource DarkTile}" AllowDrop="True" Drop="PieceDrop">
-                    <Image x:Name="tile_f4" Tag="f4" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
+                    <Grid>
+                        <Image x:Name="tile_f4" Tag="f4" Source="/Assets/Empty.png" Margin="2" MouseMove="PieceMove"/>
+                        <Ellipse Fill="Transparent" Height="25" Width="25" Opacity=".8"/>
+                    </Grid>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="6" Background="{StaticResource LightTile}" AllowDrop="True" Drop="PieceDrop">
-                    <Image x:Name="tile_g4" Tag="g4" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
+                    <Grid>
+                        <Image x:Name="tile_g4" Tag="g4" Source="/Assets/Empty.png" Margin="2" MouseMove="PieceMove"/>
+                        <Ellipse Fill="Transparent" Height="25" Width="25" Opacity=".8"/>
+                    </Grid>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="7" Background="{StaticResource DarkTile}" AllowDrop="True" Drop="PieceDrop">
-                    <Image x:Name="tile_h4" Tag="h4" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
+                    <Grid>
+                        <Image x:Name="tile_h4" Tag="h4" Source="/Assets/Empty.png" Margin="2" MouseMove="PieceMove"/>
+                        <Ellipse Fill="Transparent" Height="25" Width="25" Opacity=".8"/>
+                    </Grid>
                 </UniformGrid>
 
                 <!--ROW 3-->
 
                 <UniformGrid Grid.Row="0" Grid.Column="0" Background="{StaticResource DarkTile}" AllowDrop="True" Drop="PieceDrop">
-                    <Image x:Name="tile_a3" Tag="a3" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
+                    <Grid>
+                        <Image x:Name="tile_a3" Tag="a3" Source="/Assets/Empty.png" Margin="2" MouseMove="PieceMove"/>
+                        <Ellipse Fill="Transparent" Height="25" Width="25" Opacity=".8"/>
+                    </Grid>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="1" Background="{StaticResource LightTile}" AllowDrop="True" Drop="PieceDrop">
-                    <Image x:Name="tile_b3" Tag="b3" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
+                    <Grid>
+                        <Image x:Name="tile_b3" Tag="b3" Source="/Assets/Empty.png" Margin="2" MouseMove="PieceMove"/>
+                        <Ellipse Fill="Transparent" Height="25" Width="25" Opacity=".8"/>
+                    </Grid>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="2" Background="{StaticResource DarkTile}" AllowDrop="True" Drop="PieceDrop">
-                    <Image x:Name="tile_c3" Tag="c3" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
+                    <Grid>
+                        <Image x:Name="tile_c3" Tag="c3" Source="/Assets/Empty.png" Margin="2" MouseMove="PieceMove"/>
+                        <Ellipse Fill="Transparent" Height="25" Width="25" Opacity=".8"/>
+                    </Grid>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="3" Background="{StaticResource LightTile}" AllowDrop="True" Drop="PieceDrop">
-                    <Image x:Name="tile_d3" Tag="d3" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
+                    <Grid>
+                        <Image x:Name="tile_d3" Tag="d3" Source="/Assets/Empty.png" Margin="2" MouseMove="PieceMove"/>
+                        <Ellipse Fill="Transparent" Height="25" Width="25" Opacity=".8"/>
+                    </Grid>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="4" Background="{StaticResource DarkTile}" AllowDrop="True" Drop="PieceDrop">
-                    <Image x:Name="tile_e3" Tag="e3" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
+                    <Grid>
+                        <Image x:Name="tile_e3" Tag="e3" Source="/Assets/Empty.png" Margin="2" MouseMove="PieceMove"/>
+                        <Ellipse Fill="Transparent" Height="25" Width="25" Opacity=".8"/>
+                    </Grid>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="5" Background="{StaticResource LightTile}" AllowDrop="True" Drop="PieceDrop">
-                    <Image x:Name="tile_f3" Tag="f3" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
+                    <Grid>
+                        <Image x:Name="tile_f3" Tag="f3" Source="/Assets/Empty.png" Margin="2" MouseMove="PieceMove"/>
+                        <Ellipse Fill="Transparent" Height="25" Width="25" Opacity=".8"/>
+                    </Grid>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="6" Background="{StaticResource DarkTile}" AllowDrop="True" Drop="PieceDrop">
-                    <Image x:Name="tile_g3" Tag="g3" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
+                    <Grid>
+                        <Image x:Name="tile_g3" Tag="g3" Source="/Assets/Empty.png" Margin="2" MouseMove="PieceMove"/>
+                        <Ellipse Fill="Transparent" Height="25" Width="25" Opacity=".8"/>
+                    </Grid>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="7" Background="{StaticResource LightTile}" AllowDrop="True" Drop="PieceDrop">
-                    <Image x:Name="tile_h3" Tag="h3" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
+                    <Grid>
+                        <Image x:Name="tile_h3" Tag="h3" Source="/Assets/Empty.png" Margin="2" MouseMove="PieceMove"/>
+                        <Ellipse Fill="Transparent" Height="25" Width="25" Opacity=".8"/>
+                    </Grid>
                 </UniformGrid>
 
                 <!--ROW 2-->
 
                 <UniformGrid Grid.Row="0" Grid.Column="0" Background="{StaticResource LightTile}" AllowDrop="True" Drop="PieceDrop">
-                    <Image x:Name="tile_a2" Tag="a2" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
+                    <Grid>
+                        <Image x:Name="tile_a2" Tag="a2" Source="/Assets/Pawn_White.png" Margin="2" MouseMove="PieceMove"/>
+                        <Ellipse Fill="Transparent" Height="25" Width="25" Opacity=".8"/>
+                    </Grid>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="1" Background="{StaticResource DarkTile}" AllowDrop="True" Drop="PieceDrop">
-                    <Image x:Name="tile_b2" Tag="b2" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
+                    <Grid>
+                        <Image x:Name="tile_b2" Tag="b2" Source="/Assets/Pawn_White.png" Margin="2" MouseMove="PieceMove"/>
+                        <Ellipse Fill="Transparent" Height="25" Width="25" Opacity=".8"/>
+                    </Grid>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="2" Background="{StaticResource LightTile}" AllowDrop="True" Drop="PieceDrop">
-                    <Image x:Name="tile_c2" Tag="c2" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
+                    <Grid>
+                        <Image x:Name="tile_c2" Tag="c2" Source="/Assets/Pawn_White.png" Margin="2" MouseMove="PieceMove"/>
+                        <Ellipse Fill="Transparent" Height="25" Width="25" Opacity=".8"/>
+                    </Grid>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="3" Background="{StaticResource DarkTile}" AllowDrop="True" Drop="PieceDrop">
-                    <Image x:Name="tile_d2" Tag="d2" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
+                    <Grid>
+                        <Image x:Name="tile_d2" Tag="d2" Source="/Assets/Pawn_White.png" Margin="2" MouseMove="PieceMove"/>
+                        <Ellipse Fill="Transparent" Height="25" Width="25" Opacity=".8"/>
+                    </Grid>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="4" Background="{StaticResource LightTile}" AllowDrop="True" Drop="PieceDrop">
-                    <Image x:Name="tile_e2" Tag="e2" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
+                    <Grid>
+                        <Image x:Name="tile_e2" Tag="e2" Source="/Assets/Pawn_White.png" Margin="2" MouseMove="PieceMove"/>
+                        <Ellipse Fill="Transparent" Height="25" Width="25" Opacity=".8"/>
+                    </Grid>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="5" Background="{StaticResource DarkTile}" AllowDrop="True" Drop="PieceDrop">
-                    <Image x:Name="tile_f2" Tag="f2" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
+                    <Grid>
+                        <Image x:Name="tile_f2" Tag="f2" Source="/Assets/Pawn_White.png" Margin="2" MouseMove="PieceMove"/>
+                        <Ellipse Fill="Transparent" Height="25" Width="25" Opacity=".8"/>
+                    </Grid>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="6" Background="{StaticResource LightTile}" AllowDrop="True" Drop="PieceDrop">
-                    <Image x:Name="tile_g2" Tag="g2" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
+                    <Grid>
+                        <Image x:Name="tile_g2" Tag="g2" Source="/Assets/Pawn_White.png" Margin="2" MouseMove="PieceMove"/>
+                        <Ellipse Fill="Transparent" Height="25" Width="25" Opacity=".8"/>
+                    </Grid>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="7" Background="{StaticResource DarkTile}" AllowDrop="True" Drop="PieceDrop">
-                    <Image x:Name="tile_h2" Tag="h2" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
+                    <Grid>
+                        <Image x:Name="tile_h2" Tag="h2" Source="/Assets/Pawn_White.png" Margin="2" MouseMove="PieceMove"/>
+                        <Ellipse Fill="Transparent" Height="25" Width="25" Opacity=".8"/>
+                    </Grid>
                 </UniformGrid>
                 
                 <!--ROW 1-->
 
                 <UniformGrid Grid.Row="0" Grid.Column="0" Background="{StaticResource DarkTile}" AllowDrop="True" Drop="PieceDrop">
-                    <Image x:Name="tile_a1" Tag="a1" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
+                    <Grid>
+                        <Image x:Name="tile_a1" Tag="a1" Source="/Assets/Rook_White.png" Margin="2" MouseMove="PieceMove"/>
+                        <Ellipse Fill="Transparent" Height="25" Width="25" Opacity=".8"/>
+                    </Grid>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="1" Background="{StaticResource LightTile}" AllowDrop="True" Drop="PieceDrop">
-                    <Image x:Name="tile_b1" Tag="b1" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
+                    <Grid>
+                        <Image x:Name="tile_b1" Tag="b1" Source="/Assets/Knight_White.png" Margin="2" MouseMove="PieceMove"/>
+                        <Ellipse Fill="Transparent" Height="25" Width="25" Opacity=".8"/>
+                    </Grid>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="2" Background="{StaticResource DarkTile}" AllowDrop="True" Drop="PieceDrop">
-                    <Image x:Name="tile_c1" Tag="c1" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
+                    <Grid>
+                        <Image x:Name="tile_c1" Tag="c1" Source="/Assets/Bishop_White.png" Margin="2" MouseMove="PieceMove"/>
+                        <Ellipse Fill="Transparent" Height="25" Width="25" Opacity=".8"/>
+                    </Grid>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="3" Background="{StaticResource LightTile}" AllowDrop="True" Drop="PieceDrop">
-                    <Image x:Name="tile_d1" Tag="d1" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
+                    <Grid>
+                        <Image x:Name="tile_d1" Tag="d1" Source="/Assets/Queen_White.png" Margin="2" MouseMove="PieceMove"/>
+                        <Ellipse Fill="Transparent" Height="25" Width="25" Opacity=".8"/>
+                    </Grid>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="4" Background="{StaticResource DarkTile}" AllowDrop="True" Drop="PieceDrop">
-                    <Image x:Name="tile_e1" Tag="e1" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
+                    <Grid>
+                        <Image x:Name="tile_e1" Tag="e1" Source="/Assets/King_White.png" Margin="2" MouseMove="PieceMove"/>
+                        <Ellipse Fill="Transparent" Height="25" Width="25" Opacity=".8"/>
+                    </Grid>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="5" Background="{StaticResource LightTile}" AllowDrop="True" Drop="PieceDrop">
-                    <Image x:Name="tile_f1" Tag="f1" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
+                    <Grid>
+                        <Image x:Name="tile_f1" Tag="f1" Source="/Assets/Bishop_White.png" Margin="2" MouseMove="PieceMove"/>
+                        <Ellipse Fill="Transparent" Height="25" Width="25" Opacity=".8"/>
+                    </Grid>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="6" Background="{StaticResource DarkTile}" AllowDrop="True" Drop="PieceDrop">
-                    <Image x:Name="tile_g1" Tag="g1" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
+                    <Grid>
+                        <Image x:Name="tile_g1" Tag="g1" Source="/Assets/Knight_White.png" Margin="2" MouseMove="PieceMove"/>
+                        <Ellipse Fill="Transparent" Height="25" Width="25" Opacity=".8"/>
+                    </Grid>
                 </UniformGrid>
                 <UniformGrid Grid.Row="0" Grid.Column="7" Background="{StaticResource LightTile}" AllowDrop="True" Drop="PieceDrop">
-                    <Image x:Name="tile_h1" Tag="h1" Loaded="Image_Loaded" Margin="2" MouseMove="PieceMove"/>
+                    <Grid>
+                        <Image x:Name="tile_h1" Tag="h1" Source="/Assets/Rook_White.png" Margin="2" MouseMove="PieceMove"/>
+                        <Ellipse Fill="Transparent" Height="25" Width="25" Opacity=".8"/>
+                    </Grid>
                 </UniformGrid>
             </UniformGrid> 
         </Border>
