@@ -214,7 +214,7 @@ namespace Engine
                         }
                         // Adjacent capture
                         target = idx - pawnLeftCapture;
-                        if (idx % 8 != 0 && Piece.Color(boardData[target]) == opponentTurnColor)
+                        if ((idx + 1) % 8 != 0 && Piece.Color(boardData[target]) == opponentTurnColor)
                         {
                             if (pinnedSquares[idx] == -1 || pinnedSquares[idx] == 3)
                             {
@@ -229,7 +229,7 @@ namespace Engine
                             }
                         }
                         target = idx - pawnRightCapture;
-                        if ((idx - 1) % 8 != 0 && Piece.Color(boardData[target]) == opponentTurnColor)
+                        if (idx % 8 != 0 && Piece.Color(boardData[target]) == opponentTurnColor)
                         {
                             if (pinnedSquares[idx] == -1 || pinnedSquares[idx] == 5)
                             {
@@ -286,7 +286,7 @@ namespace Engine
                     for (int direction = 0; direction < moveOffsets.Length; ++direction)
                     {
                         int target = idx + moveOffsets[direction];
-                        if (distToEdge[idx][direction] > 1 && attackedSquares[target] == false)
+                        if (distToEdge[idx][direction] > 0 && attackedSquares[target] == false)
                         {
                             if (Piece.Color(boardData[target]) == curTurnColor) continue; // cannot capture own piece
                             possibleMoves.Add(new Move(idx, target));
