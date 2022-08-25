@@ -96,11 +96,13 @@ namespace Engine
             {62, 6},
             {63, 7}
         };
+        private static readonly Random rdm = new();
         public const string START = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
         public const string DEBUG = "Rq6/5N2/5r2/Rp5K/3Bp1P1/Q3n1Pp/3kP2P/1N5b w";
-        private bool AIDisabled;
-        private bool lockWhite;
-        private bool lockBlack;
+        private bool AIDisabled = false;
+        private bool AIMove_Random = false;
+        private bool lockWhite = false;
+        private bool lockBlack = false;
         private readonly int[] boardData;
         private List<Move> playerMoves = default!;
         private List<Move> prevMoves;
@@ -183,7 +185,10 @@ namespace Engine
         {
             AIDisabled = true;
         }
-
+        public void SetAIMovGen(string type)
+        {
+            if(type.ToLower().Equals("random")) AIMove_Random = true;
+        }
         public void SelectColor(int color)
         {
             if (color == Piece.White) lockWhite = true;
@@ -194,7 +199,6 @@ namespace Engine
         {
             // Decide Turn
             this.curTurn = Piece.White;
-            Random rdm = new();
             if (lockWhite || (!lockBlack && rdm.Next() % 2 == 0))
             {
                 this.boardOrientation = Piece.White;
@@ -408,12 +412,13 @@ namespace Engine
             }
             else gameState = stalemate; // curTurn player is NOT in check with no legal moves
         }
-
-        public void PlayerMove(string fromTile, string toTile, int flag)
+        private void MakeMove(string fromTile, string toTile, int flag)
+        {
+            MakeMove(TileToIndex(fromTile), TileToIndex(toTile), flag);
+        }
+        private void MakeMove(int idxFrom, int idxTo, int flag)
         {
             // Move should already be checked to be legal 
-            int idxFrom = TileToIndex(fromTile);
-            int idxTo = TileToIndex(toTile);
             if (boardOrientation == Piece.Black)
             {
                 idxFrom = flippedBoard[idxFrom];
@@ -480,6 +485,10 @@ namespace Engine
                     }
                 }
             }
+        }
+        public void PlayerMove(string fromTile, string toTile, int flag)
+        {
+            MakeMove(fromTile, toTile, flag);
             curTurn = curTurn == Piece.White ? Piece.Black : Piece.White; // swap game turn
             // generate opponent legal moves
             moveGenerator = new MoveGenerator(boardData, curTurn, prevMoves);
@@ -501,6 +510,11 @@ namespace Engine
             // generate player legal moves
             moveGenerator = new MoveGenerator(boardData, curTurn, prevMoves);
             if (moveGenerator.possibleMoves.Count == 0) ResolveGame(); // checkmate or stalemate is on board
+            if (AIMove_Random)
+            {
+                Move m = moveGenerator.possibleMoves[rdm.Next(0, moveGenerator.possibleMoves.Count)];
+                MakeMove(m.StartSquare, m.TargetSquare, m.MoveFlag);
+            }
         }
     }
 }

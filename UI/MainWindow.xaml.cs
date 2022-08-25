@@ -24,7 +24,8 @@ namespace UI
 
         public MainWindow()
         {
-            _chessboard.DisableAI(); // Testing
+            // _chessboard.DisableAI(); // Testing
+            _chessboard.SetAIMovGen("random");
             _chessboard.SelectColor(Piece.White); // locks to white
             _chessboard.SetBoard(); // normally starts as random color
             DataContext = this;

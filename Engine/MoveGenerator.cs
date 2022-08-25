@@ -243,7 +243,7 @@ namespace Engine
                                 }
                             }
                         }
-                        // Forward Twice and En Passant only legal on original pawn positions
+                        // Forward Twice and En  Passant only legal on original pawn positions
                         if (idx >= 8 && idx <= 15)
                         {
                             // Forward twice
