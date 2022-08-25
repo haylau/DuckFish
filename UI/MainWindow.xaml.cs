@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -14,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 using Engine;
 
 namespace UI
@@ -29,6 +30,31 @@ namespace UI
             _chessboard.SetBoard(); // normally starts as random color
             DataContext = this;
             InitializeComponent();
+        }
+
+        private void dispatcherTimer_Tick(object? sender, EventArgs e)
+        {
+            // let the ai play itself :)
+            bool AIOnly = false;
+            if (AIOnly)
+            {
+                if (!_chessboard.Checkmate)
+                {
+                    _chessboard.OpponentMove();
+                    ReloadBoardColors();
+                    ReloadBoardPieces();
+                }
+            }
+            // Forcing the CommandManager to raise the RequerySuggested event
+            CommandManager.InvalidateRequerySuggested();
+        }
+
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            DispatcherTimer dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
+            dispatcherTimer.Tick += new EventHandler(dispatcherTimer_Tick);
+            dispatcherTimer.Interval = TimeSpan.FromTicks(1000);
+            dispatcherTimer.Start();
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
