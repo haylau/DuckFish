@@ -103,8 +103,7 @@ namespace Engine
         private bool AIMove_Random = false;
         private bool lockWhite = false;
         private bool lockBlack = false;
-        private readonly int[] boardData;
-        private List<Move> playerMoves = default!;
+        private int[] boardData;
         private List<Move> prevMoves;
         private MoveGenerator moveGenerator = default!;
         private int boardOrientation = Piece.White;
@@ -150,6 +149,13 @@ namespace Engine
             get
             {
                 return curTurn == Piece.White ? moveGenerator.whiteKingSquare : moveGenerator.blackKingSquare;
+            }
+        }
+        public List<Move> possibleMoves
+        {
+            get
+            {
+                return moveGenerator.possibleMoves;
             }
         }
 
@@ -235,7 +241,6 @@ namespace Engine
             if (color == Piece.White) lockWhite = true;
             if (color == Piece.Bishop) lockBlack = true;
         }
-
         public void SetBoard() // Default board setup and random turn
         {
             // Decide Turn
@@ -335,7 +340,16 @@ namespace Engine
             }
             if (AIDisabled) this.playerColor = curTurn;
             moveGenerator = new MoveGenerator(boardData, curTurn, prevMoves);
-            playerMoves = moveGenerator.possibleMoves;
+        }
+        public void SetBoard(int[] boardData, List<Move> prevMoves)
+        {
+            this.boardData = boardData;
+            if (prevMoves is null) prevMoves = new();
+            else
+            {
+                this.prevMoves = prevMoves;
+                curTurn = prevMoves.Count() % 2 == 0 ? curTurn = Piece.White : Piece.Black; // White always moves first
+            }
         }
 
         public bool IsMoveable(string tile) // checks if a piece is able to be moved
@@ -366,7 +380,7 @@ namespace Engine
             int toColor = Piece.Color(boardData[idxTo]);
             if (fromColor == toColor) return false; // cannot capture your own pieces
             int fromPiece = Piece.Type(boardData[idxFrom]);
-            if (playerMoves.Contains(new Move(idxFrom, idxTo, flag))) return true;
+            if (possibleMoves.Contains(new Move(idxFrom, idxTo, flag))) return true;
             return false;
         }
         public bool IsPromotion(string fromTile, string toTile)
@@ -529,6 +543,10 @@ namespace Engine
         }
         public void PlayerMove(string fromTile, string toTile, int flag)
         {
+            PlayerMove(TileToIndex(fromTile), TileToIndex(toTile), flag);
+        }
+        public void PlayerMove(int fromTile, int toTile, int flag)
+        {
             // make player move
             MakeMove(fromTile, toTile, flag);
             // swap turns
@@ -547,7 +565,6 @@ namespace Engine
             if (AIDisabled)
             {
                 playerColor = curTurn; // player moves both
-                playerMoves = moveGenerator.possibleMoves;
             }
         }
         public void OpponentMove()
@@ -563,7 +580,6 @@ namespace Engine
             // generate player legal moves
             curTurn = curTurn == Piece.White ? Piece.Black : Piece.White; // swap game turn
             moveGenerator = new MoveGenerator(boardData, curTurn, prevMoves);
-            playerMoves = moveGenerator.possibleMoves;
             if (moveGenerator.possibleMoves.Count == 0) ResolveGame(); // opponent has checkmate or stalemate is on board
             else if (moveGenerator.inCheck)
             {
