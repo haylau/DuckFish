@@ -97,8 +97,11 @@ namespace Engine
             {63, 7}
         };
         private static readonly Random rdm = new();
-        public const string START = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
-        public const string DEBUG = "Rq6/5N2/5r2/Rp5K/3Bp1P1/Q3n1Pp/3kP2P/1N5b w";
+        public const string START = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -";
+        public const string DEBUG = "Rq6/5N2/5r2/Rp5K/3Bp1P1/Q3n1Pp/3kP2P/1N5b w -";
+        public const string DEPTHTEST_2 = "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1";
+        public const string DEPTHTEST_3 = "8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - -";
+        public const string DEPTHTEST_5 = "rnbq1k1r/pp1Pbppp/2p5/8/2B5/8/PPP1NnPP/RNBQK2R w KQ - 1 8";
         private bool AIDisabled = false;
         private bool AIMove_Random = false;
         private bool lockWhite = false;
@@ -115,6 +118,13 @@ namespace Engine
         {
             boardData = new int[64];
             prevMoves = new();
+        }
+
+        public Board(Board board)
+        {
+            boardData = new int[64];
+            prevMoves = new();
+            SetBoard(board.boardData, board.prevMoves);
         }
         public bool InCheck
         {
@@ -156,6 +166,21 @@ namespace Engine
             get
             {
                 return moveGenerator.possibleMoves;
+            }
+        }
+        public int[] BoardData
+        {
+            get
+            {
+                return boardData;
+            }
+        }
+
+        public List<Move> PreviousMoves
+        {
+            get
+            {
+                return prevMoves;
             }
         }
 
@@ -264,26 +289,73 @@ namespace Engine
         */
         public void SetBoard(string fen)
         {
-            this.boardOrientation = Piece.White;
-            this.playerColor = Piece.White;
+            boardData = new int[64];
+            prevMoves = new();
+            bool rules = false, halfmove = false, enpassant = false;
+            bool castle_wk = false, castle_wq = false, castle_bk = false, castle_bq = false;
             int idx = 0;
-            bool rules = false;
             foreach (char token in fen)
             {
-                if (idx >= 64 || token.Equals(' '))
+                if (!rules && idx >= 64 || token.Equals(' ')) rules = true;
+                else if (rules)
                 {
-                    rules = true;
-                }
-                if (rules)
-                {
-                    if (token.Equals('b'))
+                    if (token.Equals(' ') || token.Equals('-')) continue;
+                    else if (token.Equals('w'))
                     {
-                        this.boardOrientation = Piece.White;
-                        this.playerColor = Piece.White;
+                        this.curTurn = Piece.White;
                     }
+                    else if (token.Equals('b'))
+                    {
+                        this.curTurn = Piece.Black;
+                    }
+                    else if (token.Equals('k')) castle_wk = true;
+                    else if (token.Equals('q')) castle_wq = true;
+                    else if (token.Equals('K')) castle_bk = true;
+                    else if (token.Equals('Q')) castle_bq = true;
+                    else if (!halfmove && Char.IsDigit(token))
+                    {
+                        halfmove = true;
+                        // set halfmove
+                    }
+                    else if (halfmove && Char.IsDigit(token))
+                    {
+                        int totalMoves = (int)char.GetNumericValue(token);
+                        // Add moves to invalidate castle check
+                        if (!castle_wk)
+                        {
+                            prevMoves.Add(new Move(startingWhiteKingRook, startingWhiteKingRook));
+                            --totalMoves;
+                        }
+                        if (!castle_wq)
+                        {
+                            prevMoves.Add(new Move(startingWhiteQueenRook, startingWhiteQueenRook));
+                            --totalMoves;
+                        }
+                        if (!castle_bk)
+                        {
+                            prevMoves.Add(new Move(startingBlackKingRook, startingBlackKingRook));
+                            --totalMoves;
+                        }
+                        if (!castle_bq)
+                        {
+                            prevMoves.Add(new Move(startingBlackQueenRook, startingBlackQueenRook));
+                            --totalMoves;
+                        }
+                        if (enpassant) --totalMoves;
+                        for (int i = 1; i < totalMoves; ++i)
+                        {
+                            // fill rest with meaningless moves
+                            prevMoves.Add(Move.InvalidMove);
+                        }
+                    }
+                    else // en passant target
+                    {
+                        enpassant = true;
+                    }
+                    continue;
                 }
                 // token is a newline
-                if (token.Equals('/') && !rules)
+                else if (token.Equals('/') && !rules)
                 {
                     if (idx % 8 == 0) continue; // already at end of row
                     idx += 8 - (idx % 8);
@@ -291,14 +363,14 @@ namespace Engine
                     continue;
                 }
                 // token empty space
-                if (char.IsDigit(token) && !rules)
+                else if (char.IsDigit(token) && !rules)
                 {
                     idx += (int)char.GetNumericValue(token);
                     if (idx >= 64) rules = true; // end of board
                     continue;
                 }
                 // token is a piece
-                if (char.IsLetter(token) && !rules)
+                else if (char.IsLetter(token) && !rules)
                 {
                     boardData[idx] += char.IsUpper(token) ? Piece.White : Piece.Black;
                     switch (char.ToUpper(token))
@@ -343,13 +415,21 @@ namespace Engine
         }
         public void SetBoard(int[] boardData, List<Move> prevMoves)
         {
-            this.boardData = boardData;
+            for (int i = 0; i < boardData.Length; ++i)
+            {
+                this.boardData[i] = boardData[i];
+            }
             if (prevMoves is null) prevMoves = new();
             else
             {
-                this.prevMoves = prevMoves;
-                curTurn = prevMoves.Count() % 2 == 0 ? curTurn = Piece.White : Piece.Black; // White always moves first
+                foreach (Move m in prevMoves)
+                {
+                    this.prevMoves.Add(m);
+                }
+                curTurn = prevMoves.Count() % 2 == 0 ? curTurn = Piece.White : Piece.Black; // White always moves first 
             }
+            if (AIDisabled) this.playerColor = curTurn;
+            moveGenerator = new MoveGenerator(boardData, curTurn, prevMoves);
         }
 
         public bool IsMoveable(string tile) // checks if a piece is able to be moved

@@ -63,6 +63,7 @@ namespace Engine
         public void GenerateMoves() // generates a list of all current legal moves
         {
             VerifyCastling();
+            int kingSquare = (curTurnColor == Piece.White) ? whiteKingSquare : blackKingSquare;
             foreach (int idx in (curTurnColor == Piece.White) ? whitePieces : blackPieces)
             {
                 int piece = boardData[idx];
@@ -174,13 +175,23 @@ namespace Engine
                         if (prevMoves.Count > 0 && prevMoves.Last().MoveFlag == Move.Flag.PawnTwoForward && idx >= 24 && idx <= 31) // Previous move was a double pawn push
                         {
                             int enPassantTarget = prevMoves.Last().TargetSquare;
-                            // Adjacent capture
+
                             target = idx + pawnLeftEnPassant;
                             if (target == enPassantTarget && Piece.Color(boardData[target]) == opponentTurnColor)
                             {
                                 if (pinnedSquares[idx] == -1 || pinnedSquares[idx] == 7)
                                 {
-                                    possibleMoves.Add(new Move(idx, idx + pawnLeftCapture, Move.Flag.EnPassantCapture));
+                                    if (kingSquare - (kingSquare % 8) == idx - (idx % 8)) // king and pawn on the same row
+                                    {
+                                        if (!CheckEnPassantCheck(idx, target))
+                                        {
+                                            possibleMoves.Add(new Move(idx, idx + pawnLeftCapture, Move.Flag.EnPassantCapture));
+                                        }
+                                    }
+                                    else
+                                    {
+                                        possibleMoves.Add(new Move(idx, idx + pawnLeftCapture, Move.Flag.EnPassantCapture));
+                                    }
                                 }
                             }
                             target = idx + pawnRightEnPassant;
@@ -188,7 +199,17 @@ namespace Engine
                             {
                                 if (pinnedSquares[idx] == -1 || pinnedSquares[idx] == 1)
                                 {
-                                    possibleMoves.Add(new Move(idx, idx + pawnRightCapture, Move.Flag.EnPassantCapture));
+                                    if (kingSquare - (kingSquare % 8) == idx - (idx % 8)) // king and pawn on the same row
+                                    {
+                                        if (!CheckEnPassantCheck(idx, target))
+                                        {
+                                            possibleMoves.Add(new Move(idx, idx + pawnRightCapture, Move.Flag.EnPassantCapture));
+                                        }
+                                    }
+                                    else
+                                    {
+                                        possibleMoves.Add(new Move(idx, idx + pawnRightCapture, Move.Flag.EnPassantCapture));
+                                    }
                                 }
                             }
                         }
@@ -266,7 +287,17 @@ namespace Engine
                             {
                                 if (pinnedSquares[idx] == -1 || pinnedSquares[idx] == 3)
                                 {
-                                    possibleMoves.Add(new Move(idx, idx - pawnLeftCapture, Move.Flag.EnPassantCapture));
+                                    if (kingSquare - (kingSquare % 8) == idx - (idx % 8)) // king and pawn on the same row
+                                    {
+                                        if (!CheckEnPassantCheck(idx, target))
+                                        {
+                                            possibleMoves.Add(new Move(idx, idx - pawnLeftCapture, Move.Flag.EnPassantCapture));
+                                        }
+                                    }
+                                    else
+                                    {
+                                        possibleMoves.Add(new Move(idx, idx - pawnLeftCapture, Move.Flag.EnPassantCapture));
+                                    }
                                 }
                             }
                             target = idx - pawnRightEnPassant;
@@ -274,7 +305,17 @@ namespace Engine
                             {
                                 if (pinnedSquares[idx] == -1 || pinnedSquares[idx] == 5)
                                 {
-                                    possibleMoves.Add(new Move(idx, idx - pawnRightCapture, Move.Flag.EnPassantCapture));
+                                    if (kingSquare - (kingSquare % 8) == idx - (idx % 8)) // king and pawn on the same row
+                                    {
+                                        if (!CheckEnPassantCheck(idx, target))
+                                        {
+                                            possibleMoves.Add(new Move(idx, idx - pawnRightCapture, Move.Flag.EnPassantCapture));
+                                        }
+                                    }
+                                    else
+                                    {
+                                        possibleMoves.Add(new Move(idx, idx - pawnRightCapture, Move.Flag.EnPassantCapture));
+                                    }
                                 }
                             }
                         }
@@ -332,7 +373,6 @@ namespace Engine
             // Remove illegal moves due to check
             if (inCheck) // Only captures of checking piece, interposing, or moving the king is legal
             {
-                int kingSquare = (curTurnColor == Piece.White) ? whiteKingSquare : blackKingSquare;
                 List<Move> legalMoves = new();
                 foreach (Move move in possibleMoves)
                 {
@@ -390,7 +430,6 @@ namespace Engine
             // Skips to next idx when an attacking piece is found
             for (int idx = 0; idx < boardData.Length; ++idx)
             {
-                // #TODO CHECK FOR EN PASSANT
                 // Pawns
                 if (curTurnColor == Piece.White && idx > 7)
                 {
@@ -588,27 +627,53 @@ namespace Engine
         }
         private void VerifyCastling()
         {
-            whiteKingCastle = true;
-            whiteQueenCastle = true;
-            blackKingCastle = true;
-            blackQueenCastle = true;
-            foreach (Move move in prevMoves)
+            whiteKingCastle = false;
+            whiteQueenCastle = false;
+            blackKingCastle = false;
+            blackQueenCastle = false;
+            if (whiteKingSquare == startingWhiteKingSquare)
             {
-                if (move.StartSquare == whiteKingSquare)
-                {
-                    whiteKingCastle = false;
-                    whiteQueenCastle = false;
-                }
-                else if (move.StartSquare == blackKingSquare)
-                {
-                    blackKingCastle = false;
-                    blackQueenCastle = false;
-                }
-                else if (move.StartSquare == startingWhiteKingRook) whiteKingCastle = false;
-                else if (move.StartSquare == startingWhiteQueenRook) whiteQueenCastle = false;
-                else if (move.StartSquare == startingBlackKingRook) blackKingCastle = false;
-                else if (move.StartSquare == startingBlackQueenRook) blackQueenCastle = false;
+                whiteKingCastle = true;
+                whiteQueenCastle = true;
             }
+            if (blackKingSquare == startingBlackKingSquare)
+            {
+                blackKingCastle = true;
+                blackQueenCastle = true;
+            }
+            if (whiteKingCastle || whiteQueenCastle || blackKingCastle || blackQueenCastle)
+            {
+                foreach (Move move in prevMoves)
+                {
+                    if (move.StartSquare == startingWhiteKingRook) whiteKingCastle = false;
+                    else if (move.StartSquare == startingWhiteQueenRook) whiteQueenCastle = false;
+                    else if (move.StartSquare == startingBlackKingRook) blackKingCastle = false;
+                    else if (move.StartSquare == startingBlackQueenRook) blackQueenCastle = false;
+                }
+            }
+        }
+        private bool CheckEnPassantCheck(int startSquare, int enpassantSquare)
+        {
+            int kingSquare = (curTurnColor == Piece.White) ? whiteKingSquare : blackKingSquare;
+            int direction = -1;
+            for (int i = 0; i < 2; ++i)
+            {
+                // check left and right of king
+                if (direction == -1) direction = 2;
+                if (direction == 2) direction = 6;
+                for (int dist = 0; dist < distToEdge[kingSquare][direction]; ++dist)
+                {
+                    int target = kingSquare + moveOffsets[direction] * (dist + 1); // num moves in a given directio
+                    if (target == startSquare || target == enpassantSquare) continue; // these squares are getting skipped
+                    if (Piece.Color(boardData[target]) == curTurnColor) return false; // piece blocks check
+                    if (Piece.Color(boardData[target]) == opponentTurnColor)
+                    {
+                        int type = Piece.Type(boardData[target]);
+                        if (type == Piece.Queen || type == Piece.Rook) return true;
+                    }
+                }
+            }
+            return false; // did not find a discovered en passant check
         }
     }
 }

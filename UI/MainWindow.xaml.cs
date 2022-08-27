@@ -22,11 +22,12 @@ namespace UI
     public partial class MainWindow : INotifyPropertyChanged
     {
         private readonly Board _chessboard = new();
+        private int _time = 0;
 
         public MainWindow()
         {
             _chessboard.SetAIMovGen("random");
-            _chessboard.SelectColor(Piece.White); // locks to white
+            // _chessboard.SelectColor(Piece.White); // locks to white
             _chessboard.SetBoard(); // normally starts as random color
             DataContext = this;
             InitializeComponent();
@@ -34,6 +35,7 @@ namespace UI
 
         private void dispatcherTimer_Tick(object? sender, EventArgs e)
         {
+            ++_time;
             // let the ai play itself :)
             bool AIOnly = false;
             if (AIOnly)
@@ -51,10 +53,73 @@ namespace UI
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
+
             DispatcherTimer dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
             dispatcherTimer.Tick += new EventHandler(dispatcherTimer_Tick);
-            dispatcherTimer.Interval = TimeSpan.FromTicks(1000);
+            dispatcherTimer.Interval = TimeSpan.FromSeconds(1);
             dispatcherTimer.Start();
+
+            bool runDepthTest = true;
+            if (runDepthTest)
+            {
+                int position = 3;
+                List<int> expected = new();
+                switch (position)
+                {
+                    case 1:
+                        {
+                            _chessboard.SetBoard(Board.START);
+                            int[] vals = { 20, 400, 8902, 197281, 4865609 };
+                            expected.AddRange(vals);
+                            break;
+                        }
+                    case 2:
+                        {
+                            _chessboard.SetBoard(Board.DEPTHTEST_2);
+                            int[] vals = { 48, 2039, 97862, 4085603, 193690690 }; // pos 2
+                            expected.AddRange(vals);
+                            break;
+                        }
+                    case 3:
+                        {
+                            _chessboard.SetBoard(Board.DEPTHTEST_3);
+                            int[] vals = { 14, 191, 2812, 43238, 674624 };
+                            expected.AddRange(vals);
+                            break;
+                        }
+                    case 4:
+                        {
+                            // _chessboard.SetBoard(Board.START);
+                            // int[] vals = { 20, 400, 8902, 197281, 4865609 };
+                            break;
+                        }
+                    case 5:
+                        {
+                            _chessboard.SetBoard(Board.DEPTHTEST_5);
+                            int[] vals = { 44, 191, 2812, 43238, 674624 };
+                            expected.AddRange(vals);
+                            break;
+                        }
+                }
+                _chessboard.SetAIMovGen("disable");
+                _chessboard.SelectColor(Piece.White);
+                depthlog.Inlines.Add("Running Depth Test...\n");
+                for (int depth = 1; depth < 6; ++depth)
+                {
+                    Run run = new();
+                    var watch = System.Diagnostics.Stopwatch.StartNew();
+                    int moveCount = MoveDepthCounter.CountMoves(depth, _chessboard);
+                    watch.Stop();
+                    run.Text += "Found " + moveCount + " moves at depth " + depth + " after " + watch.ElapsedMilliseconds + "ms\n";
+                    run.Text += "Expected " + expected[depth - 1] + '\n';
+                    depthlog.Inlines.Add(run);
+                }
+                // _chessboard.PlayerMove(27, 20, Move.Flag.None);
+                // int temp = MoveDepthCounter.CountMoves(1, _chessboard);                
+            }
+
+            if (_chessboard.playerTurn == Piece.Black) _chessboard.OpponentMove();
+            ReloadBoardPieces();
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -307,7 +372,6 @@ namespace UI
         private void PieceDrop(object sender, DragEventArgs e)
         {
             if (e.Data.GetData(DataFormats.Serializable) is not Image fromImg) return;
-
             if (sender is not UniformGrid uniformGrid) return;
             if (uniformGrid.Children[0] is not Grid grid) return;
             if (grid.Children[0] is not Image toImg) return;
