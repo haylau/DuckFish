@@ -101,6 +101,7 @@ namespace Engine
         public const string DEBUG = "Rq6/5N2/5r2/Rp5K/3Bp1P1/Q3n1Pp/3kP2P/1N5b w -";
         public const string DEPTHTEST_2 = "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1";
         public const string DEPTHTEST_3 = "8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - -";
+        public const string DEPTHTEST_4 = "r3k2r/Pppp1ppp/1b3nbN/nP6/BBP1P3/q4N2/Pp1P2PP/R2Q1RK1 w kq - 0 1";
         public const string DEPTHTEST_5 = "rnbq1k1r/pp1Pbppp/2p5/8/2B5/8/PPP1NnPP/RNBQK2R w KQ - 1 8";
         private bool AIDisabled = false;
         private bool AIMove_Random = false;
@@ -124,7 +125,7 @@ namespace Engine
         {
             boardData = new int[64];
             prevMoves = new();
-            SetBoard(board.boardData, board.prevMoves);
+            SetBoard(board.boardData, board.prevMoves, board.curTurn);
         }
         public bool InCheck
         {
@@ -255,6 +256,21 @@ namespace Engine
             }
 
         }
+        public string IndexToString(int idx)
+        {
+            string str = "";
+            int file = idx % 8;
+            int row = idx - (idx % 8);
+            foreach (var pair in files)
+            {
+                if (pair.Value == file) str += pair.Key;
+            }
+            foreach (var pair in rows)
+            {
+                if (pair.Value == row) str += pair.Key;
+            }
+            return str;
+        }
 
         public void SetAIMovGen(string type)
         {
@@ -293,6 +309,7 @@ namespace Engine
             prevMoves = new();
             bool rules = false, halfmove = false, enpassant = false;
             bool castle_wk = false, castle_wq = false, castle_bk = false, castle_bq = false;
+            char[] enpassantMove = new char[] {'0', '0'};
             int idx = 0;
             foreach (char token in fen)
             {
@@ -308,10 +325,15 @@ namespace Engine
                     {
                         this.curTurn = Piece.Black;
                     }
-                    else if (token.Equals('k')) castle_wk = true;
-                    else if (token.Equals('q')) castle_wq = true;
-                    else if (token.Equals('K')) castle_bk = true;
-                    else if (token.Equals('Q')) castle_bq = true;
+                    else if (token.Equals('K')) castle_wk = true;
+                    else if (token.Equals('Q')) castle_wq = true;
+                    else if (token.Equals('k')) castle_bk = true;
+                    else if (token.Equals('q')) castle_bq = true;
+                    else if (enpassant && enpassantMove[1] == '0')
+                    {
+                        enpassantMove[1] = token;
+                        continue;
+                    }
                     else if (!halfmove && Char.IsDigit(token))
                     {
                         halfmove = true;
@@ -341,15 +363,28 @@ namespace Engine
                             prevMoves.Add(new Move(startingBlackQueenRook, startingBlackQueenRook));
                             --totalMoves;
                         }
-                        if (enpassant) --totalMoves;
+                        if (enpassant) // '6' != 6 
+                        {
+                            if (char.GetNumericValue(enpassantMove[1]) == 6)
+                            {
+                                prevMoves.Add(new Move(8 + files[enpassantMove[0]], 24 + files[enpassantMove[0]], Move.Flag.PawnTwoForward));
+                            }
+                            else if (char.GetNumericValue(enpassantMove[1]) == 3)
+                            {
+                                prevMoves.Add(new Move(48 + files[enpassantMove[0]], 32 + files[enpassantMove[0]], Move.Flag.PawnTwoForward));
+                            }
+                            else enpassant = false; // invalid enpassant target
+                        }
+                        --totalMoves; // current move has not happened yet
                         for (int i = 1; i < totalMoves; ++i)
                         {
                             // fill rest with meaningless moves
                             prevMoves.Add(Move.InvalidMove);
                         }
                     }
-                    else // en passant target
+                    else if (!enpassant) // first en passant target
                     {
+                        enpassantMove[0] = token;
                         enpassant = true;
                     }
                     continue;
@@ -413,8 +448,9 @@ namespace Engine
             if (AIDisabled) this.playerColor = curTurn;
             moveGenerator = new MoveGenerator(boardData, curTurn, prevMoves);
         }
-        public void SetBoard(int[] boardData, List<Move> prevMoves)
+        public void SetBoard(int[] boardData, List<Move> prevMoves, int curTurn)
         {
+            this.curTurn = curTurn;
             for (int i = 0; i < boardData.Length; ++i)
             {
                 this.boardData[i] = boardData[i];
@@ -426,7 +462,6 @@ namespace Engine
                 {
                     this.prevMoves.Add(m);
                 }
-                curTurn = prevMoves.Count() % 2 == 0 ? curTurn = Piece.White : Piece.Black; // White always moves first 
             }
             if (AIDisabled) this.playerColor = curTurn;
             moveGenerator = new MoveGenerator(boardData, curTurn, prevMoves);
@@ -472,7 +507,6 @@ namespace Engine
                 idxFrom = flippedBoard[idxFrom];
                 idxTo = flippedBoard[idxTo];
             }
-            if (Piece.Type(boardData[idxTo]) != Piece.Empty) return false; // cannot promote into a piece
             if (Piece.Type(boardData[idxFrom]) == Piece.Pawn) // pawn is being moved
             {
                 if (idxFrom >= 8 && idxFrom <= 15 && idxTo >= 0 && idxTo <= 7)

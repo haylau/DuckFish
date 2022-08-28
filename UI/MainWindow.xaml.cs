@@ -23,7 +23,14 @@ namespace UI
     {
         private readonly Board _chessboard = new();
         private int _time = 0;
-
+        // AI Only
+        bool AIOnly = false;
+        // Depth Testing variables
+        bool runDepthTest = true;
+        bool runDepthTestSetup = true;
+        private int _depthIdx = 1;
+        private int _depthMax;
+        private List<int> expected = new();
         public MainWindow()
         {
             _chessboard.SetAIMovGen("random");
@@ -32,12 +39,10 @@ namespace UI
             DataContext = this;
             InitializeComponent();
         }
-
         private void dispatcherTimer_Tick(object? sender, EventArgs e)
         {
             ++_time;
             // let the ai play itself :)
-            bool AIOnly = false;
             if (AIOnly)
             {
                 if (!_chessboard.Checkmate)
@@ -46,6 +51,85 @@ namespace UI
                     ReloadBoardColors();
                     ReloadBoardPieces();
                 }
+            }
+            if (runDepthTestSetup)
+            {
+                runDepthTestSetup = false;
+                depthlog.Inlines.Add("Running Depth Test...\n");
+                _chessboard.SetAIMovGen("disable");
+                _chessboard.SelectColor(Piece.White);
+                _chessboard.SetBoard(); //resets board orientation
+                int position = 1;
+                _depthMax = 5;
+                switch (position)
+                {
+                    case 1:
+                        {
+                            // rnbqkbnr/pppppppp/8/ 8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
+                            _chessboard.SetBoard(Board.START);
+                            int[] vals = { 20, 400, 8902, 197281, 4865609 };
+                            expected.AddRange(vals);
+                            break;
+                        }
+                    case 2:
+                        {
+                            // r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 
+                            _chessboard.SetBoard(Board.DEPTHTEST_2);
+                            int[] vals = { 48, 2039, 97862, 4085603, 193690690 }; // pos 2
+                            expected.AddRange(vals);
+                            break;
+                        }
+                    case 3:
+                        {
+                            // 8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - - 
+                            _chessboard.SetBoard(Board.DEPTHTEST_3);
+                            int[] vals = { 14, 191, 2812, 43238, 674624 };
+                            expected.AddRange(vals);
+                            break;
+                        }
+                    case 4:
+                        {
+                            // r3k2r/Pppp1ppp/1b3nbN/nP6/BBP1P3/q4N2/Pp1P2PP/R2Q1RK1 w kq - 0 1
+                            _chessboard.SetBoard(Board.DEPTHTEST_4);
+                            int[] vals = { 6, 264, 9467, 422333, 15833292 };
+                            expected.AddRange(vals);
+                            break;
+                        }
+                    case 5:
+                        {
+                            // rnbq1k1r/pp1Pbppp/2p5/8/2B5/8/PPP1NnPP/RNBQK2R w KQ - 1 8  
+                            _chessboard.SetBoard(Board.DEPTHTEST_5);
+                            int[] vals = { 44, 1486, 62379, 2103487, 89941194 };
+                            expected.AddRange(vals);
+                            break;
+                        }
+                    default:
+                        {
+                            _chessboard.SetBoard("r4rk1/p1ppqpb1/bn2pnp1/P2PN3/1p2P3/2N2Q1p/1PPBBPPP/R3K2R b KQ - 0 2");
+                            int[] vals = { 46, 2079, 89890, 3894594, 3894594 };
+                            expected.AddRange(vals);
+                            break;
+                        }
+                }
+            }
+            if (runDepthTest && _depthIdx <= _depthMax && _time > 3)
+            {
+                Run run = new();
+                var watch = System.Diagnostics.Stopwatch.StartNew();
+                int moveCount = MoveDepthCounter.CountMoves(_depthIdx, _chessboard);
+                watch.Stop();
+                run.Text += "Found " + moveCount + " moves at depth " + _depthIdx + " after " + watch.ElapsedMilliseconds + "ms\n";
+                run.Text += "Expected " + expected[_depthIdx - 1];
+                if (expected[_depthIdx - 1] == moveCount) run.Text += " ✔\n";
+                else run.Text += " ☒\n";
+                depthlog.Inlines.Add(run);
+                ++_depthIdx;
+                ReloadBoardPieces();
+            }
+            else if (runDepthTest && _depthIdx > _depthMax)
+            {
+                runDepthTest = false;
+                depthlog.Inlines.Add("Depth Test Complete!\n");
             }
             // Forcing the CommandManager to raise the RequerySuggested event
             CommandManager.InvalidateRequerySuggested();
@@ -58,68 +142,6 @@ namespace UI
             dispatcherTimer.Tick += new EventHandler(dispatcherTimer_Tick);
             dispatcherTimer.Interval = TimeSpan.FromSeconds(1);
             dispatcherTimer.Start();
-
-            bool runDepthTest = true;
-            if (runDepthTest)
-            {
-                int position = 3;
-                List<int> expected = new();
-                switch (position)
-                {
-                    case 1:
-                        {
-                            _chessboard.SetBoard(Board.START);
-                            int[] vals = { 20, 400, 8902, 197281, 4865609 };
-                            expected.AddRange(vals);
-                            break;
-                        }
-                    case 2:
-                        {
-                            _chessboard.SetBoard(Board.DEPTHTEST_2);
-                            int[] vals = { 48, 2039, 97862, 4085603, 193690690 }; // pos 2
-                            expected.AddRange(vals);
-                            break;
-                        }
-                    case 3:
-                        {
-                            _chessboard.SetBoard(Board.DEPTHTEST_3);
-                            int[] vals = { 14, 191, 2812, 43238, 674624 };
-                            expected.AddRange(vals);
-                            break;
-                        }
-                    case 4:
-                        {
-                            // _chessboard.SetBoard(Board.START);
-                            // int[] vals = { 20, 400, 8902, 197281, 4865609 };
-                            break;
-                        }
-                    case 5:
-                        {
-                            _chessboard.SetBoard(Board.DEPTHTEST_5);
-                            int[] vals = { 44, 191, 2812, 43238, 674624 };
-                            expected.AddRange(vals);
-                            break;
-                        }
-                }
-                _chessboard.SetAIMovGen("disable");
-                _chessboard.SelectColor(Piece.White);
-                depthlog.Inlines.Add("Running Depth Test...\n");
-                for (int depth = 1; depth < 6; ++depth)
-                {
-                    Run run = new();
-                    var watch = System.Diagnostics.Stopwatch.StartNew();
-                    int moveCount = MoveDepthCounter.CountMoves(depth, _chessboard);
-                    watch.Stop();
-                    run.Text += "Found " + moveCount + " moves at depth " + depth + " after " + watch.ElapsedMilliseconds + "ms\n";
-                    run.Text += "Expected " + expected[depth - 1] + '\n';
-                    depthlog.Inlines.Add(run);
-                }
-                // _chessboard.PlayerMove(27, 20, Move.Flag.None);
-                // int temp = MoveDepthCounter.CountMoves(1, _chessboard);                
-            }
-
-            if (_chessboard.playerTurn == Piece.Black) _chessboard.OpponentMove();
-            ReloadBoardPieces();
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
