@@ -65,7 +65,7 @@ namespace UI
                 {
                     case 1:
                         {
-                            // rnbqkbnr/pppppppp/8/ 8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
+                            // rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
                             _chessboard.SetBoard(Board.START);
                             int[] vals = { 20, 400, 8902, 197281, 4865609 };
                             expected.AddRange(vals);
@@ -105,8 +105,8 @@ namespace UI
                         }
                     default:
                         {
-                            _chessboard.SetBoard("r4rk1/p1ppqpb1/bn2pnp1/P2PN3/1p2P3/2N2Q1p/1PPBBPPP/R3K2R b KQ - 0 2");
-                            int[] vals = { 46, 2079, 89890, 3894594, 3894594 };
+                            _chessboard.SetBoard("rnb1kbnr/pp1ppppp/8/q1p5/3P4/P7/1PP1PPPP/RNBQKBNR w KQkq - 1 3");
+                            int[] vals = { 49, 2271, 103088, 4627292, 0 };
                             expected.AddRange(vals);
                             break;
                         }

@@ -12,6 +12,7 @@ namespace Engine
         public List<int> whitePieces;
         public List<int> blackPieces;
         public bool[] attackedSquares;
+        public bool[] checkedSquares;
         public int[] pinnedSquares; // pinnedSquare[idx] = direction  
         public int whiteKingSquare;
         public int blackKingSquare;
@@ -50,6 +51,7 @@ namespace Engine
             this.opponentTurnColor = curTurnColor == Piece.White ? Piece.Black : Piece.White;
             possibleMoves = new();
             attackedSquares = new bool[64];
+            checkedSquares = new bool[64];
             pinnedSquares = new int[64];
             checkingPiece = 0;
             whitePieces = new();
@@ -57,13 +59,28 @@ namespace Engine
             LocatePieces();
             CalculateAttackedSquares();
             CalculatePinnedSquares();
+            CalculateCheckedSquares();
+            VerifyCastling();
             GenerateMoves();
         }
 
         public void GenerateMoves() // generates a list of all current legal moves
         {
-            VerifyCastling();
             int kingSquare = (curTurnColor == Piece.White) ? whiteKingSquare : blackKingSquare;
+            if (inDoubleCheck) // King must move
+            {
+                // Check king moves
+                for (int direction = 0; direction < moveOffsets.Length; ++direction)
+                {
+                    int target = kingSquare + moveOffsets[direction];
+                    if (distToEdge[kingSquare][direction] > 0 && attackedSquares[target] == false)
+                    {
+                        if (Piece.Color(boardData[target]) == curTurnColor) continue; // cannot capture own piece
+                        possibleMoves.Add(new Move(kingSquare, target));
+                    }
+                }
+                return;
+            }
             foreach (int idx in (curTurnColor == Piece.White) ? whitePieces : blackPieces)
             {
                 int piece = boardData[idx];
@@ -89,14 +106,34 @@ namespace Engine
                             {
                                 if (pinnedSquares[idx] == -1 || pinnedSquares[idx] == direction || pinnedSquares[idx] == (direction + 4) % 8)
                                 {
-                                    possibleMoves.Add(new Move(idx, target));
+                                    if (inCheck) // only legal if capturing checking piece
+                                    {
+                                        if (target == checkingPiece)
+                                        {
+                                            possibleMoves.Add(new Move(idx, target));
+                                        }
+                                    }
+                                    else
+                                    {
+                                        possibleMoves.Add(new Move(idx, target));
+                                    }
                                 }
                                 break;
                             }
                             // can move in direction of pin
                             if (pinnedSquares[idx] == -1 || pinnedSquares[idx] == direction || pinnedSquares[idx] == (direction + 4) % 8)
                             {
-                                possibleMoves.Add(new Move(idx, target));
+                                if (inCheck) // only legal if interposing
+                                {
+                                    if (!inKnightOrPawnCheck && checkedSquares[target])
+                                    {
+                                        possibleMoves.Add(new Move(idx, target));
+                                    }
+                                }
+                                else
+                                {
+                                    possibleMoves.Add(new Move(idx, target));
+                                }
                             }
                         }
                     }
@@ -107,7 +144,24 @@ namespace Engine
                     foreach (int target in knightMoves[idx]) // checking all legal knight moves
                     {
                         if (Piece.Color(boardData[target]) == curTurnColor) continue; // cannot capture own piece
-                        possibleMoves.Add(new Move(idx, target));
+                        if (inCheck)
+                        {
+                            if (checkingPiece == target) // capturing checking piece is legal
+                            {
+                                possibleMoves.Add(new Move(idx, target));
+                            }
+                            if (!inKnightOrPawnCheck) // interposing moves are also legal
+                            {
+                                if (checkedSquares[target])
+                                {
+                                    possibleMoves.Add(new Move(idx, target));
+                                }
+                            }
+                        }
+                        else
+                        {
+                            possibleMoves.Add(new Move(idx, target));
+                        }
                     }
                 }
                 else if (type == Piece.Pawn)
@@ -121,7 +175,24 @@ namespace Engine
                         {
                             if (pinnedSquares[idx] == -1 || pinnedSquares[idx] == 0) // can move toward pinning piece
                             {
-                                if (target >= 0 && target <= 7) // promotion square
+                                if (inCheck)
+                                {
+                                    if (!inKnightOrPawnCheck) // interposing moves are legal
+                                    {
+                                        if (checkedSquares[target])
+                                        {
+                                            if (target >= 0 && target <= 7) // promotion square
+                                            {
+                                                AddPromotionMoves(idx, target);
+                                            }
+                                            else
+                                            {
+                                                possibleMoves.Add(new Move(idx, target));
+                                            }
+                                        }
+                                    }
+                                }
+                                else if (target >= 0 && target <= 7) // promotion square
                                 {
                                     AddPromotionMoves(idx, target);
                                 }
@@ -137,7 +208,35 @@ namespace Engine
                         {
                             if (pinnedSquares[idx] == -1 || pinnedSquares[idx] == 7) // can capture pinning piece
                             {
-                                if (target >= 0 && target <= 7) // promotion square
+                                if (inCheck)
+                                {
+                                    if (checkingPiece == target) // capturing checking piece is legal
+                                    {
+                                        if (target >= 0 && target <= 7) // promotion square
+                                        {
+                                            AddPromotionMoves(idx, target);
+                                        }
+                                        else
+                                        {
+                                            possibleMoves.Add(new Move(idx, target));
+                                        }
+                                    }
+                                    if (!inKnightOrPawnCheck) // interposing moves are also legal
+                                    {
+                                        if (checkedSquares[target])
+                                        {
+                                            if (target >= 0 && target <= 7) // promotion square
+                                            {
+                                                AddPromotionMoves(idx, target);
+                                            }
+                                            else
+                                            {
+                                                possibleMoves.Add(new Move(idx, target));
+                                            }
+                                        }
+                                    }
+                                }
+                                else if (target >= 0 && target <= 7) // promotion square
                                 {
                                     AddPromotionMoves(idx, target);
                                 }
@@ -152,7 +251,35 @@ namespace Engine
                         {
                             if (pinnedSquares[idx] == -1 || pinnedSquares[idx] == 1) // can capture pinning piece
                             {
-                                if (target >= 0 && target <= 7) // promotion square
+                                if (inCheck)
+                                {
+                                    if (checkingPiece == target) // capturing checking piece is legal
+                                    {
+                                        if (target >= 0 && target <= 7) // promotion square
+                                        {
+                                            AddPromotionMoves(idx, target);
+                                        }
+                                        else
+                                        {
+                                            possibleMoves.Add(new Move(idx, target));
+                                        }
+                                    }
+                                    if (!inKnightOrPawnCheck) // interposing moves are also legal
+                                    {
+                                        if (checkedSquares[target])
+                                        {
+                                            if (target >= 0 && target <= 7) // promotion square
+                                            {
+                                                AddPromotionMoves(idx, target);
+                                            }
+                                            else
+                                            {
+                                                possibleMoves.Add(new Move(idx, target));
+                                            }
+                                        }
+                                    }
+                                }
+                                else if (target >= 0 && target <= 7) // promotion square
                                 {
                                     AddPromotionMoves(idx, target);
                                 }
@@ -167,11 +294,25 @@ namespace Engine
                         {
                             // Forward twice
                             // Can only move into/through empty tiles
-                            if (Piece.Type(boardData[idx + pawnForward]) == Piece.Empty && Piece.Type(boardData[idx + pawnTwoForward]) == Piece.Empty)
+                            target = idx + pawnTwoForward;
+                            if (Piece.Type(boardData[idx + pawnForward]) == Piece.Empty && Piece.Type(boardData[target]) == Piece.Empty)
                             {
                                 if (pinnedSquares[idx] == -1 || pinnedSquares[idx] == 0) // can move toward pinning piece
                                 {
-                                    possibleMoves.Add(new Move(idx, idx + pawnTwoForward, Move.Flag.PawnTwoForward));
+                                    if (inCheck)
+                                    {
+                                        if (!inKnightOrPawnCheck) // interposing moves are legal
+                                        {
+                                            if (checkedSquares[target])
+                                            {
+                                                possibleMoves.Add(new Move(idx, target, Move.Flag.PawnTwoForward));
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        possibleMoves.Add(new Move(idx, target, Move.Flag.PawnTwoForward));
+                                    }
                                 }
                             }
                         }
@@ -179,7 +320,6 @@ namespace Engine
                         if (prevMoves.Count > 0 && prevMoves.Last().MoveFlag == Move.Flag.PawnTwoForward && idx >= 24 && idx <= 31) // Previous move was a double pawn push
                         {
                             int enPassantTarget = prevMoves.Last().TargetSquare;
-
                             target = idx + pawnLeftEnPassant;
                             if (target == enPassantTarget && Piece.Color(boardData[target]) == opponentTurnColor)
                             {
@@ -189,12 +329,32 @@ namespace Engine
                                     {
                                         if (!CheckEnPassantCheck(idx, target))
                                         {
-                                            possibleMoves.Add(new Move(idx, idx + pawnLeftCapture, Move.Flag.EnPassantCapture));
+                                            if (inCheck)
+                                            {
+                                                if (checkingPiece == target) // capturing checking piece is legal
+                                                {
+                                                    possibleMoves.Add(new Move(idx, idx + pawnLeftCapture, Move.Flag.EnPassantCapture));
+                                                }
+                                            }
+                                            else
+                                            {
+                                                possibleMoves.Add(new Move(idx, idx + pawnLeftCapture, Move.Flag.EnPassantCapture));
+                                            }
                                         }
                                     }
                                     else
                                     {
-                                        possibleMoves.Add(new Move(idx, idx + pawnLeftCapture, Move.Flag.EnPassantCapture));
+                                        if (inCheck)
+                                        {
+                                            if (checkingPiece == target) // capturing checking piece is legal
+                                            {
+                                                possibleMoves.Add(new Move(idx, idx + pawnLeftCapture, Move.Flag.EnPassantCapture));
+                                            }
+                                        }
+                                        else
+                                        {
+                                            possibleMoves.Add(new Move(idx, idx + pawnLeftCapture, Move.Flag.EnPassantCapture));
+                                        }
                                     }
                                 }
                             }
@@ -207,12 +367,32 @@ namespace Engine
                                     {
                                         if (!CheckEnPassantCheck(idx, target))
                                         {
-                                            possibleMoves.Add(new Move(idx, idx + pawnRightCapture, Move.Flag.EnPassantCapture));
+                                            if (inCheck)
+                                            {
+                                                if (checkingPiece == target) // capturing checking piece is legal
+                                                {
+                                                    possibleMoves.Add(new Move(idx, idx + pawnRightCapture, Move.Flag.EnPassantCapture));
+                                                }
+                                            }
+                                            else
+                                            {
+                                                possibleMoves.Add(new Move(idx, idx + pawnRightCapture, Move.Flag.EnPassantCapture));
+                                            }
                                         }
                                     }
                                     else
                                     {
-                                        possibleMoves.Add(new Move(idx, idx + pawnRightCapture, Move.Flag.EnPassantCapture));
+                                        if (inCheck)
+                                        {
+                                            if (checkingPiece == target) // capturing checking piece is legal
+                                            {
+                                                possibleMoves.Add(new Move(idx, idx + pawnRightCapture, Move.Flag.EnPassantCapture));
+                                            }
+                                        }
+                                        else
+                                        {
+                                            possibleMoves.Add(new Move(idx, idx + pawnRightCapture, Move.Flag.EnPassantCapture));
+                                        }
                                     }
                                 }
                             }
@@ -227,7 +407,24 @@ namespace Engine
                         {
                             if (pinnedSquares[idx] == -1 || pinnedSquares[idx] == 4) // can move toward pinning piece
                             {
-                                if (target >= 56 && target <= 63) // promotion square
+                                if (inCheck)
+                                {
+                                    if (!inKnightOrPawnCheck) // interposing moves are legal
+                                    {
+                                        if (checkedSquares[target])
+                                        {
+                                            if (target >= 0 && target <= 7) // promotion square
+                                            {
+                                                AddPromotionMoves(idx, target);
+                                            }
+                                            else
+                                            {
+                                                possibleMoves.Add(new Move(idx, target));
+                                            }
+                                        }
+                                    }
+                                }
+                                else if (target >= 0 && target <= 7) // promotion square
                                 {
                                     AddPromotionMoves(idx, target);
                                 }
@@ -236,89 +433,199 @@ namespace Engine
                                     possibleMoves.Add(new Move(idx, target));
                                 }
                             }
-                        }
-                        // Adjacent capture
-                        target = idx - pawnLeftCapture;
-                        if ((idx + 1) % 8 != 0 && Piece.Color(boardData[target]) == opponentTurnColor)
-                        {
-                            if (pinnedSquares[idx] == -1 || pinnedSquares[idx] == 3)
-                            {
-                                if (target >= 56 && target <= 63) // promotion square
-                                {
-                                    AddPromotionMoves(idx, target);
-                                }
-                                else
-                                {
-                                    possibleMoves.Add(new Move(idx, target));
-                                }
-                            }
-                        }
-                        target = idx - pawnRightCapture;
-                        if (idx % 8 != 0 && Piece.Color(boardData[target]) == opponentTurnColor)
-                        {
-                            if (pinnedSquares[idx] == -1 || pinnedSquares[idx] == 5)
-                            {
-                                if (target >= 56 && target <= 63) // promotion square
-                                {
-                                    AddPromotionMoves(idx, target);
-                                }
-                                else
-                                {
-                                    possibleMoves.Add(new Move(idx, target));
-                                }
-                            }
-                        }
-                        // Forward Twice only legal on original pawn positions
-                        if (idx >= 8 && idx <= 15)
-                        {
-                            // Forward twice
-                            // Can only move into/through empty tiles
-                            if (Piece.Type(boardData[idx - pawnForward]) == Piece.Empty && Piece.Type(boardData[idx - pawnTwoForward]) == Piece.Empty)
-                            {
-                                if (pinnedSquares[idx] == -1 || pinnedSquares[idx] == 4)
-                                {
-                                    possibleMoves.Add(new Move(idx, idx - pawnTwoForward, Move.Flag.PawnTwoForward));
-                                }
-                            }
-                        }
-                        // En Passant
-                        if (prevMoves.Count > 0 && prevMoves.Last().MoveFlag == Move.Flag.PawnTwoForward && idx >= 32 && idx <= 39) // Previous move was a double pawn push
-                        {
-                            int enPassantTarget = prevMoves.Last().TargetSquare;
                             // Adjacent capture
-                            target = idx - pawnLeftEnPassant;
-                            if (target == enPassantTarget && Piece.Color(boardData[target]) == opponentTurnColor)
+                            target = idx - pawnLeftCapture;
+                            if ((idx + 1) % 8 != 0 && Piece.Color(boardData[target]) == opponentTurnColor)
                             {
                                 if (pinnedSquares[idx] == -1 || pinnedSquares[idx] == 3)
                                 {
-                                    if (kingSquare - (kingSquare % 8) == idx - (idx % 8)) // king and pawn on the same row
+                                    if (inCheck)
                                     {
-                                        if (!CheckEnPassantCheck(idx, target))
+                                        if (checkingPiece == target) // capturing checking piece is legal
                                         {
-                                            possibleMoves.Add(new Move(idx, idx - pawnLeftCapture, Move.Flag.EnPassantCapture));
+                                            if (target >= 0 && target <= 7) // promotion square
+                                            {
+                                                AddPromotionMoves(idx, target);
+                                            }
+                                            else
+                                            {
+                                                possibleMoves.Add(new Move(idx, target));
+                                            }
                                         }
+                                        if (!inKnightOrPawnCheck) // interposing moves are also legal
+                                        {
+                                            if (checkedSquares[target])
+                                            {
+                                                if (target >= 0 && target <= 7) // promotion square
+                                                {
+                                                    AddPromotionMoves(idx, target);
+                                                }
+                                                else
+                                                {
+                                                    possibleMoves.Add(new Move(idx, target));
+                                                }
+                                            }
+                                        }
+                                    }
+                                    else if (target >= 0 && target <= 7) // promotion square
+                                    {
+                                        AddPromotionMoves(idx, target);
                                     }
                                     else
                                     {
-                                        possibleMoves.Add(new Move(idx, idx - pawnLeftCapture, Move.Flag.EnPassantCapture));
+                                        possibleMoves.Add(new Move(idx, target));
                                     }
                                 }
                             }
-                            target = idx - pawnRightEnPassant;
-                            if (target == enPassantTarget && Piece.Color(boardData[target]) == opponentTurnColor)
+                            target = idx - pawnRightCapture;
+                            if (idx % 8 != 0 && Piece.Color(boardData[target]) == opponentTurnColor)
                             {
                                 if (pinnedSquares[idx] == -1 || pinnedSquares[idx] == 5)
                                 {
-                                    if (kingSquare - (kingSquare % 8) == idx - (idx % 8)) // king and pawn on the same row
+                                    if (inCheck)
                                     {
-                                        if (!CheckEnPassantCheck(idx, target))
+                                        if (checkingPiece == target) // capturing checking piece is legal
                                         {
-                                            possibleMoves.Add(new Move(idx, idx - pawnRightCapture, Move.Flag.EnPassantCapture));
+                                            if (target >= 0 && target <= 7) // promotion square
+                                            {
+                                                AddPromotionMoves(idx, target);
+                                            }
+                                            else
+                                            {
+                                                possibleMoves.Add(new Move(idx, target));
+                                            }
                                         }
+                                        if (!inKnightOrPawnCheck) // interposing moves are also legal
+                                        {
+                                            if (checkedSquares[target])
+                                            {
+                                                if (target >= 0 && target <= 7) // promotion square
+                                                {
+                                                    AddPromotionMoves(idx, target);
+                                                }
+                                                else
+                                                {
+                                                    possibleMoves.Add(new Move(idx, target));
+                                                }
+                                            }
+                                        }
+                                    }
+                                    else if (target >= 0 && target <= 7) // promotion square
+                                    {
+                                        AddPromotionMoves(idx, target);
                                     }
                                     else
                                     {
-                                        possibleMoves.Add(new Move(idx, idx - pawnRightCapture, Move.Flag.EnPassantCapture));
+                                        possibleMoves.Add(new Move(idx, target));
+                                    }
+                                }
+                            }
+                            // Forward Twice only legal on original pawn positions
+                            if (idx >= 8 && idx <= 15)
+                            {
+                                // Forward twice
+                                // Can only move into/through empty tiles
+                                target = idx - pawnTwoForward;
+                                if (Piece.Type(boardData[idx - pawnForward]) == Piece.Empty && Piece.Type(boardData[target]) == Piece.Empty)
+                                {
+                                    if (pinnedSquares[idx] == -1 || pinnedSquares[idx] == 4)
+                                    {
+                                        if (inCheck)
+                                        {
+                                            if (!inKnightOrPawnCheck) // interposing moves are legal
+                                            {
+                                                if (checkedSquares[target])
+                                                {
+                                                    possibleMoves.Add(new Move(idx, target, Move.Flag.PawnTwoForward));
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            possibleMoves.Add(new Move(idx, target, Move.Flag.PawnTwoForward));
+                                        }
+                                    }
+                                }
+                            }
+                            // En Passant
+                            if (prevMoves.Count > 0 && prevMoves.Last().MoveFlag == Move.Flag.PawnTwoForward && idx >= 32 && idx <= 39) // Previous move was a double pawn push
+                            {
+                                int enPassantTarget = prevMoves.Last().TargetSquare;
+                                // Adjacent capture
+                                target = idx - pawnLeftEnPassant;
+                                if (target == enPassantTarget && Piece.Color(boardData[target]) == opponentTurnColor)
+                                {
+                                    if (pinnedSquares[idx] == -1 || pinnedSquares[idx] == 3)
+                                    {
+                                        if (kingSquare - (kingSquare % 8) == idx - (idx % 8)) // king and pawn on the same row
+                                        {
+                                            if (!CheckEnPassantCheck(idx, target))
+                                            {
+                                                if (inCheck)
+                                                {
+                                                    if (checkingPiece == target) // capturing checking piece is legal
+                                                    {
+                                                        possibleMoves.Add(new Move(idx, idx - pawnLeftCapture, Move.Flag.EnPassantCapture));
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    possibleMoves.Add(new Move(idx, idx - pawnLeftCapture, Move.Flag.EnPassantCapture));
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (inCheck)
+                                            {
+                                                if (checkingPiece == target) // capturing checking piece is legal
+                                                {
+                                                    possibleMoves.Add(new Move(idx, idx - pawnLeftCapture, Move.Flag.EnPassantCapture));
+                                                }
+                                            }
+                                            else
+                                            {
+                                                possibleMoves.Add(new Move(idx, idx - pawnLeftCapture, Move.Flag.EnPassantCapture));
+                                            }
+                                        }
+                                    }
+                                }
+                                target = idx - pawnRightEnPassant;
+                                if (target == enPassantTarget && Piece.Color(boardData[target]) == opponentTurnColor)
+                                {
+                                    if (pinnedSquares[idx] == -1 || pinnedSquares[idx] == 5)
+                                    {
+                                        if (kingSquare - (kingSquare % 8) == idx - (idx % 8)) // king and pawn on the same row
+                                        {
+                                            if (!CheckEnPassantCheck(idx, target))
+                                            {
+                                                if (inCheck)
+                                                {
+                                                    if (checkingPiece == target) // capturing checking piece is legal
+                                                    {
+                                                        possibleMoves.Add(new Move(idx, idx - pawnRightCapture, Move.Flag.EnPassantCapture));
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    possibleMoves.Add(new Move(idx, idx - pawnRightCapture, Move.Flag.EnPassantCapture));
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (inCheck)
+                                            {
+                                                if (checkingPiece == target) // capturing checking piece is legal
+                                                {
+                                                    possibleMoves.Add(new Move(idx, idx - pawnRightCapture, Move.Flag.EnPassantCapture));
+                                                }
+                                            }
+                                            else
+                                            {
+                                                possibleMoves.Add(new Move(idx, idx - pawnRightCapture, Move.Flag.EnPassantCapture));
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -347,7 +654,7 @@ namespace Engine
                                 possibleMoves.Add(new Move(startingWhiteKingSquare, startingWhiteKingSquare + 2, Move.Flag.Castling));
                             }
                         }
-                        if (whiteQueenCastle && Piece.Type(boardData[59]) == Piece.Empty && Piece.Type(boardData[58]) == Piece.Empty && Piece.Type(boardData[57]) == Piece.Empty )
+                        if (whiteQueenCastle && Piece.Type(boardData[59]) == Piece.Empty && Piece.Type(boardData[58]) == Piece.Empty && Piece.Type(boardData[57]) == Piece.Empty)
                         {
                             if (!attackedSquares[59] && !attackedSquares[58] && Piece.Type(boardData[startingWhiteQueenRook]) == Piece.Rook)
                             {
@@ -374,62 +681,6 @@ namespace Engine
                     }
                 }
             }
-            // Remove illegal moves due to check
-            if (inCheck) // Only captures of checking piece, interposing, or moving the king is legal
-            // #TODO rework to precheck these moves instead of filtering them out
-            {
-                List<Move> legalMoves = new();
-                foreach (Move move in possibleMoves)
-                {
-                    if (inDoubleCheck) // no legal captures exist
-                    {
-                        if (Piece.Type(boardData[move.StartSquare]) == Piece.King) legalMoves.Add(move); // King move
-                        continue;
-                    }
-                    else if (inKnightOrPawnCheck) // no legal interposing moves exist 
-                    {
-                        if (Piece.Type(boardData[move.StartSquare]) == Piece.King)
-                        {
-                            legalMoves.Add(move); // King move
-                            continue;
-                        }
-                        if (move.TargetSquare == checkingPiece) // Capture of checking piece
-                        {
-                            legalMoves.Add(move);
-                            continue;
-                        }
-                        if (move.MoveFlag == Move.Flag.EnPassantCapture && prevMoves.Last().MoveFlag == Move.Flag.PawnTwoForward) // En passant capture 
-                        {
-                            legalMoves.Add(move);
-                            continue;
-                        }
-                    }
-                    else
-                    {
-                        if (Piece.Type(boardData[move.StartSquare]) == Piece.King) // King move
-                        {
-                            legalMoves.Add(move);
-                            continue;
-                        }
-                        if (move.TargetSquare == checkingPiece) // Capture of checking piece
-                        {
-                            legalMoves.Add(move);
-                            continue;
-                        }
-                        for (int dist = 0; dist < distToEdge[kingSquare][checkDirection]; ++dist) // check for interposing moves 
-                        {
-                            int target = kingSquare + moveOffsets[checkDirection] * (dist + 1); // scan in the direction of the check
-                            if (target == move.TargetSquare) // Interposing move
-                            {
-                                legalMoves.Add(move);
-                                break;
-                            }
-                            if (checkingPiece == target) break; // reached the checking piece; no more interposing moves
-                        }
-                    }
-                }
-                possibleMoves = legalMoves;
-            }
         }
 
         private void LocatePieces()
@@ -451,157 +702,272 @@ namespace Engine
 
         private void CalculateAttackedSquares()
         {
+            List<int> opponentPieces = curTurnColor == Piece.White ? blackPieces : whitePieces;
             int kingSquare = (curTurnColor == Piece.White) ? whiteKingSquare : blackKingSquare;
-            // Iterate through each square to see if an enemy piece attacks it
-            // Skips to next idx when an attacking piece is found
-            for (int idx = 0; idx < boardData.Length; ++idx)
+            foreach (int idx in opponentPieces)
             {
-                // Pawns
-                if (curTurnColor == Piece.White && idx > 7)
+                int type = Piece.Type(boardData[idx]);
+                int color = Piece.Color(boardData[idx]);
+                if (type == Piece.Queen || type == Piece.Rook || type == Piece.Bishop || type == Piece.King)
                 {
-                    // Left-Facing Pawn 
-                    int target = idx + pawnLeftCapture;
-                    if (idx % 8 != 0 && target >= 0 && target < 64 && Piece.Color(boardData[target]) == opponentTurnColor && Piece.Type(boardData[target]) == Piece.Pawn)
+                    for (int direction = 0; direction < moveOffsets.Length; ++direction)
                     {
-                        attackedSquares[idx] = true;
-                        if (kingSquare == idx)
+                        if (type == Piece.Bishop && direction % 2 == 0) continue; // Bishops cannot move cardinally
+                        if (type == Piece.Rook && direction % 2 == 1) continue; // Rooks cannot move diagonally
+                        for (int dist = 0; dist < distToEdge[idx][direction]; ++dist)
                         {
-                            if (inCheck) inDoubleCheck = true;
-                            inCheck = true;
-                            inKnightOrPawnCheck = true;
-                            if (!inDoubleCheck) checkingPiece = target;
-                        }
-                        else continue;
-                    }
-                    // Right-Facing Pawn 
-                    target = idx + pawnRightCapture;
-                    if ((idx + 1) % 8 != 0 && target >= 0 && target < 64 && Piece.Color(boardData[target]) == opponentTurnColor && Piece.Type(boardData[target]) == Piece.Pawn)
-                    {
-                        attackedSquares[idx] = true;
-                        if (kingSquare == idx)
-                        {
-                            if (inCheck) inDoubleCheck = true;
-                            inCheck = true;
-                            inKnightOrPawnCheck = true;
-                            if (!inDoubleCheck) checkingPiece = target;
-                        }
-                        else continue;
-                    }
-                }
-                if (curTurnColor == Piece.Black && idx < 56)
-                {
-                    // Left-Facing Pawn 
-                    int target = idx - pawnLeftCapture;
-                    if (idx % 8 != 0 && target >= 0 && target < 64 && Piece.Color(boardData[target]) == opponentTurnColor && Piece.Type(boardData[target]) == Piece.Pawn)
-                    {
-                        attackedSquares[idx] = true;
-                        if (kingSquare == idx)
-                        {
-                            if (inCheck) inDoubleCheck = true;
-                            inCheck = true;
-                            inKnightOrPawnCheck = true;
-                            if (!inDoubleCheck) checkingPiece = target;
-                        }
-                        else continue;
-                    }
-                    // Right-Facing Pawn 
-                    target = idx - pawnRightCapture;
-                    if ((idx - 1) % 8 != 0 && target >= 0 && target < 64 && Piece.Color(boardData[target]) == opponentTurnColor && Piece.Type(boardData[target]) == Piece.Pawn)
-                    {
-                        attackedSquares[idx] = true;
-                        if (kingSquare == idx)
-                        {
-                            if (inCheck) inDoubleCheck = true;
-                            inCheck = true;
-                            inKnightOrPawnCheck = true;
-                            if (!inDoubleCheck) checkingPiece = target;
-                        }
-                        else continue;
-                    }
-                }
-                if (attackedSquares[idx]) continue;
-                // Directional Pieces
-                for (int direction = 0; direction < moveOffsets.Length; ++direction)
-                {
-                    int target = idx + moveOffsets[direction];
-                    if (!(target >= 0 && target <= 63)) continue;
-                    // King
-                    if (distToEdge[idx][direction] > 0 && Piece.Type(boardData[target]) == Piece.King && Piece.Color(boardData[target]) == opponentTurnColor)
-                    {
-                        attackedSquares[idx] = true;
-                        break;
-                    }
-                    // Queen Rook Bishop
-                    for (int dist = 0; dist < distToEdge[idx][direction]; ++dist)
-                    {
-                        target = idx + moveOffsets[direction] * (dist + 1);
-                        int color = Piece.Color(boardData[target]);
-                        int type = Piece.Type(boardData[target]);
-                        if (color == curTurnColor && type != Piece.King) break; // friendly non-king pieces interpose
-                        if (color == opponentTurnColor) // enemy piece found
-                        {
-                            if (type == Piece.Queen)
+                            if (type == Piece.King && dist > 0) break; // Kings only move one space
+                            int target = idx + moveOffsets[direction] * (dist + 1); // num moves in a given direction
+                            if (Piece.Color(boardData[target]) == curTurnColor)
                             {
-                                attackedSquares[idx] = true;
-                                if (kingSquare == idx)
+                                attackedSquares[target] = true;
+                                if (kingSquare == target)
                                 {
                                     if (inCheck) inDoubleCheck = true;
                                     inCheck = true;
                                     checkDirection = direction;
-                                    if (!inDoubleCheck) checkingPiece = target;
+                                    if (!inDoubleCheck) checkingPiece = idx;
+                                    continue; // King cannot interpose
                                 }
-                                break;
+                                break; // Friendly pieces interpose
                             }
-                            else if (type == Piece.Rook && direction % 2 == 0)
+                            if (Piece.Color(boardData[target]) == opponentTurnColor)
                             {
-                                attackedSquares[idx] = true;
-                                if (kingSquare == idx)
-                                {
-                                    if (inCheck) inDoubleCheck = true;
-                                    inCheck = true;
-                                    checkDirection = direction;
-                                    if (!inDoubleCheck) checkingPiece = target;
-                                }
-                                break;
+                                attackedSquares[target] = true;
+                                break; // Opponent pieces interpose
                             }
-                            else if (type == Piece.Bishop && direction % 2 == 1)
+                            if (Piece.Type(boardData[target]) == Piece.Empty)
                             {
-                                attackedSquares[idx] = true;
-                                if (kingSquare == idx)
-                                {
-                                    if (inCheck) inDoubleCheck = true;
-                                    inCheck = true;
-                                    checkDirection = direction;
-                                    if (!inDoubleCheck) checkingPiece = target;
-                                }
-                                break;
+                                attackedSquares[target] = true;
+                                continue;
                             }
-                            else break; // enemy piece is not a queen rook or bishop therefore blocks attacks
                         }
                     }
                 }
-                if (attackedSquares[idx]) continue;
-                // Knight Moves
-                foreach (int target in knightMoves[idx]) // checking all legal knight moves
+                else if (type == Piece.Knight)
                 {
-                    if (Piece.Type(boardData[target]) == Piece.Knight && Piece.Color(boardData[target]) == opponentTurnColor)
+                    foreach (int target in knightMoves[idx]) // checking all legal knight moves
                     {
-                        attackedSquares[idx] = true;
-                        if (kingSquare == idx)
+                        attackedSquares[target] = true;
+                        if (kingSquare == target)
                         {
                             if (inCheck) inDoubleCheck = true;
                             inCheck = true;
                             inKnightOrPawnCheck = true;
-                            if (!inDoubleCheck) checkingPiece = target;
+                            if (!inDoubleCheck) checkingPiece = idx;
                         }
-                        else break;
                     }
                 }
-                if (attackedSquares[idx]) continue;
-                // No enemy pieces attack this square
-                attackedSquares[idx] = false;
+                else if (type == Piece.Pawn)
+                {
+                    if (idx < 8 || idx > 55) continue; // I llegal pawn position, dont consider
+                    if (color == Piece.White) // Opponent is white
+                    {
+                        if (idx % 8 != 0) // Pawn can attack left
+                        {
+                            attackedSquares[idx + pawnLeftCapture] = true;
+                            if (kingSquare == idx + pawnLeftCapture)
+                            {
+                                if (inCheck) inDoubleCheck = true;
+                                inCheck = true;
+                                inKnightOrPawnCheck = true;
+                                if (!inDoubleCheck) checkingPiece = idx;
+                            }
+                        }
+                        if ((idx + 1) % 8 != 0) // Pawn can attack right
+                        {
+                            attackedSquares[idx + pawnRightCapture] = true;
+                            if (kingSquare == idx + pawnRightCapture)
+                            {
+                                if (inCheck) inDoubleCheck = true;
+                                inCheck = true;
+                                inKnightOrPawnCheck = true;
+                                if (!inDoubleCheck) checkingPiece = idx;
+                            }
+                        }
+                    }
+                    else if (color == Piece.Black) // Opponent is black
+                    {
+                        if ((idx + 1) % 8 != 0) // Pawn can attack left
+                        {
+                            attackedSquares[idx - pawnLeftCapture] = true;
+                            if (kingSquare == idx - pawnLeftCapture)
+                            {
+                                if (inCheck) inDoubleCheck = true;
+                                inCheck = true;
+                                inKnightOrPawnCheck = true;
+                                if (!inDoubleCheck) checkingPiece = idx;
+                            }
+                        }
+                        if (idx % 8 != 0) // Pawn can attack right
+                        {
+                            attackedSquares[idx - pawnRightCapture] = true;
+                            if (kingSquare == idx - pawnRightCapture)
+                            {
+                                if (inCheck) inDoubleCheck = true;
+                                inCheck = true;
+                                inKnightOrPawnCheck = true;
+                                if (!inDoubleCheck) checkingPiece = idx;
+                            }
+                        }
+                    }
+                }
             }
         }
+
+        // private void CalculateAttackedSquares()
+        // {
+        //     int kingSquare = (curTurnColor == Piece.White) ? whiteKingSquare : blackKingSquare;
+        //     // Iterate through each square to see if an enemy piece attacks it
+        //     // Skips to next idx when an attacking piece is found
+        //     for (int idx = 0; idx < boardData.Length; ++idx)
+        //     {
+        //         // Pawns
+        //         if (curTurnColor == Piece.White && idx > 7 && idx < 56)
+        //         {
+        //             // Left-Facing Pawn 
+        //             int target = idx - pawnLeftCapture;
+        //             if ((idx + 1) % 8 != 0 && target >= 0 && target < 64 && Piece.Color(boardData[target]) == opponentTurnColor && Piece.Type(boardData[target]) == Piece.Pawn)
+        //             {
+        //                 attackedSquares[idx] = true;
+        //                 if (kingSquare == idx)
+        //                 {
+        //                     if (inCheck) inDoubleCheck = true;
+        //                     inCheck = true;
+        //                     inKnightOrPawnCheck = true;
+        //                     if (!inDoubleCheck) checkingPiece = target;
+        //                 }
+        //                 else continue;
+        //             }
+        //             // Right-Facing Pawn 
+        //             target = idx - pawnRightCapture;
+        //             if (idx % 8 != 0 && target >= 0 && target < 64 && Piece.Color(boardData[target]) == opponentTurnColor && Piece.Type(boardData[target]) == Piece.Pawn)
+        //             {
+        //                 attackedSquares[idx] = true;
+        //                 if (kingSquare == idx)
+        //                 {
+        //                     if (inCheck) inDoubleCheck = true;
+        //                     inCheck = true;
+        //                     inKnightOrPawnCheck = true;
+        //                     if (!inDoubleCheck) checkingPiece = target;
+        //                 }
+        //                 else continue;
+        //             }
+        //         }
+        //         if (curTurnColor == Piece.Black && idx > 7 && idx < 56)
+        //         {
+        //             // Left-Facing Pawn 
+        //             int target = idx - pawnLeftCapture;
+        //             if ((idx + 1) % 8 != 0 && target >= 0 && target < 64 && Piece.Color(boardData[target]) == opponentTurnColor && Piece.Type(boardData[target]) == Piece.Pawn)
+        //             {
+        //                 attackedSquares[idx] = true;
+        //                 if (kingSquare == idx)
+        //                 {
+        //                     if (inCheck) inDoubleCheck = true;
+        //                     inCheck = true;
+        //                     inKnightOrPawnCheck = true;
+        //                     if (!inDoubleCheck) checkingPiece = target;
+        //                 }
+        //                 else continue;
+        //             }
+        //             // Right-Facing Pawn 
+        //             target = idx - pawnRightCapture;
+        //             if (idx % 8 != 0 && target >= 0 && target < 64 && Piece.Color(boardData[target]) == opponentTurnColor && Piece.Type(boardData[target]) == Piece.Pawn)
+        //             {
+        //                 attackedSquares[idx] = true;
+        //                 if (kingSquare == idx)
+        //                 {
+        //                     if (inCheck) inDoubleCheck = true;
+        //                     inCheck = true;
+        //                     inKnightOrPawnCheck = true;
+        //                     if (!inDoubleCheck) checkingPiece = target;
+        //                 }
+        //                 else continue;
+        //             }
+        //         }
+        //         if (attackedSquares[idx]) continue;
+        //         // Directional Pieces
+        //         for (int direction = 0; direction < moveOffsets.Length; ++direction)
+        //         {
+        //             int target = idx + moveOffsets[direction];
+        //             if (!(target >= 0 && target <= 63)) continue;
+        //             // King
+        //             if (distToEdge[idx][direction] > 0 && Piece.Type(boardData[target]) == Piece.King && Piece.Color(boardData[target]) == opponentTurnColor)
+        //             {
+        //                 attackedSquares[idx] = true;
+        //                 break;
+        //             }
+        //             // Queen Rook Bishop
+        //             for (int dist = 0; dist < distToEdge[idx][direction]; ++dist)
+        //             {
+        //                 target = idx + moveOffsets[direction] * (dist + 1);
+        //                 int color = Piece.Color(boardData[target]);
+        //                 int type = Piece.Type(boardData[target]);
+        //                 if (color == curTurnColor && type != Piece.King) break; // friendly non-king pieces interpose
+        //                 if (color == opponentTurnColor) // enemy piece found
+        //                 {
+        //                     if (type == Piece.Queen)
+        //                     {
+        //                         attackedSquares[idx] = true;
+        //                         if (kingSquare == idx)
+        //                         {
+        //                             if (inCheck) inDoubleCheck = true;
+        //                             inCheck = true;
+        //                             checkDirection = direction;
+        //                             if (!inDoubleCheck) checkingPiece = target;
+        //                         }
+        //                         break;
+        //                     }
+        //                     else if (type == Piece.Rook && direction % 2 == 0)
+        //                     {
+        //                         attackedSquares[idx] = true;
+        //                         if (kingSquare == idx)
+        //                         {
+        //                             if (inCheck) inDoubleCheck = true;
+        //                             inCheck = true;
+        //                             checkDirection = direction;
+        //                             if (!inDoubleCheck) checkingPiece = target;
+        //                         }
+        //                         break;
+        //                     }
+        //                     else if (type == Piece.Bishop && direction % 2 == 1)
+        //                     {
+        //                         attackedSquares[idx] = true;
+        //                         if (kingSquare == idx)
+        //                         {
+        //                             if (inCheck) inDoubleCheck = true;
+        //                             inCheck = true;
+        //                             checkDirection = direction;
+        //                             if (!inDoubleCheck) checkingPiece = target;
+        //                         }
+        //                         break;
+        //                     }
+        //                     else break; // enemy piece is not a queen rook or bishop therefore blocks attacks
+        //                 }
+        //             }
+        //         }
+        //         if (attackedSquares[idx]) continue;
+        //         // Knight Moves
+        //         foreach (int target in knightMoves[idx]) // checking all legal knight moves
+        //         {
+        //             if (Piece.Type(boardData[target]) == Piece.Knight && Piece.Color(boardData[target]) == opponentTurnColor)
+        //             {
+        //                 attackedSquares[idx] = true;
+        //                 if (kingSquare == idx)
+        //                 {
+        //                     if (inCheck) inDoubleCheck = true;
+        //                     inCheck = true;
+        //                     inKnightOrPawnCheck = true;
+        //                     if (!inDoubleCheck) checkingPiece = target;
+        //                 }
+        //                 else break;
+        //             }
+        //         }
+        //         if (attackedSquares[idx]) continue;
+        //         // No enemy pieces attack this square
+        //         attackedSquares[idx] = false;
+        //     }
+        // }
         private void AddPromotionMoves(int idx, int target)
         {
             this.possibleMoves.Add(new Move(idx, target, Move.Flag.PromoteToQueen));
@@ -652,6 +1018,20 @@ namespace Engine
                 }
             }
         }
+        private void CalculateCheckedSquares()
+        {
+            int kingSquare = (curTurnColor == Piece.White) ? whiteKingSquare : blackKingSquare;
+            if (!inCheck || inKnightOrPawnCheck || inDoubleCheck) return;
+            for (int dist = 0; dist < distToEdge[kingSquare][(checkDirection + 4) % 8]; ++dist) // check for interposing moves 
+            {
+                int target = kingSquare + moveOffsets[(checkDirection + 4) % 8] * (dist + 1); // scan in the direction of the check
+                if (Piece.Type(boardData[target]) == Piece.Empty) // Square can be used to block check
+                {
+                    checkedSquares[target] = true;
+                }
+                if (checkingPiece == target) break; // reached the checking piece; no more interposing moves
+            }
+        }
         private void VerifyCastling()
         {
             whiteKingCastle = false;
@@ -672,10 +1052,22 @@ namespace Engine
             {
                 foreach (Move move in prevMoves)
                 {
-                    if (move.StartSquare == startingWhiteKingRook) whiteKingCastle = false;
-                    else if (move.StartSquare == startingWhiteQueenRook) whiteQueenCastle = false;
-                    else if (move.StartSquare == startingBlackKingRook) blackKingCastle = false;
-                    else if (move.StartSquare == startingBlackQueenRook) blackQueenCastle = false;
+                    if (move.StartSquare == startingWhiteKingSquare || move.StartSquare == startingWhiteKingRook)
+                    {
+                        whiteKingCastle = false;
+                    }
+                    else if (move.StartSquare == startingWhiteKingSquare || move.StartSquare == startingWhiteQueenRook)
+                    {
+                        whiteQueenCastle = false;
+                    }
+                    else if (move.StartSquare == startingBlackKingSquare || move.StartSquare == startingBlackKingRook)
+                    {
+                        blackKingCastle = false;
+                    }
+                    else if (move.StartSquare == startingBlackKingSquare || move.StartSquare == startingBlackQueenRook)
+                    {
+                        blackQueenCastle = false;
+                    }
                 }
             }
         }
