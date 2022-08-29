@@ -59,15 +59,16 @@ namespace UI
                 _chessboard.SetAIMovGen("disable");
                 _chessboard.SelectColor(Piece.White);
                 _chessboard.SetBoard(); //resets board orientation
-                int position = 1;
+                int position = 6;
                 _depthMax = 5;
+                MoveDepthCounter.logDepth = _depthMax;
                 switch (position)
                 {
                     case 1:
                         {
                             // rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
                             _chessboard.SetBoard(Board.START);
-                            int[] vals = { 20, 400, 8902, 197281, 4865609 };
+                            int[] vals = { 20, 400, 8902, 197281, 4865609, 119060324 };
                             expected.AddRange(vals);
                             break;
                         }
@@ -83,7 +84,7 @@ namespace UI
                         {
                             // 8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - - 
                             _chessboard.SetBoard(Board.DEPTHTEST_3);
-                            int[] vals = { 14, 191, 2812, 43238, 674624 };
+                            int[] vals = { 14, 191, 2812, 43238, 674624, 11030083 };
                             expected.AddRange(vals);
                             break;
                         }
@@ -91,22 +92,22 @@ namespace UI
                         {
                             // r3k2r/Pppp1ppp/1b3nbN/nP6/BBP1P3/q4N2/Pp1P2PP/R2Q1RK1 w kq - 0 1
                             _chessboard.SetBoard(Board.DEPTHTEST_4);
-                            int[] vals = { 6, 264, 9467, 422333, 15833292 };
+                            int[] vals = { 6, 264, 9467, 422333, 15833292, 706045033 };
                             expected.AddRange(vals);
                             break;
                         }
                     case 5:
                         {
-                            // rnbq1k1r/pp1Pbppp/2p5/8/2B5/8/PPP1NnPP/RNBQK2R w KQ - 1 8  
+                            // 1k6/1b6/8/8/7R/8/8/4K2R b K - 0 1  
                             _chessboard.SetBoard(Board.DEPTHTEST_5);
-                            int[] vals = { 44, 1486, 62379, 2103487, 89941194 };
+                            int[] vals = { 13, 284, 3529, 85765, 1063513, 27535380 };
                             expected.AddRange(vals);
                             break;
                         }
                     default:
                         {
-                            _chessboard.SetBoard("rnb1kbnr/pp1ppppp/8/q1p5/3P4/P7/1PP1PPPP/RNBQKBNR w KQkq - 1 3");
-                            int[] vals = { 49, 2271, 103088, 4627292, 0 };
+                            _chessboard.SetBoard("8/2p5/3p4/1P5r/K1R2pk1/8/4P1P1/8 b - - 3 2");
+                            int[] vals = { -1, -1, -1, -1, 1833967, -1, -1 };
                             expected.AddRange(vals);
                             break;
                         }
@@ -119,9 +120,12 @@ namespace UI
                 int moveCount = MoveDepthCounter.CountMoves(_depthIdx, _chessboard);
                 watch.Stop();
                 run.Text += "Found " + moveCount + " moves at depth " + _depthIdx + " after " + watch.ElapsedMilliseconds + "ms\n";
-                run.Text += "Expected " + expected[_depthIdx - 1];
-                if (expected[_depthIdx - 1] == moveCount) run.Text += " ✔\n";
-                else run.Text += " ☒\n";
+                if (expected[_depthIdx - 1] != -1)
+                {
+                    run.Text += "Expected " + expected[_depthIdx - 1];
+                    if (expected[_depthIdx - 1] == moveCount) run.Text += " ✔\n";
+                    else run.Text += " ☒\n";
+                }
                 depthlog.Inlines.Add(run);
                 ++_depthIdx;
                 ReloadBoardPieces();
