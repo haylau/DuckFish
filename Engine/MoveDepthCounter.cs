@@ -8,13 +8,13 @@ namespace Engine
             if (depth == 0) return 0; // end search
             if (depth == 1)
             {
-                if (logDepth == 1)
-                {
-                    foreach (Move m in prevBoard.possibleMoves)
-                    {
-                        Console.WriteLine(prevBoard.IndexToString(m.StartSquare) + prevBoard.IndexToString(m.TargetSquare) + ": 1");
-                    }
-                }
+                // if (logDepth == 1)
+                // {
+                //     foreach (Move m in prevBoard.possibleMoves)
+                //     {
+                //         Console.WriteLine(prevBoard.IndexToString(m.StartSquare) + prevBoard.IndexToString(m.TargetSquare) + ": 1");
+                //     }
+                // }
                 return prevBoard.possibleMoves.Count;
             }
             int count = 0;
