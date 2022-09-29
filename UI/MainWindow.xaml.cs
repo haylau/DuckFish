@@ -29,8 +29,8 @@ namespace UI
         bool AIOnly = false;
 
         // Depth Testing Variables
-        private bool runDepthTest = false;
-        private bool runDepthTestSetup = false;
+        private bool runDepthTest = true;
+        private bool runDepthTestSetup = true;
         private int _depthIdx = 1;
         private int _depthMax;
         private List<int> expected = new();
@@ -59,11 +59,7 @@ namespace UI
             }
             if (runDepthTestSetup)
             {
-                var parent = System.IO.Directory.GetParent(Environment.CurrentDirectory);
-                if (parent is null) return;
-                string debugDir = parent.FullName;
-                string outputPath = System.IO.Path.Combine(debugDir, "Debug\\perft.txt");
-                File.Create(outputPath).Close();
+                MoveDepthCounter.Open();
                 runDepthTestSetup = false;
                 depthlog.Inlines.Add("Running Depth Test...\n");
                 _chessboard.SetAIMovGen("disable");
@@ -118,7 +114,7 @@ namespace UI
                         {
                             _chessboard.SetBoard("8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - -");
                             _depthMax = 6;
-                            int[] vals = { 0, 0, 0, 0, 0, 0, 0 };
+                            int[] vals = { 14, 191, 2812, 43238, 674624, 11030083, 0 };
                             expected.AddRange(vals);
                             break;
                         }
@@ -145,8 +141,7 @@ namespace UI
             else if (runDepthTest && _depthIdx > _depthMax)
             {
                 runDepthTest = false;
-                MoveDepthCounter.sw.Close();
-                MoveDepthCounter.fs.Close();
+                MoveDepthCounter.Close();
                 depthlog.Inlines.Add("Depth Test Complete!\n");
             }
             // Forcing the CommandManager to raise the RequerySuggested event
