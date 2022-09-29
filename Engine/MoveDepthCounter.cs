@@ -1,20 +1,25 @@
 namespace Engine
 {
+    using System.IO;
     public static class MoveDepthCounter
     {
+        private static string dir = System.IO.Directory.GetParent(Environment.CurrentDirectory).FullName;
+        private static string path = Path.Combine(dir, "Debug\\perft.txt");
+        public static FileStream fs = new FileStream(path, FileMode.Append, FileAccess.Write);
+        public static StreamWriter sw = new StreamWriter(fs);
         public static int logDepth;
         public static int CountMoves(int depth, Board prevBoard)
         {
             if (depth == 0) return 0; // end search
             if (depth == 1)
             {
-                // if (logDepth == 1)
-                // {
-                //     foreach (Move m in prevBoard.possibleMoves)
-                //     {
-                //         Console.WriteLine(prevBoard.IndexToString(m.StartSquare) + prevBoard.IndexToString(m.TargetSquare) + ": 1");
-                //     }
-                // }
+                if (logDepth == 1)
+                {
+                    foreach (Move m in prevBoard.possibleMoves)
+                    {
+                        sw.WriteLine(prevBoard.IndexToString(m.StartSquare) + prevBoard.IndexToString(m.TargetSquare) + ": 1");
+                    }
+                }
                 return prevBoard.possibleMoves.Count;
             }
             int count = 0;
@@ -28,9 +33,9 @@ namespace Engine
                 {
                     if (move.IsPromotion)
                     {
-                        Console.WriteLine(board.IndexToString(move.StartSquare) + board.IndexToString(move.TargetSquare) + move.PromotionPieceType + ": " + depthCount);
+                        sw.WriteLine(board.IndexToString(move.StartSquare) + board.IndexToString(move.TargetSquare) + move.PromotionPieceType + ": " + depthCount);
                     }
-                    else Console.WriteLine(board.IndexToString(move.StartSquare) + board.IndexToString(move.TargetSquare) + ": " + depthCount);
+                    else sw.WriteLine(board.IndexToString(move.StartSquare) + board.IndexToString(move.TargetSquare) + ": " + depthCount);
                 }
             }
             return count;

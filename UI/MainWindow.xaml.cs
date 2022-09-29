@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
@@ -23,14 +24,18 @@ namespace UI
     {
         private readonly Board _chessboard = new();
         private int _time = 0;
+
         // AI Only
         bool AIOnly = false;
-        // Depth Testing variables
-        bool runDepthTest = true;
-        bool runDepthTestSetup = true;
+
+        // Depth Testing Variables
+        private bool runDepthTest = false;
+        private bool runDepthTestSetup = false;
         private int _depthIdx = 1;
         private int _depthMax;
         private List<int> expected = new();
+        // End Depth Testing Variables
+
         public MainWindow()
         {
             _chessboard.SetAIMovGen("random");
@@ -54,6 +59,11 @@ namespace UI
             }
             if (runDepthTestSetup)
             {
+                var parent = System.IO.Directory.GetParent(Environment.CurrentDirectory);
+                if (parent is null) return;
+                string debugDir = parent.FullName;
+                string outputPath = System.IO.Path.Combine(debugDir, "Debug\\perft.txt");
+                File.Create(outputPath).Close();
                 runDepthTestSetup = false;
                 depthlog.Inlines.Add("Running Depth Test...\n");
                 _chessboard.SetAIMovGen("disable");
@@ -61,7 +71,6 @@ namespace UI
                 _chessboard.SetBoard(); //resets board orientation
                 int position = 6;
                 _depthMax = 5;
-                MoveDepthCounter.logDepth = _depthMax;
                 switch (position)
                 {
                     case 1:
@@ -77,6 +86,7 @@ namespace UI
                             // r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 
                             _chessboard.SetBoard(Board.DEPTHTEST_2);
                             int[] vals = { 48, 2039, 97862, 4085603, 193690690 }; // pos 2
+                            _depthMax = 5; // please dont run this past 5
                             expected.AddRange(vals);
                             break;
                         }
@@ -106,8 +116,9 @@ namespace UI
                         }
                     default:
                         {
-                            _chessboard.SetBoard("8/2p5/3p4/1P5r/K1R2pk1/8/4P1P1/8 b - - 3 2");
-                            int[] vals = { -1, -1, -1, -1, 1833967, -1, -1 };
+                            _chessboard.SetBoard("8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - -");
+                            _depthMax = 6;
+                            int[] vals = { 0, 0, 0, 0, 0, 0, 0 };
                             expected.AddRange(vals);
                             break;
                         }
@@ -115,12 +126,13 @@ namespace UI
             }
             if (runDepthTest && _depthIdx <= _depthMax && _time > 3)
             {
+                MoveDepthCounter.logDepth = _depthMax;
                 Run run = new();
                 var watch = System.Diagnostics.Stopwatch.StartNew();
                 int moveCount = MoveDepthCounter.CountMoves(_depthIdx, _chessboard);
                 watch.Stop();
                 run.Text += "Found " + moveCount + " moves at depth " + _depthIdx + " after " + watch.ElapsedMilliseconds + "ms\n";
-                if (expected[_depthIdx - 1] != -1)
+                if (expected[_depthIdx - 1] != 0)
                 {
                     run.Text += "Expected " + expected[_depthIdx - 1];
                     if (expected[_depthIdx - 1] == moveCount) run.Text += " ✔\n";
@@ -133,6 +145,8 @@ namespace UI
             else if (runDepthTest && _depthIdx > _depthMax)
             {
                 runDepthTest = false;
+                MoveDepthCounter.sw.Close();
+                MoveDepthCounter.fs.Close();
                 depthlog.Inlines.Add("Depth Test Complete!\n");
             }
             // Forcing the CommandManager to raise the RequerySuggested event

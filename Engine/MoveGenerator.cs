@@ -171,7 +171,6 @@ namespace Engine
                 }
             }
         }
-
         private void GenerateKnightMoves(int idx)
         {
             if (pinnedSquares[idx] != -1) return; // pinned knights cannot move
@@ -322,21 +321,18 @@ namespace Engine
         private bool CheckEnPassantCheck(int startSquare, int enpassantSquare)
         {
             int kingSquare = (curTurnColor == Piece.White) ? whiteKingSquare : blackKingSquare;
-            int direction = -1;
-            for (int i = 0; i < 2; ++i)
+            int[] directions = {2, 6}; // check left and right of king
+            foreach (int dir in directions)
             {
-                // check left and right of king
-                if (direction == -1) direction = 2;
-                else if (direction == 2) direction = 6;
-                for (int dist = 0; dist < distToEdge[kingSquare][direction]; ++dist)
+                for (int dist = 0; dist < distToEdge[kingSquare][dir]; ++dist)
                 {
-                    int target = kingSquare + moveOffsets[direction] * (dist + 1); // num moves in a given directio
+                    int target = kingSquare + moveOffsets[dir] * (dist + 1); // num moves in a given directio
                     if (target == startSquare || target == enpassantSquare) continue; // these squares are getting skipped
-                    if (Piece.Color(boardData[target]) == curTurnColor) return false; // piece blocks check
+                    if (Piece.Color(boardData[target]) == curTurnColor) break; // piece blocks check
                     if (Piece.Color(boardData[target]) == opponentTurnColor)
                     {
                         int type = Piece.Type(boardData[target]);
-                        if (type == Piece.Queen || type == Piece.Rook) return true;
+                        if (type == Piece.Queen || type == Piece.Rook) return true; // taking en passant causes check 
                         else break; // opponent piece blocks checks
                     }
                 }
