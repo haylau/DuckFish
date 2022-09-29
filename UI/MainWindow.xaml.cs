@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -14,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 using Engine;
 
 namespace UI
@@ -21,14 +23,143 @@ namespace UI
     public partial class MainWindow : INotifyPropertyChanged
     {
         private readonly Board _chessboard = new();
+        private int _time = 0;
+
+        // AI Only
+        bool AIOnly = false;
+
+        // Depth Testing Variables
+        private bool runDepthTest = false;
+        private bool runDepthTestSetup = false;
+        private int _depthIdx = 1;
+        private int _depthMax;
+        private List<int> expected = new();
+        // End Depth Testing Variables
 
         public MainWindow()
         {
             _chessboard.SetAIMovGen("random");
-            _chessboard.SelectColor(Piece.White); // locks to white
+            // _chessboard.SelectColor(Piece.White); // locks to white
             _chessboard.SetBoard(); // normally starts as random color
             DataContext = this;
             InitializeComponent();
+        }
+        private void dispatcherTimer_Tick(object? sender, EventArgs e)
+        {
+            ++_time;
+            // let the ai play itself :)
+            if (AIOnly)
+            {
+                if (!_chessboard.Checkmate)
+                {
+                    _chessboard.OpponentMove();
+                    ReloadBoardColors();
+                    ReloadBoardPieces();
+                }
+            }
+            if (runDepthTestSetup)
+            {
+                var parent = System.IO.Directory.GetParent(Environment.CurrentDirectory);
+                if (parent is null) return;
+                string debugDir = parent.FullName;
+                string outputPath = System.IO.Path.Combine(debugDir, "Debug\\perft.txt");
+                File.Create(outputPath).Close();
+                runDepthTestSetup = false;
+                depthlog.Inlines.Add("Running Depth Test...\n");
+                _chessboard.SetAIMovGen("disable");
+                _chessboard.SelectColor(Piece.White);
+                _chessboard.SetBoard(); //resets board orientation
+                int position = 6;
+                _depthMax = 5;
+                switch (position)
+                {
+                    case 1:
+                        {
+                            // rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
+                            _chessboard.SetBoard(Board.START);
+                            int[] vals = { 20, 400, 8902, 197281, 4865609, 119060324 };
+                            expected.AddRange(vals);
+                            break;
+                        }
+                    case 2:
+                        {
+                            // r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 
+                            _chessboard.SetBoard(Board.DEPTHTEST_2);
+                            int[] vals = { 48, 2039, 97862, 4085603, 193690690 }; // pos 2
+                            _depthMax = 5; // please dont run this past 5
+                            expected.AddRange(vals);
+                            break;
+                        }
+                    case 3:
+                        {
+                            // 8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - - 
+                            _chessboard.SetBoard(Board.DEPTHTEST_3);
+                            int[] vals = { 14, 191, 2812, 43238, 674624, 11030083 };
+                            expected.AddRange(vals);
+                            break;
+                        }
+                    case 4:
+                        {
+                            // r3k2r/Pppp1ppp/1b3nbN/nP6/BBP1P3/q4N2/Pp1P2PP/R2Q1RK1 w kq - 0 1
+                            _chessboard.SetBoard(Board.DEPTHTEST_4);
+                            int[] vals = { 6, 264, 9467, 422333, 15833292, 706045033 };
+                            expected.AddRange(vals);
+                            break;
+                        }
+                    case 5:
+                        {
+                            // 1k6/1b6/8/8/7R/8/8/4K2R b K - 0 1  
+                            _chessboard.SetBoard(Board.DEPTHTEST_5);
+                            int[] vals = { 13, 284, 3529, 85765, 1063513, 27535380 };
+                            expected.AddRange(vals);
+                            break;
+                        }
+                    default:
+                        {
+                            _chessboard.SetBoard("8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - -");
+                            _depthMax = 6;
+                            int[] vals = { 0, 0, 0, 0, 0, 0, 0 };
+                            expected.AddRange(vals);
+                            break;
+                        }
+                }
+            }
+            if (runDepthTest && _depthIdx <= _depthMax && _time > 3)
+            {
+                MoveDepthCounter.logDepth = _depthMax;
+                Run run = new();
+                var watch = System.Diagnostics.Stopwatch.StartNew();
+                int moveCount = MoveDepthCounter.CountMoves(_depthIdx, _chessboard);
+                watch.Stop();
+                run.Text += "Found " + moveCount + " moves at depth " + _depthIdx + " after " + watch.ElapsedMilliseconds + "ms\n";
+                if (expected[_depthIdx - 1] != 0)
+                {
+                    run.Text += "Expected " + expected[_depthIdx - 1];
+                    if (expected[_depthIdx - 1] == moveCount) run.Text += " ✔\n";
+                    else run.Text += " ☒\n";
+                }
+                depthlog.Inlines.Add(run);
+                ++_depthIdx;
+                ReloadBoardPieces();
+            }
+            else if (runDepthTest && _depthIdx > _depthMax)
+            {
+                runDepthTest = false;
+                MoveDepthCounter.sw.Close();
+                MoveDepthCounter.fs.Close();
+                depthlog.Inlines.Add("Depth Test Complete!\n");
+            }
+            // Forcing the CommandManager to raise the RequerySuggested event
+            CommandManager.InvalidateRequerySuggested();
+        }
+
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+
+            DispatcherTimer dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
+            dispatcherTimer.Tick += new EventHandler(dispatcherTimer_Tick);
+            dispatcherTimer.Interval = TimeSpan.FromSeconds(1);
+            dispatcherTimer.Start();
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -281,7 +412,6 @@ namespace UI
         private void PieceDrop(object sender, DragEventArgs e)
         {
             if (e.Data.GetData(DataFormats.Serializable) is not Image fromImg) return;
-
             if (sender is not UniformGrid uniformGrid) return;
             if (uniformGrid.Children[0] is not Grid grid) return;
             if (grid.Children[0] is not Image toImg) return;

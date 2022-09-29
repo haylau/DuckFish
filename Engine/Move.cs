@@ -16,8 +16,7 @@ namespace Engine
         }
 
         readonly ushort moveValue;
-
-        const ushort startSquareMask = 0b0000000000111111;
+        const ushort startSquareMask  = 0b0000000000111111;
         const ushort targetSquareMask = 0b0000111111000000;
         const ushort flagMask = 0b1111000000000000;
 

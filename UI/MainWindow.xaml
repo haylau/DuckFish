@@ -6,22 +6,26 @@
         xmlns:local="clr-namespace:UI"
         mc:Ignorable="d"
         Icon="Assets\duckfish.ico"
-        Title="DuckFish" Height="800" Width="800">
-    <Grid>
+        Title="DuckFish" Height="1080" Width="1920"
+        Loaded="MainWindow_Loaded">
+    <Grid Background="{StaticResource BorderColor}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="20"/>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition />
-            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="1000"/>
+            <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="20"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="20"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition />
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="1000"/>
+            <RowDefinition Height="*"/>
             <RowDefinition Height="20"/>
         </Grid.RowDefinitions>
+        <TextBlock Grid.Column="1" Grid.Row="2" Name="depthlog" FontSize="18">
+            <Run/>
+        </TextBlock>
         <Border Grid.Column="2" Grid.Row="2" BorderThickness="40" BorderBrush="{StaticResource BorderColor}">
             <UniformGrid Name="board" Grid.Column="2" Grid.Row="2" Columns="8" Rows="8">
 
