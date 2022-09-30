@@ -29,7 +29,7 @@ namespace UI
         bool AIOnly = false;
 
         // Depth Testing Variables
-        private bool runDepthTest = false;
+        private bool runDepthTest = false; // if enabled create Debug Folder in source directory
         private bool runDepthTestSetup = false;
         private int _depthIdx = 1;
         private int _depthMax;
