@@ -30,7 +30,7 @@ namespace UI
 
         // Depth Testing Variables
         private bool runDepthTest = false; // if enabled create Debug Folder in source directory
-        private bool runDepthTestSetup = false;
+        private bool runDepthTestSetup;
         private int _depthIdx = 1;
         private int _depthMax;
         private List<int> expected = new();
@@ -41,6 +41,8 @@ namespace UI
             _chessboard.SetAIMovGen("random");
             // _chessboard.SelectColor(Piece.White); // locks to white
             _chessboard.SetBoard(); // normally starts as random color
+            runDepthTestSetup = runDepthTest;
+
             DataContext = this;
             InitializeComponent();
         }
@@ -65,8 +67,8 @@ namespace UI
                 _chessboard.SetAIMovGen("disable");
                 _chessboard.SelectColor(Piece.White);
                 _chessboard.SetBoard(); //resets board orientation
-                int position = 6;
-                _depthMax = 5;
+                int position = 1;
+                _depthMax = 6;
                 switch (position)
                 {
                     case 1:
@@ -82,7 +84,7 @@ namespace UI
                             // r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 
                             _chessboard.SetBoard(Board.DEPTHTEST_2);
                             int[] vals = { 48, 2039, 97862, 4085603, 193690690 }; // pos 2
-                            _depthMax = 5; // please dont run this past 5
+                            if(_depthMax > 5) _depthMax = 5; // dont run this past 5
                             expected.AddRange(vals);
                             break;
                         }
@@ -112,8 +114,8 @@ namespace UI
                         }
                     default:
                         {
-                            _chessboard.SetBoard("8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - -");
-                            _depthMax = 6;
+                            _chessboard.SetBoard("r3k2r/p1ppqpb1/bn2pnp1/3PN1B1/1p2P3/2N2Q1p/PPP1BPPP/R3K2R b KQkq - 1 1");
+                            _depthMax = 1;
                             int[] vals = { 14, 191, 2812, 43238, 674624, 11030083, 0 };
                             expected.AddRange(vals);
                             break;

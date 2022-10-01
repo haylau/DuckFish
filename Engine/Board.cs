@@ -111,7 +111,7 @@ namespace Engine
         private List<Move> prevMoves;
         private MoveGenerator moveGenerator = default!;
         private int boardOrientation = Piece.White;
-        private int curTurn;
+        private int curTurnColor;
         private int playerColor;
         private int gameState;
 
@@ -125,7 +125,7 @@ namespace Engine
         {
             boardData = new int[64];
             prevMoves = new();
-            SetBoard(board.boardData, board.prevMoves, board.curTurn);
+            SetBoard(board.boardData, board.prevMoves, board.curTurnColor);
         }
         public bool InCheck
         {
@@ -152,14 +152,14 @@ namespace Engine
         {
             get
             {
-                return curTurn;
+                return curTurnColor;
             }
         }
         public int KingTile
         {
             get
             {
-                return curTurn == Piece.White ? moveGenerator.whiteKingSquare : moveGenerator.blackKingSquare;
+                return curTurnColor == Piece.White ? moveGenerator.whiteKingSquare : moveGenerator.blackKingSquare;
             }
         }
         public List<Move> possibleMoves
@@ -256,7 +256,7 @@ namespace Engine
             }
 
         }
-        public string IndexToString(int idx)
+        public static string IndexToString(int idx)
         {
             string str = "";
             int file = idx % 8;
@@ -285,7 +285,7 @@ namespace Engine
         public void SetBoard() // Default board setup and random turn
         {
             // Decide Turn
-            this.curTurn = Piece.White;
+            this.curTurnColor = Piece.White;
             if (lockWhite || (!lockBlack && rdm.Next() % 2 == 0))
             {
                 this.boardOrientation = Piece.White;
@@ -295,7 +295,7 @@ namespace Engine
             {
                 this.boardOrientation = Piece.Black;
                 this.playerColor = Piece.Black;
-                if (AIDisabled) this.playerColor = curTurn; // Lets player move opponent 
+                if (AIDisabled) this.playerColor = curTurnColor; // Lets player move opponent 
             }
             SetBoard(START);
         }
@@ -319,11 +319,11 @@ namespace Engine
                     if (token.Equals(' ') || token.Equals('-')) continue;
                     else if (token.Equals('w'))
                     {
-                        this.curTurn = Piece.White;
+                        this.curTurnColor = Piece.White;
                     }
                     else if (token.Equals('b'))
                     {
-                        this.curTurn = Piece.Black;
+                        this.curTurnColor = Piece.Black;
                     }
                     else if (token.Equals('K')) castle_wk = true;
                     else if (token.Equals('Q')) castle_wq = true;
@@ -445,12 +445,12 @@ namespace Engine
                     continue;
                 }
             }
-            if (AIDisabled) this.playerColor = curTurn;
-            moveGenerator = new MoveGenerator(boardData, curTurn, prevMoves);
+            if (AIDisabled) this.playerColor = curTurnColor;
+            moveGenerator = new MoveGenerator(boardData, curTurnColor, prevMoves);
         }
         public void SetBoard(int[] boardData, List<Move> prevMoves, int curTurn)
         {
-            this.curTurn = curTurn;
+            this.curTurnColor = curTurn;
             for (int i = 0; i < boardData.Length; ++i)
             {
                 this.boardData[i] = boardData[i];
@@ -469,7 +469,7 @@ namespace Engine
 
         public bool IsMoveable(string tile) // checks if a piece is able to be moved
         {
-            if (curTurn != playerColor) return false; // not the players turn
+            if (curTurnColor != playerColor) return false; // not the players turn
             int idx = TileToIndex(tile);
             if (boardOrientation == Piece.Black)
             {
@@ -559,11 +559,11 @@ namespace Engine
             }
             if (Piece.Type(boardData[idxFrom]) == Piece.King)
             {
-                if (curTurn == Piece.White && idxFrom == startingWhiteKingSquare)
+                if (curTurnColor == Piece.White && idxFrom == startingWhiteKingSquare)
                 {
                     if (idxTo == startingWhiteKingSquare - 2 || idxTo == startingWhiteKingSquare + 2) return Move.Flag.Castling;
                 }
-                if (curTurn == Piece.Black && idxFrom == startingBlackKingSquare)
+                if (curTurnColor == Piece.Black && idxFrom == startingBlackKingSquare)
                 {
                     if (idxTo == startingBlackKingSquare - 2 || idxTo == startingBlackKingSquare + 2) return Move.Flag.Castling;
                 }
@@ -575,8 +575,8 @@ namespace Engine
         {
             if (moveGenerator.inCheck) // curTurn player is in check with no legal moves
             {
-                if (curTurn == Piece.White) gameState = blackCheckmate;
-                else if (curTurn == Piece.Black) gameState = whiteCheckmate;
+                if (curTurnColor == Piece.White) gameState = blackCheckmate;
+                else if (curTurnColor == Piece.Black) gameState = whiteCheckmate;
                 else throw new Exception("Invalid Player State");
             }
             else gameState = stalemate; // curTurn player is NOT in check with no legal moves
@@ -594,66 +594,7 @@ namespace Engine
                 idxTo = flippedBoard[idxTo];
             }
             prevMoves.Add(new Move(idxFrom, idxTo, flag));
-            boardData[idxTo] = boardData[idxFrom]; // from -> to
-            boardData[idxFrom] = Piece.Empty; // from is now empty
-            if (flag == Move.Flag.PromoteToQueen)
-            {
-                boardData[idxTo] = curTurn + Piece.Queen;
-            }
-            if (flag == Move.Flag.PromoteToRook)
-            {
-                boardData[idxTo] = curTurn + Piece.Rook;
-            }
-            if (flag == Move.Flag.PromoteToKnight)
-            {
-                boardData[idxTo] = curTurn + Piece.Knight;
-            }
-            if (flag == Move.Flag.PromoteToBishop)
-            {
-                boardData[idxTo] = curTurn + Piece.Bishop;
-            }
-            if (flag == Move.Flag.EnPassantCapture)
-            {
-                // Remove pawn captured en passant
-                if (curTurn == Piece.White)
-                {
-                    boardData[idxTo - pawnForward] = Piece.Empty;
-                }
-                if (curTurn == Piece.Black)
-                {
-                    boardData[idxTo + pawnForward] = Piece.Empty;
-                }
-            }
-            if (flag == Move.Flag.Castling)
-            {
-                // Move Rook
-                if (curTurn == Piece.White)
-                {
-                    if (idxTo == startingWhiteKingSquare - 2)
-                    {
-                        boardData[59] = Piece.White + Piece.Rook;
-                        boardData[56] = Piece.Empty;
-                    }
-                    if (idxTo == startingWhiteKingSquare + 2)
-                    {
-                        boardData[61] = Piece.White + Piece.Rook;
-                        boardData[63] = Piece.Empty;
-                    }
-                }
-                if (curTurn == Piece.Black)
-                {
-                    if (idxTo == startingBlackKingSquare - 2)
-                    {
-                        boardData[3] = Piece.Black + Piece.Rook;
-                        boardData[0] = Piece.Empty;
-                    }
-                    if (idxTo == startingBlackKingSquare + 2)
-                    {
-                        boardData[5] = Piece.Black + Piece.Rook;
-                        boardData[7] = Piece.Empty;
-                    }
-                }
-            }
+            boardData = Move.MakeMove(boardData, curTurnColor, new Move(idxFrom, idxTo, flag));
         }
         public void PlayerMove(string fromTile, string toTile, int flag)
         {
@@ -664,9 +605,9 @@ namespace Engine
             // make player move
             MakeMove(fromTile, toTile, flag);
             // swap turns
-            curTurn = curTurn == Piece.White ? Piece.Black : Piece.White; // swap game turn
+            curTurnColor = curTurnColor == Piece.White ? Piece.Black : Piece.White; // swap game turn
             // generate opponent legal moves
-            moveGenerator = new MoveGenerator(boardData, curTurn, prevMoves);
+            moveGenerator = new MoveGenerator(boardData, curTurnColor, prevMoves);
             if (moveGenerator.possibleMoves.Count == 0) ResolveGame(); // player has checkmate or stalemate is on board 
             else if (moveGenerator.inCheck)
             {
@@ -678,7 +619,7 @@ namespace Engine
             }
             if (AIDisabled)
             {
-                playerColor = curTurn; // player moves both
+                playerColor = curTurnColor; // player moves both
             }
         }
         public void OpponentMove()
@@ -692,8 +633,8 @@ namespace Engine
             }
 
             // generate player legal moves
-            curTurn = curTurn == Piece.White ? Piece.Black : Piece.White; // swap game turn
-            moveGenerator = new MoveGenerator(boardData, curTurn, prevMoves);
+            curTurnColor = curTurnColor == Piece.White ? Piece.Black : Piece.White; // swap game turn
+            moveGenerator = new MoveGenerator(boardData, curTurnColor, prevMoves);
             if (moveGenerator.possibleMoves.Count == 0) ResolveGame(); // opponent has checkmate or stalemate is on board
             else if (moveGenerator.inCheck)
             {
