@@ -6,7 +6,8 @@ namespace Engine
         public static FileStream? fs;
         public static StreamWriter? sw;
         public static int logDepth;
-        public static void Open() {   
+        public static void Open()
+        {
             var dir = System.IO.Directory.GetParent(Environment.CurrentDirectory);
             if (dir is null) return;
             string path = Path.Combine(dir.FullName, "Debug\\perft.txt");
@@ -14,15 +15,16 @@ namespace Engine
             fs = new FileStream(path, FileMode.Append, FileAccess.Write);
             sw = new StreamWriter(fs);
         }
-        public static void Close() {
-            if(sw is null) return;
+        public static void Close()
+        {
+            if (sw is null) return;
             sw.Close();
-            if(fs is null) return;
+            if (fs is null) return;
             fs.Close();
         }
-        public static int CountMoves(int depth, Board board) 
+        public static int CountMoves(int depth, Board board)
         {
-            return CountMoves(depth, new MoveGenerator(board.BoardData, board.playerTurn, board.PreviousMoves));
+            return CountMoves(depth, new MoveGenerator(board.BoardData, board.CurrentTurn, board.PreviousMoves));
         }
         public static int CountMoves(int depth, MoveGenerator curMoves)
         {
@@ -33,7 +35,7 @@ namespace Engine
                 {
                     foreach (Move m in curMoves.possibleMoves)
                     {
-                        if(sw is null) throw new Exception("Depth Counter was not opened");
+                        if (sw is null) throw new Exception("Depth Counter was not opened");
                         sw.WriteLine(Board.IndexToString(m.StartSquare) + Board.IndexToString(m.TargetSquare) + ": 1");
                     }
                 }
@@ -48,14 +50,14 @@ namespace Engine
                 {
                     if (move.IsPromotion)
                     {
-                        if(sw is null) throw new Exception("Depth Counter was not opened");
+                        if (sw is null) throw new Exception("Depth Counter was not opened");
                         sw.WriteLine(Board.IndexToString(move.StartSquare) + Board.IndexToString(move.TargetSquare) + move.PromotionPieceType + ": " + depthCount);
                     }
-                    else 
+                    else
                     {
-                        if(sw is null) throw new Exception("Depth Counter was not opened");
+                        if (sw is null) throw new Exception("Depth Counter was not opened");
                         sw.WriteLine(Board.IndexToString(move.StartSquare) + Board.IndexToString(move.TargetSquare) + ": " + depthCount);
-                    } 
+                    }
                 }
             }
             return count;

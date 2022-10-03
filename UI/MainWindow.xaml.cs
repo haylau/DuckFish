@@ -24,12 +24,12 @@ namespace UI
     {
         private readonly Board _chessboard = new();
         private int _time = 0;
-
-        // AI Only
-        bool AIOnly = false;
+        // Engine Mode
+        bool AIOnly;
+        bool PlayerOnly;
 
         // Depth Testing Variables
-        private bool runDepthTest = false; // if enabled create Debug Folder in source directory
+        private bool runDepthTest; // if enabled create Debug Folder in source directory
         private bool runDepthTestSetup;
         private int _depthIdx = 1;
         private int _depthMax;
@@ -38,17 +38,45 @@ namespace UI
 
         public MainWindow()
         {
-            _chessboard.SetAIMovGen("random");
-            // _chessboard.SelectColor(Piece.White); // locks to white
-            _chessboard.SetBoard(); // normally starts as random color
+            // debug flags
+            this.AIOnly = false;
+            this.PlayerOnly = false;
+            this.runDepthTest = false;
             runDepthTestSetup = runDepthTest;
 
+            if (PlayerOnly)
+            {
+                _chessboard.SetAIMovGen("disable");
+            }
+            else
+            {
+                // _chessboard.SetAIMovGen("random");
+                _chessboard.SetAIMovGen("engine");
+            }
+
+            _chessboard.SelectColor("white"); // locks to white
+            // _chessboard.SelectColor("black"); // locks to black
+            _chessboard.SetBoard(); // Sets to STARTPOS
             DataContext = this;
             InitializeComponent();
         }
         private void dispatcherTimer_Tick(object? sender, EventArgs e)
         {
             ++_time;
+
+            if (!PlayerOnly && _chessboard.PlayerTurn != _chessboard.CurrentTurn)
+            {
+                _chessboard.OpponentMove(5);
+                List<int> prevMove = _chessboard.GetPrevMove();
+                ReloadBoardPieces();
+                UpdateMoveHighlight(prevMove[0], prevMove[1]);
+                if (_chessboard.InCheck)
+                {
+                    CheckPiece(_chessboard.KingTile); // player in check
+                    if (_chessboard.Checkmate) { return; } // #TODO handle player has won  
+                }
+            }
+
             // let the ai play itself :)
             if (AIOnly)
             {
@@ -65,7 +93,7 @@ namespace UI
                 runDepthTestSetup = false;
                 depthlog.Inlines.Add("Running Depth Test...\n");
                 _chessboard.SetAIMovGen("disable");
-                _chessboard.SelectColor(Piece.White);
+                _chessboard.SelectColor("white");
                 _chessboard.SetBoard(); //resets board orientation
                 int position = 1;
                 _depthMax = 6;
@@ -74,7 +102,7 @@ namespace UI
                     case 1:
                         {
                             // rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
-                            _chessboard.SetBoard(Board.START);
+                            _chessboard.SetBoard(Board.STARTPOS);
                             int[] vals = { 20, 400, 8902, 197281, 4865609, 119060324 };
                             expected.AddRange(vals);
                             break;
@@ -84,7 +112,7 @@ namespace UI
                             // r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 
                             _chessboard.SetBoard(Board.DEPTHTEST_2);
                             int[] vals = { 48, 2039, 97862, 4085603, 193690690 }; // pos 2
-                            if(_depthMax > 5) _depthMax = 5; // dont run this past 5
+                            if (_depthMax > 5) _depthMax = 5; // dont run this past 5
                             expected.AddRange(vals);
                             break;
                         }
@@ -152,11 +180,12 @@ namespace UI
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-
             DispatcherTimer dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
             dispatcherTimer.Tick += new EventHandler(dispatcherTimer_Tick);
             dispatcherTimer.Interval = TimeSpan.FromSeconds(1);
             dispatcherTimer.Start();
+            ReloadBoardColors();
+            ReloadBoardPieces();
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -387,8 +416,7 @@ namespace UI
                 }
             }
         }
-
-        private void HighlightPiece(int tile)
+        private void CheckPiece(int tile)
         {
             if (board.Children[tile] is not UniformGrid uniformGrid) return;
             uniformGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(App.Current.Resources["CheckHighlight"].ToString()));
@@ -426,26 +454,14 @@ namespace UI
             }
             if (_chessboard.IsLegal(fromTile, toTile, flag))
             {
+                // make player's move
                 _chessboard.PlayerMove(fromTile, toTile, flag);
                 ReloadBoardPieces();
                 UpdateMoveHighlight(fromTile, toTile);
+                // check gamestate 
                 if (_chessboard.InCheck)
                 {
-                    HighlightPiece(_chessboard.KingTile); // opponent in check
-                    if (_chessboard.Checkmate) { return; } // #TODO handle player has won  
-                    _chessboard.OpponentMove();
-                    ReloadBoardColors();
-                }
-                else
-                {
-                    _chessboard.OpponentMove();
-                }
-                List<int> prevMove = _chessboard.GetPrevMove();
-                ReloadBoardPieces();
-                UpdateMoveHighlight(prevMove[0], prevMove[1]);
-                if (_chessboard.InCheck)
-                {
-                    HighlightPiece(_chessboard.KingTile); // player in check
+                    CheckPiece(_chessboard.KingTile); // opponent in check
                     if (_chessboard.Checkmate) { return; } // #TODO handle player has won  
                 }
             }
