@@ -11,6 +11,11 @@ namespace Engine
         public int[] boardData;
         public List<int> whitePieces;
         public List<int> blackPieces;
+        public List<int> pawnSquares;
+        public List<int> knightSquares;
+        public List<int> bishopSquares;
+        public List<int> rookSquares;
+        public List<int> queenSquares;
         public bool[] attackedSquares;
         public bool[] checkedSquares;
         public int[] pinnedSquares; // pinnedSquare[idx] = direction  
@@ -64,6 +69,11 @@ namespace Engine
             this.checkingPiece = -1;
             this.whitePieces = new();
             this.blackPieces = new();
+            this.pawnSquares = new();
+            this.knightSquares = new();
+            this.bishopSquares = new();
+            this.rookSquares = new();
+            this.queenSquares = new();
             LocatePieces();
             CalculateAttackedSquares();
             CalculatePinnedSquares();
@@ -89,36 +99,19 @@ namespace Engine
                 }
                 return;
             }
-            foreach (int idx in (curTurnColor == Piece.White) ? whitePieces : blackPieces)
-            {
-                int piece = boardData[idx];
-                int type = Piece.Type(piece);
-                switch (type)
-                {
-                    case Piece.Queen:
-                    case Piece.Rook:
-                    case Piece.Bishop:
-                        {
-                            GenerateLinearMoves(idx, piece, type);
-                            break;
-                        }
-                    case Piece.Knight:
-                        {
-                            GenerateKnightMoves(idx);
-                            break;
-                        }
-                    case Piece.Pawn:
-                        {
-                            GeneratePawnMoves(idx);
-                            break;
-                        }
-                    case Piece.King:
-                        {
-                            GenerateKingMoves(idx);
-                            break;
-                        }
-                }
+            foreach (int idx in queenSquares) {
+                GenerateLinearMoves(idx, boardData[idx], Piece.Queen);
             }
+            foreach (int idx in rookSquares) {
+                GenerateLinearMoves(idx, boardData[idx], Piece.Rook);
+            }
+            foreach (int idx in bishopSquares) {
+                GenerateLinearMoves(idx, boardData[idx], Piece.Bishop);
+            }
+            foreach (int idx in knightSquares) {
+                GenerateKnightMoves(idx);
+            }
+            GenerateKingMoves(kingSquare);
         }
 
         private void GenerateLinearMoves(int idx, int piece, int type) // Queen / Rook / Bishop
@@ -385,8 +378,36 @@ namespace Engine
         }
         private void LocatePieces()
         {
+            Action<int> addToLists = idx => {
+                if(Piece.Color(boardData[idx]) != curTurnColor) return; 
+                switch(Piece.Type(boardData[idx])) {
+                    case(Piece.Pawn) : {
+                        this.pawnSquares.Add(idx);
+                        break;
+                    }
+                    case(Piece.Knight) : {
+                        this.knightSquares.Add(idx);
+                        break;
+                    }
+                    case(Piece.Bishop) : {
+                        this.bishopSquares.Add(idx);
+                        break;
+                    }
+                    case(Piece.Rook) : {
+                        this.rookSquares.Add(idx);
+                        break;
+                    }
+                    case(Piece.Queen) : {
+                        this.queenSquares.Add(idx);
+                        break;
+                    }
+                };
+            };
+
             for (int idx = 0; idx < boardData.Length; ++idx)
             {
+                if (Piece.Type(boardData[idx]) == Piece.Empty) continue;
+                addToLists(idx); // adds piece to curTurn's list of pieces 
                 if (Piece.Color(boardData[idx]) == Piece.White)
                 {
                     whitePieces.Add(idx);
