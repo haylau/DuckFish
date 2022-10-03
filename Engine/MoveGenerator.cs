@@ -35,6 +35,15 @@ namespace Engine
         public bool inCheck;
         public bool inDoubleCheck; // only check king moves
         public bool inKnightOrPawnCheck; // don't check for interposing moves
+        public bool IsCheckmate
+        {
+            get
+            {
+                return this.possibleMoves.Count == 0;
+            }
+        }
+
+        // #TODO store move types
         /* 
             * a8 b8 c8 d8 e8 f8 g8 h8 | 00 01 02 03 04 05 06 07
             * a7 b7 c7 d7 e7 f7 g7 h7 | 08 09 10 11 12 13 14 15
@@ -46,22 +55,29 @@ namespace Engine
             * a2 b2 c2 d2 e2 f2 g2 h2 | 48 49 50 51 52 53 54 55
             * a1 b1 c1 d1 e1 f1 g1 h1 | 56 57 58 59 60 61 62 63
             */
-        public MoveGenerator(int[] boardData, int curTurnColor, List<Move> prevMoves)
+        public MoveGenerator(int[] boardData, int curTurnColor, List<Move>? prevMoves = default, Move curMove = default)
         {
-            this.boardData = boardData;
-            if (prevMoves is List<Move>)
-            {
-                this.prevMoves = prevMoves;
-            }
-            else
+            this.boardData = new int[boardData.Length];
+            boardData.CopyTo(this.boardData, 0);
+            if (prevMoves is null)
             {
                 this.prevMoves = new();
             }
+            else
+            {
+                this.prevMoves = new(prevMoves);
+            }
             this.curTurnColor = curTurnColor;
-            this.opponentTurnColor = curTurnColor == Piece.White ? Piece.Black : Piece.White;
-            this.pawnForwardDistance = curTurnColor == Piece.White ? pawnForward : -1 * pawnForward;
-            this.pawnLeftDistance = curTurnColor == Piece.White ? pawnLeftCapture : -1 * pawnLeftCapture;
-            this.pawnRightDistance = curTurnColor == Piece.White ? pawnRightCapture : -1 * pawnRightCapture;
+            if (!curMove.IsInvalid)
+            {
+                this.boardData = Move.MakeMove(this.boardData, this.curTurnColor, curMove);
+                this.curTurnColor = this.curTurnColor == Piece.White ? Piece.Black : Piece.White; // swap game turn
+                this.prevMoves.Add(curMove);
+            }
+            this.opponentTurnColor = this.curTurnColor == Piece.White ? Piece.Black : Piece.White;
+            this.pawnForwardDistance = this.curTurnColor == Piece.White ? pawnForward : -1 * pawnForward;
+            this.pawnLeftDistance = this.curTurnColor == Piece.White ? pawnLeftCapture : -1 * pawnLeftCapture;
+            this.pawnRightDistance = this.curTurnColor == Piece.White ? pawnRightCapture : -1 * pawnRightCapture;
             this.possibleMoves = new();
             this.attackedSquares = new bool[64];
             this.checkedSquares = new bool[64];
@@ -95,6 +111,7 @@ namespace Engine
                     {
                         if (Piece.Color(boardData[target]) == curTurnColor) continue; // cannot capture own piece
                         possibleMoves.Add(new Move(kingSquare, target));
+                        
                     }
                 }
                 return;
@@ -260,9 +277,15 @@ namespace Engine
                         {
                             if (kingSquare - (kingSquare % 8) == idx - (idx % 8))
                             {
-                                if (!CheckEnPassantCheck(idx, enpassantTarget)) AddPawnMoves(idx, target, isPromotion, Move.Flag.EnPassantCapture);
+                                if (!CheckEnPassantCheck(idx, enpassantTarget))
+                                {
+                                    AddPawnMoves(idx, target, isPromotion, Move.Flag.EnPassantCapture);
+                                }
                             }
-                            else AddPawnMoves(idx, target, isPromotion, Move.Flag.EnPassantCapture);
+                            else
+                            {
+                                AddPawnMoves(idx, target, isPromotion, Move.Flag.EnPassantCapture);
+                            }
                         }
                     }
                 }
@@ -278,9 +301,14 @@ namespace Engine
                         {
                             if (kingSquare - (kingSquare % 8) == idx - (idx % 8))
                             {
-                                if (!CheckEnPassantCheck(idx, enpassantTarget)) AddPawnMoves(idx, target, isPromotion, Move.Flag.EnPassantCapture);
+                                if (!CheckEnPassantCheck(idx, enpassantTarget))
+                                {
+                                    AddPawnMoves(idx, target, isPromotion, Move.Flag.EnPassantCapture);
+                                }
                             }
-                            else AddPawnMoves(idx, target, isPromotion, Move.Flag.EnPassantCapture);
+                            else
+                            {
+                                AddPawnMoves(idx, target, isPromotion, Move.Flag.EnPassantCapture);                            }
                         }
                     }
                 }
@@ -290,7 +318,7 @@ namespace Engine
         {
             if (inCheck)
             {
-                if (checkedSquares[target] || target == checkingPiece || (flag == Move.Flag.EnPassantCapture && checkingPiece == (target - pawnForwardDistance)) )
+                if (checkedSquares[target] || target == checkingPiece || (flag == Move.Flag.EnPassantCapture && checkingPiece == (target - pawnForwardDistance)))
                 {
                     if (isPromotion)
                     {
@@ -314,7 +342,7 @@ namespace Engine
         private bool CheckEnPassantCheck(int startSquare, int enpassantSquare)
         {
             int kingSquare = (curTurnColor == Piece.White) ? whiteKingSquare : blackKingSquare;
-            int[] directions = {2, 6}; // check left and right of king
+            int[] directions = { 2, 6 }; // check left and right of king
             foreach (int dir in directions)
             {
                 for (int dist = 0; dist < distToEdge[kingSquare][dir]; ++dist)
@@ -349,7 +377,7 @@ namespace Engine
             if (kingCastle)
             {
                 // These squares cannot be attacked and must be empty 
-                int[] castlingSquares = new int[2]; 
+                int[] castlingSquares = new int[2];
                 castlingSquares[0] = curTurnColor == Piece.White ? 62 : 6;
                 castlingSquares[1] = curTurnColor == Piece.White ? 61 : 5;
                 if (Piece.Type(boardData[castlingSquares[0]]) == Piece.Empty && Piece.Type(boardData[castlingSquares[1]]) == Piece.Empty)
@@ -613,12 +641,12 @@ namespace Engine
                         return; // Castling cannot be legal anymore
                     }
                     // Kingside rook has moved or has been taken; king side castling is illegal
-                    if (move.StartSquare == startingKingRook || move.TargetSquare == startingKingRook) 
+                    if (move.StartSquare == startingKingRook || move.TargetSquare == startingKingRook)
                     {
                         kingCastle = false;
                     }
                     // Queenside rook has moved or has been taken; king side castling is illegal
-                    if (move.StartSquare == startingQueenRook || move.TargetSquare == startingQueenRook) 
+                    if (move.StartSquare == startingQueenRook || move.TargetSquare == startingQueenRook)
                     {
                         queenCastle = false;
                     }

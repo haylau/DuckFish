@@ -16,7 +16,7 @@ namespace Engine
         }
 
         readonly ushort moveValue;
-        const ushort startSquareMask  = 0b0000000000111111;
+        const ushort startSquareMask = 0b0000000000111111;
         const ushort targetSquareMask = 0b0000111111000000;
         const ushort flagMask = 0b1111000000000000;
 
@@ -95,26 +95,77 @@ namespace Engine
                 return new Move(0);
             }
         }
-
-        public static bool SameMove(Move a, Move b)
-        {
-            return a.moveValue == b.moveValue;
-        }
-
-        public ushort Value
-        {
-            get
-            {
-                return moveValue;
-            }
-        }
-
         public bool IsInvalid
         {
             get
             {
                 return moveValue == 0;
             }
+        }
+        // Helper function to mutate boardData
+        public static int[] MakeMove(int[] boardData, int curTurnColor, Move move)
+        {
+            boardData[move.TargetSquare] = boardData[move.StartSquare]; // from -> to
+            boardData[move.StartSquare] = Piece.Empty; // from is now empty
+            if (move.MoveFlag == Move.Flag.PromoteToQueen)
+            {
+                boardData[move.TargetSquare] = curTurnColor + Piece.Queen;
+            }
+            if (move.MoveFlag == Move.Flag.PromoteToRook)
+            {
+                boardData[move.TargetSquare] = curTurnColor + Piece.Rook;
+            }
+            if (move.MoveFlag == Move.Flag.PromoteToKnight)
+            {
+                boardData[move.TargetSquare] = curTurnColor + Piece.Knight;
+            }
+            if (move.MoveFlag == Move.Flag.PromoteToBishop)
+            {
+                boardData[move.TargetSquare] = curTurnColor + Piece.Bishop;
+            }
+            if (move.MoveFlag == Move.Flag.EnPassantCapture)
+            {
+                // Remove pawn captured en passant
+                if (curTurnColor == Piece.White)
+                {
+                    boardData[move.TargetSquare - MoveData.pawnForward] = Piece.Empty;
+                }
+                if (curTurnColor == Piece.Black)
+                {
+                    boardData[move.TargetSquare + MoveData.pawnForward] = Piece.Empty;
+                }
+            }
+            if (move.MoveFlag == Move.Flag.Castling)
+            {
+                // Move Rook
+                if (curTurnColor == Piece.White)
+                {
+                    if (move.TargetSquare == MoveData.startingWhiteKingSquare - 2)
+                    {
+                        boardData[59] = Piece.White + Piece.Rook;
+                        boardData[56] = Piece.Empty;
+                    }
+                    if (move.TargetSquare == MoveData.startingWhiteKingSquare + 2)
+                    {
+                        boardData[61] = Piece.White + Piece.Rook;
+                        boardData[63] = Piece.Empty;
+                    }
+                }
+                if (curTurnColor == Piece.Black)
+                {
+                    if (move.TargetSquare == MoveData.startingBlackKingSquare - 2)
+                    {
+                        boardData[3] = Piece.Black + Piece.Rook;
+                        boardData[0] = Piece.Empty;
+                    }
+                    if (move.TargetSquare == MoveData.startingBlackKingSquare + 2)
+                    {
+                        boardData[5] = Piece.Black + Piece.Rook;
+                        boardData[7] = Piece.Empty;
+                    }
+                }
+            }
+            return boardData;
         }
     }
 }
