@@ -39,7 +39,7 @@ namespace UI
         public MainWindow()
         {
             // debug flags
-            this.AIOnly = true;
+            this.AIOnly = false;
             this.PlayerOnly = false;
             this.runDepthTest = false;
             runDepthTestSetup = runDepthTest;
@@ -64,12 +64,13 @@ namespace UI
         {
             ++_time;
 
-            if (!PlayerOnly && _chessboard.PlayerTurn != _chessboard.CurrentTurn)
+            if (AIOnly || (!PlayerOnly && _chessboard.PlayerTurn != _chessboard.CurrentTurn))
             {
                 _chessboard.OpponentMove(5);
                 List<int> prevMove = _chessboard.GetPrevMove();
                 ReloadBoardPieces();
                 UpdateMoveHighlight(prevMove[0], prevMove[1]);
+                Thread.Sleep(500);
                 if (_chessboard.InCheck)
                 {
                     CheckPiece(_chessboard.KingTile); // player in check
@@ -77,16 +78,6 @@ namespace UI
                 }
             }
 
-            // let the ai play itself :)
-            if (AIOnly)
-            {
-                if (!_chessboard.Checkmate)
-                {
-                    _chessboard.OpponentMove();
-                    ReloadBoardColors();
-                    ReloadBoardPieces();
-                }
-            }
             if (runDepthTestSetup)
             {
                 MoveDepthCounter.Open();

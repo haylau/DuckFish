@@ -156,6 +156,7 @@ namespace Engine
         private Move bestMove;
         private int numNodes;
         private int halfmove;
+        private int numPieces; // number of non-pawn or king pieces
         private MoveGenerator originalPosition;
         public MoveEvaluator(MoveGenerator moveGen)
         {
@@ -163,8 +164,12 @@ namespace Engine
             this.halfmove = 0;
             this.bestMove = Move.InvalidMove;
             this.originalPosition = new MoveGenerator(moveGen.boardData, moveGen.curTurnColor, moveGen.prevMoves);
+            this.numPieces = originalPosition.knightSquares.Count
+                           + originalPosition.bishopSquares.Count
+                           + originalPosition.rookSquares.Count
+                           + originalPosition.queenSquares.Count;
         }
-        private static int getPositionalValue(int idx, int type)
+        private int getPositionalValue(int idx, int type)
         {
             switch (type)
             {
@@ -190,7 +195,14 @@ namespace Engine
                     }
                 case (Piece.King):
                     {
-                        return posVal_King[idx];
+                        if (numPieces < 8) // king can be more active now
+                        {
+                            return posVal_KingEndgame[idx];
+                        }
+                        else
+                        {
+                            return posVal_King[idx];
+                        }
                     }
                 default:
                     {
@@ -199,10 +211,10 @@ namespace Engine
             }
         }
 
-        public static int EvaluateMove(MoveGenerator moveGen)
+        public int EvaluateMove(MoveGenerator moveGen)
         {
             // #TODO Improve eval function; currently only considers material
-            if (moveGen.IsCheckmate) return moveGen.curTurnColor == Piece.White ? whiteCheckmate : blackCheckmate;
+            if (moveGen.IsCheckmate) return moveGen.curTurnColor == Piece.White ? blackCheckmate : whiteCheckmate;
             int boardVal = 0;
             foreach (int idx in moveGen.whitePieces)
             {
@@ -214,13 +226,13 @@ namespace Engine
                 boardVal -= pieceValue[Piece.Type(moveGen.boardData[idx])];
                 boardVal -= getPositionalValue(flippedBoard[idx], Piece.Type(moveGen.boardData[idx]));
             }
-            return boardVal;
+            return moveGen.curTurnColor == Piece.White ? boardVal : -1 * boardVal;
         }
 
         public Move Search(int depth)
         {
             int eval = NegaMax(originalPosition, depth, blackCheckmate, whiteCheckmate);
-            if(bestMove.IsInvalid)
+            if (bestMove.IsInvalid)
             {
                 return originalPosition.possibleMoves[rdm.Next(0, originalPosition.possibleMoves.Count)]; // #TODO prevent choosing no move 
             }
@@ -233,7 +245,7 @@ namespace Engine
             {
                 ++this.numNodes;
                 return EvaluateMove(moveGenerator);
-            }   
+            }
             int bound = alpha;
             Move runningBestMove = Move.InvalidMove;
             foreach (Move move in moveGenerator.possibleMoves)
