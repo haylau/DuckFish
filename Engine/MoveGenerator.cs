@@ -9,13 +9,13 @@ namespace Engine
         public List<Move> prevMoves;
         public List<Move> possibleMoves;
         public int[] boardData;
-        public List<int> whitePieces;
-        public List<int> blackPieces;
-        public List<int> pawnSquares;
-        public List<int> knightSquares;
-        public List<int> bishopSquares;
-        public List<int> rookSquares;
-        public List<int> queenSquares;
+        public List<int> whitePieces; // convert to bitboards
+        public List<int> blackPieces; // convert to bitboards
+        public List<int> pawnSquares; // convert to bitboards
+        public List<int> knightSquares; // convert to bitboards
+        public List<int> bishopSquares; // convert to bitboards
+        public List<int> rookSquares; // convert to bitboards
+        public List<int> queenSquares; // convert to bitboards
         public bool[] attackedSquares;
         public bool[] checkedSquares;
         public int[] pinnedSquares; // pinnedSquare[idx] = direction  
@@ -111,22 +111,30 @@ namespace Engine
                     {
                         if (Piece.Color(boardData[target]) == curTurnColor) continue; // cannot capture own piece
                         possibleMoves.Add(new Move(kingSquare, target));
-                        
+
                     }
                 }
                 return;
             }
-            foreach (int idx in queenSquares) {
+            foreach (int idx in queenSquares)
+            {
                 GenerateLinearMoves(idx, boardData[idx], Piece.Queen);
             }
-            foreach (int idx in rookSquares) {
+            foreach (int idx in rookSquares)
+            {
                 GenerateLinearMoves(idx, boardData[idx], Piece.Rook);
             }
-            foreach (int idx in bishopSquares) {
+            foreach (int idx in bishopSquares)
+            {
                 GenerateLinearMoves(idx, boardData[idx], Piece.Bishop);
             }
-            foreach (int idx in knightSquares) {
+            foreach (int idx in knightSquares)
+            {
                 GenerateKnightMoves(idx);
+            }
+            foreach (int idx in pawnSquares) 
+            {
+                GeneratePawnMoves(idx);
             }
             GenerateKingMoves(kingSquare);
         }
@@ -308,7 +316,8 @@ namespace Engine
                             }
                             else
                             {
-                                AddPawnMoves(idx, target, isPromotion, Move.Flag.EnPassantCapture);                            }
+                                AddPawnMoves(idx, target, isPromotion, Move.Flag.EnPassantCapture);
+                            }
                         }
                     }
                 }
@@ -406,29 +415,36 @@ namespace Engine
         }
         private void LocatePieces()
         {
-            Action<int> addToLists = idx => {
-                if(Piece.Color(boardData[idx]) != curTurnColor) return; 
-                switch(Piece.Type(boardData[idx])) {
-                    case(Piece.Pawn) : {
-                        this.pawnSquares.Add(idx);
-                        break;
-                    }
-                    case(Piece.Knight) : {
-                        this.knightSquares.Add(idx);
-                        break;
-                    }
-                    case(Piece.Bishop) : {
-                        this.bishopSquares.Add(idx);
-                        break;
-                    }
-                    case(Piece.Rook) : {
-                        this.rookSquares.Add(idx);
-                        break;
-                    }
-                    case(Piece.Queen) : {
-                        this.queenSquares.Add(idx);
-                        break;
-                    }
+            Action<int> addToLists = idx =>
+            {
+                if (Piece.Color(boardData[idx]) != curTurnColor) return;
+                switch (Piece.Type(boardData[idx]))
+                {
+                    case (Piece.Pawn):
+                        {
+                            this.pawnSquares.Add(idx);
+                            break;
+                        }
+                    case (Piece.Knight):
+                        {
+                            this.knightSquares.Add(idx);
+                            break;
+                        }
+                    case (Piece.Bishop):
+                        {
+                            this.bishopSquares.Add(idx);
+                            break;
+                        }
+                    case (Piece.Rook):
+                        {
+                            this.rookSquares.Add(idx);
+                            break;
+                        }
+                    case (Piece.Queen):
+                        {
+                            this.queenSquares.Add(idx);
+                            break;
+                        }
                 };
             };
 

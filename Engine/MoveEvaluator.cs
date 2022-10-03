@@ -15,11 +15,78 @@ namespace Engine
             {Piece.Queen, 900},
             {Piece.King, 0} // checkmate already set to -100000/100000 int
         };
+        private static readonly Dictionary<int, int> flippedBoard = new()
+        {
+            {0, 56},
+            {1, 57},
+            {2, 58},
+            {3, 59},
+            {4, 60},
+            {5, 61},
+            {6, 62},
+            {7, 63},
+            {8, 48},
+            {9, 49},
+            {10, 50},
+            {11, 51},
+            {12, 52},
+            {13, 53},
+            {14, 54},
+            {15, 55},
+            {16, 40},
+            {17, 41},
+            {18, 42},
+            {19, 43},
+            {20, 44},
+            {21, 45},
+            {22, 46},
+            {23, 47},
+            {24, 32},
+            {25, 33},
+            {26, 34},
+            {27, 35},
+            {28, 36},
+            {29, 37},
+            {30, 38},
+            {31, 39},
+            {32, 24},
+            {33, 25},
+            {34, 26},
+            {35, 27},
+            {36, 28},
+            {37, 29},
+            {38, 30},
+            {39, 31},
+            {40, 16},
+            {41, 17},
+            {42, 18},
+            {43, 19},
+            {44, 20},
+            {45, 21},
+            {46, 22},
+            {47, 23},
+            {48, 8},
+            {49, 9},
+            {50, 10},
+            {51, 11},
+            {52, 12},
+            {53, 13},
+            {54, 14},
+            {55, 15},
+            {56, 0},
+            {57, 1},
+            {58, 2},
+            {59, 3},
+            {60, 4},
+            {61, 5},
+            {62, 6},
+            {63, 7}
+        };
         public static readonly int[] posVal_Pawns = {
             0,  0,  0,  0,  0,  0,  0,  0,
             50, 50, 50, 30, 30, 50, 50, 50,
             10, 10, 20, 30, 30, 20, 10, 10,
-            5,  5, 10, 55, 55, 10,  5,  5,
+            5,  5, 10, 25, 25, 10,  5,  5,
             0,  0,  0, 20, 20,  0,  0,  0,
             5, -5,-10,  0,  0,-10, -5,  5,
             5, 10, 10,-20,-20, 10, 10,  5,
@@ -145,7 +212,7 @@ namespace Engine
             foreach (int idx in moveGen.blackPieces)
             {
                 boardVal -= pieceValue[Piece.Type(moveGen.boardData[idx])];
-                boardVal -= getPositionalValue(idx, Piece.Type(moveGen.boardData[idx]));
+                boardVal -= getPositionalValue(flippedBoard[idx], Piece.Type(moveGen.boardData[idx]));
             }
             return boardVal;
         }
@@ -166,7 +233,7 @@ namespace Engine
             {
                 ++this.numNodes;
                 return EvaluateMove(moveGenerator);
-            }
+            }   
             int bound = alpha;
             Move runningBestMove = Move.InvalidMove;
             foreach (Move move in moveGenerator.possibleMoves)

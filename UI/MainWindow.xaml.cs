@@ -39,7 +39,7 @@ namespace UI
         public MainWindow()
         {
             // debug flags
-            this.AIOnly = false;
+            this.AIOnly = true;
             this.PlayerOnly = false;
             this.runDepthTest = false;
             runDepthTestSetup = runDepthTest;
