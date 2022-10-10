@@ -7,8 +7,8 @@ namespace Engine
         public int curTurnColor;
         public int opponentTurnColor;
         public List<Move> prevMoves;
-        public List<Move> possibleMoves;
-        public int[] boardData;
+        public List<Tuple<Move, int>> possibleMoves;
+        public int[] boardData; // convert to bitboards
         public List<int> whitePieces; // convert to bitboards
         public List<int> blackPieces; // convert to bitboards
         public List<int> pawnSquares; // convert to bitboards
@@ -39,7 +39,33 @@ namespace Engine
         {
             get
             {
-                return this.possibleMoves.Count == 0;
+                return this.PossibleMoves.Count == 0;
+            }
+        }
+        public List<Move> PossibleMoves
+        {
+            get
+            {
+                // sort moves by move order
+                possibleMoves = possibleMoves.OrderByDescending(b => b.Item2).ToList();
+                List<Move> moves = new();
+                foreach (Tuple<Move, int> move in this.possibleMoves)
+                {
+                    moves.Add(move.Item1);
+                }
+                return moves;
+            }
+        }
+        public List<Move> OrderedMoves
+        {
+            get
+            {
+                List<Move> moves = new();
+                foreach (Tuple<Move, int> move in this.possibleMoves)
+                {
+                    moves.Add(move.Item1);
+                }
+                return moves;
             }
         }
 
@@ -98,6 +124,107 @@ namespace Engine
             GenerateMoves();
         }
 
+        private void AddMove(Move move)
+        {
+            int weight = 0;
+            // Check if captures opponent
+            if (Piece.Color(boardData[move.TargetSquare]) == opponentTurnColor)
+            {
+                weight += moveCapture;
+            }
+            // Check if checking opponent (m.Target square --> opponentKingSquare)
+            int type = Piece.Type(boardData[move.StartSquare]);
+            if (move.IsPromotion)
+            {
+                switch (move.MoveFlag)
+                {
+                    case (Move.Flag.PromoteToQueen):
+                        {
+                            type = Piece.Queen;
+                            break;
+                        }
+                    case (Move.Flag.PromoteToRook):
+                        {
+                            type = Piece.Rook;
+                            break;
+                        }
+                    case (Move.Flag.PromoteToBishop):
+                        {
+                            type = Piece.Bishop;
+                            break;
+                        }
+                    case (Move.Flag.PromoteToKnight):
+                        {
+                            type = Piece.Knight;
+                            break;
+                        }
+                }
+            }
+            int opponentKingSquare = (curTurnColor == Piece.White) ? blackKingSquare : whiteKingSquare;
+            switch (type)
+            {
+                case (Piece.Queen):
+                case (Piece.Rook):
+                case (Piece.Bishop):
+                    {
+                        for (int direction = 0; direction < moveOffsets.Length; ++direction)
+                        {
+                            if (type == Piece.Bishop && direction % 2 == 0) continue; // Bishops cannot move cardinally
+                            if (type == Piece.Rook && direction % 2 == 1) continue; // Rooks cannot move diagonally
+                            for (int dist = 0; dist < distToEdge[opponentKingSquare][direction]; ++dist) // check for interposing moves 
+                            {
+                                int target = opponentKingSquare + moveOffsets[direction] * (dist + 1); // scan outwards from opponent king
+                                if (move.TargetSquare == target) // reached the checking piece; no more interposing moves
+                                {
+                                    weight += moveCheck;
+                                    goto AddMove; // move checks opponent; stop searching
+                                }
+                                if (Piece.Type(boardData[target]) != Piece.Empty) // Square can be used to block check
+                                {
+
+                                }
+                            }
+                        }
+                        break;
+                    }
+                case (Piece.Knight):
+                    {
+                        foreach (int target in knightMoves[move.TargetSquare])
+                        {
+                            if (target == opponentKingSquare)
+                            {
+                                weight += moveCheck;
+                                goto AddMove;
+                            }
+                        }
+                        break;
+                    }
+                case (Piece.Pawn):
+                    {
+                        bool leftCapture = curTurnColor == Piece.White ? move.TargetSquare % 8 != 0 : (move.TargetSquare + 1) % 8 != 0;
+                        bool rightCapture = curTurnColor == Piece.White ? (move.TargetSquare + 1) % 8 != 0 : move.TargetSquare % 8 != 0;
+                        if (leftCapture && move.TargetSquare + pawnLeftDistance == opponentKingSquare)
+                        {
+                            weight += moveCheck;
+                            goto AddMove;
+                        }
+                        if (rightCapture && move.TargetSquare + pawnRightDistance == opponentKingSquare)
+                        {
+                            weight += moveCheck;
+                            goto AddMove;
+                        }
+                        break;
+                    }
+                default:
+                    {
+                        break;
+                    }
+            }
+        AddMove:
+            // Add <move, weight>
+            possibleMoves.Add(new Tuple<Move, int>(move, weight));
+        }
+
         private void GenerateMoves() // generates a list of all current legal moves
         {
 
@@ -110,8 +237,7 @@ namespace Engine
                     if (distToEdge[kingSquare][direction] > 0 && attackedSquares[target] == false)
                     {
                         if (Piece.Color(boardData[target]) == curTurnColor) continue; // cannot capture own piece
-                        possibleMoves.Add(new Move(kingSquare, target));
-
+                        AddMove(new Move(kingSquare, target));
                     }
                 }
                 return;
@@ -132,7 +258,7 @@ namespace Engine
             {
                 GenerateKnightMoves(idx);
             }
-            foreach (int idx in pawnSquares) 
+            foreach (int idx in pawnSquares)
             {
                 GeneratePawnMoves(idx);
             }
@@ -161,12 +287,12 @@ namespace Engine
                             {
                                 if (target == checkingPiece)
                                 {
-                                    possibleMoves.Add(new Move(idx, target));
+                                    AddMove(new Move(idx, target));
                                 }
                             }
                             else
                             {
-                                possibleMoves.Add(new Move(idx, target));
+                                AddMove(new Move(idx, target));
                             }
                         }
                         break;
@@ -178,12 +304,12 @@ namespace Engine
                         {
                             if (!inKnightOrPawnCheck && checkedSquares[target])
                             {
-                                possibleMoves.Add(new Move(idx, target));
+                                AddMove(new Move(idx, target));
                             }
                         }
                         else
                         {
-                            possibleMoves.Add(new Move(idx, target));
+                            AddMove(new Move(idx, target));
                         }
                     }
                 }
@@ -199,19 +325,19 @@ namespace Engine
                 {
                     if (checkingPiece == target) // capturing checking piece is legal
                     {
-                        possibleMoves.Add(new Move(idx, target));
+                        AddMove(new Move(idx, target));
                     }
                     if (!inKnightOrPawnCheck) // interposing moves are also legal
                     {
                         if (checkedSquares[target])
                         {
-                            possibleMoves.Add(new Move(idx, target));
+                            AddMove(new Move(idx, target));
                         }
                     }
                 }
                 else
                 {
-                    possibleMoves.Add(new Move(idx, target));
+                    AddMove(new Move(idx, target));
                 }
             }
         }
@@ -331,22 +457,22 @@ namespace Engine
                 {
                     if (isPromotion)
                     {
-                        this.possibleMoves.Add(new Move(idx, target, Move.Flag.PromoteToQueen));
-                        this.possibleMoves.Add(new Move(idx, target, Move.Flag.PromoteToRook));
-                        this.possibleMoves.Add(new Move(idx, target, Move.Flag.PromoteToKnight));
-                        this.possibleMoves.Add(new Move(idx, target, Move.Flag.PromoteToBishop));
+                        AddMove(new Move(idx, target, Move.Flag.PromoteToQueen));
+                        AddMove(new Move(idx, target, Move.Flag.PromoteToRook));
+                        AddMove(new Move(idx, target, Move.Flag.PromoteToKnight));
+                        AddMove(new Move(idx, target, Move.Flag.PromoteToBishop));
                     }
-                    else possibleMoves.Add(new Move(idx, target, flag));
+                    else AddMove(new Move(idx, target, flag));
                 }
             }
             else if (isPromotion)
             {
-                this.possibleMoves.Add(new Move(idx, target, Move.Flag.PromoteToQueen));
-                this.possibleMoves.Add(new Move(idx, target, Move.Flag.PromoteToRook));
-                this.possibleMoves.Add(new Move(idx, target, Move.Flag.PromoteToKnight));
-                this.possibleMoves.Add(new Move(idx, target, Move.Flag.PromoteToBishop));
+                AddMove(new Move(idx, target, Move.Flag.PromoteToQueen));
+                AddMove(new Move(idx, target, Move.Flag.PromoteToRook));
+                AddMove(new Move(idx, target, Move.Flag.PromoteToKnight));
+                AddMove(new Move(idx, target, Move.Flag.PromoteToBishop));
             }
-            else possibleMoves.Add(new Move(idx, target, flag));
+            else AddMove(new Move(idx, target, flag));
         }
         private bool CheckEnPassantCheck(int startSquare, int enpassantSquare)
         {
@@ -378,7 +504,7 @@ namespace Engine
                 if (distToEdge[idx][direction] > 0 && attackedSquares[target] == false)
                 {
                     if (Piece.Color(boardData[target]) == curTurnColor) continue; // cannot capture own piece
-                    possibleMoves.Add(new Move(idx, target));
+                    AddMove(new Move(idx, target));
                 }
             }
             // Castling
@@ -393,7 +519,7 @@ namespace Engine
                 {
                     if (!attackedSquares[castlingSquares[0]] && !attackedSquares[castlingSquares[1]])
                     {
-                        possibleMoves.Add(new Move(kingSquare, startingKingRook - 1, Move.Flag.Castling));
+                        AddMove(new Move(kingSquare, startingKingRook - 1, Move.Flag.Castling));
                     }
                 }
             }
@@ -408,7 +534,7 @@ namespace Engine
                 {
                     if (!attackedSquares[castlingSquares[1]] && !attackedSquares[castlingSquares[2]])
                     {
-                        possibleMoves.Add(new Move(kingSquare, startingQueenRook + 2, Move.Flag.Castling));
+                        AddMove(new Move(kingSquare, startingQueenRook + 2, Move.Flag.Castling));
                     }
                 }
             }

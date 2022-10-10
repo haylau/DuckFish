@@ -39,6 +39,9 @@ namespace Engine
         public const int whiteCheckmate = 3; // White has a victory
         public const int blackCheckmate = 4; // Black has a victory
         public const int stalemate = 5;
+        public const int moveCapture = 3;
+        public const int moveCheck = 2;
+        public const int moveQuiet = 0;
         static MoveData()
         {
             /* 

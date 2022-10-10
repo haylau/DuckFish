@@ -4,6 +4,8 @@ namespace Engine
     using static MoveData;
     public class MoveEvaluator
     {
+        private bool debug = true;
+        private System.Diagnostics.Stopwatch? watch;
         public const int whiteCheckmate = 100000;
         public const int blackCheckmate = -100000;
         public static readonly Dictionary<int, int> pieceValue = new()
@@ -231,10 +233,22 @@ namespace Engine
 
         public Move Search(int depth)
         {
+            if (debug)
+            {
+                var watch = System.Diagnostics.Stopwatch.StartNew();
+            }
             int eval = NegaMax(originalPosition, depth, blackCheckmate, whiteCheckmate);
             if (bestMove.IsInvalid)
             {
-                return originalPosition.possibleMoves[rdm.Next(0, originalPosition.possibleMoves.Count)]; // #TODO prevent choosing no move 
+                return originalPosition.OrderedMoves[rdm.Next(0, originalPosition.OrderedMoves.Count)]; // #TODO prevent choosing no move 
+            }
+            if (debug)
+            {
+                if (watch is not null)
+                {
+                    watch.Stop();
+                    Console.WriteLine("Searched: " + this.numNodes + " after " + watch.ElapsedMilliseconds + "ms\n" + " eval: " + eval);
+                }
             }
             return bestMove;
         }
@@ -248,7 +262,7 @@ namespace Engine
             }
             int bound = alpha;
             Move runningBestMove = Move.InvalidMove;
-            foreach (Move move in moveGenerator.possibleMoves)
+            foreach (Move move in moveGenerator.OrderedMoves)
             {
                 ++this.halfmove;
                 MoveGenerator nextPosition = new MoveGenerator(moveGenerator.boardData, moveGenerator.curTurnColor, moveGenerator.prevMoves, move);

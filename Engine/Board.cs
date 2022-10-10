@@ -173,7 +173,7 @@ namespace Engine
         {
             get
             {
-                return moveGenerator.possibleMoves;
+                return moveGenerator.PossibleMoves;
             }
         }
         public int[] BoardData
@@ -214,7 +214,7 @@ namespace Engine
         {
             if (boardOrientation == Piece.Black) from = flippedBoard[from]; // swap to white perspective
             List<int> legalTargets = new();
-            foreach (Move m in moveGenerator.possibleMoves)
+            foreach (Move m in moveGenerator.PossibleMoves)
             {
                 if (m.StartSquare == from && !legalTargets.Contains(m.TargetSquare))
                 {
@@ -639,7 +639,7 @@ namespace Engine
             moveGenerator = new MoveGenerator(boardData, curTurnColor, prevMoves);
 
             // check gamestate
-            if (moveGenerator.possibleMoves.Count == 0)
+            if (moveGenerator.PossibleMoves.Count == 0)
             {
                 ResolveGame(); // player has checkmate or stalemate is on board 
                 return;
@@ -656,7 +656,7 @@ namespace Engine
             if (AIMove_Disabled) return; // player will reuse PlayerMove() 
             if (AIMove_Random)
             {
-                Move m = moveGenerator.possibleMoves[rdm.Next(0, moveGenerator.possibleMoves.Count)];
+                Move m = moveGenerator.PossibleMoves[rdm.Next(0, moveGenerator.PossibleMoves.Count)];
                 MakeMove(m.StartSquare, m.TargetSquare, m.MoveFlag);
             }
             if (AIMove_Engine)
@@ -669,7 +669,7 @@ namespace Engine
             // generate player legal moves
             curTurnColor = curTurnColor == Piece.White ? Piece.Black : Piece.White; // swap game turn
             moveGenerator = new MoveGenerator(boardData, curTurnColor, prevMoves);
-            if (moveGenerator.possibleMoves.Count == 0) ResolveGame(); // opponent has checkmate or stalemate is on board
+            if (moveGenerator.PossibleMoves.Count == 0) ResolveGame(); // opponent has checkmate or stalemate is on board
             else if (moveGenerator.inCheck)
             {
                 gameState = CurrentTurn == Piece.White ? whiteCheck : blackCheck;

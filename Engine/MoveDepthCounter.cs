@@ -33,16 +33,16 @@ namespace Engine
             {
                 if (logDepth == 1)
                 {
-                    foreach (Move m in curMoves.possibleMoves)
+                    foreach (Move m in curMoves.PossibleMoves)
                     {
                         if (sw is null) throw new Exception("Depth Counter was not opened");
                         sw.WriteLine(Board.IndexToString(m.StartSquare) + Board.IndexToString(m.TargetSquare) + ": 1");
                     }
                 }
-                return curMoves.possibleMoves.Count;
+                return curMoves.PossibleMoves.Count;
             }
             int count = 0;
-            foreach (Move move in curMoves.possibleMoves)
+            foreach (Move move in curMoves.PossibleMoves)
             {
                 int depthCount = CountMoves(depth - 1, new MoveGenerator(curMoves.boardData, curMoves.curTurnColor, new List<Move>(curMoves.prevMoves), move));
                 count += depthCount;
