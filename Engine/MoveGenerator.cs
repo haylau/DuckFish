@@ -9,15 +9,26 @@ namespace Engine
         public List<Move> prevMoves;
         public List<Tuple<Move, int>> possibleMoves;
         public int[] boardData; // convert to bitboards
+        public ulong bb_board;
         public List<int> whitePieces; // convert to bitboards
+        public ulong bb_white;
         public List<int> blackPieces; // convert to bitboards
+        public ulong bb_black;
         public List<int> pawnSquares; // convert to bitboards
+        public ulong bb_pawn;
         public List<int> knightSquares; // convert to bitboards
+        public ulong bb_knight;
         public List<int> bishopSquares; // convert to bitboards
+        public ulong bb_bishop;
         public List<int> rookSquares; // convert to bitboards
+        public ulong bb_rook;
         public List<int> queenSquares; // convert to bitboards
+        public ulong bb_queen;
+        public ulong bb_king;
         public bool[] attackedSquares;
+        public ulong bb_attacked;
         public bool[] checkedSquares;
+        public ulong bb_checked;
         public int[] pinnedSquares; // pinnedSquare[idx] = direction  
         public int pawnForwardDistance;
         public int pawnLeftDistance;
@@ -85,6 +96,7 @@ namespace Engine
         {
             this.boardData = new int[boardData.Length];
             boardData.CopyTo(this.boardData, 0);
+            ulong bitboard = BitBoard.convertToBitBoard(boardData);
             if (prevMoves is null)
             {
                 this.prevMoves = new();
@@ -541,52 +553,83 @@ namespace Engine
         }
         private void LocatePieces()
         {
-            Action<int> addToLists = idx =>
+
+            Action shiftBitBoards = () =>
             {
-                if (Piece.Color(boardData[idx]) != curTurnColor) return;
-                switch (Piece.Type(boardData[idx]))
+                this.bb_white <<= 1;
+                this.bb_black <<= 1;
+
+                this.bb_queen <<= 1;
+                this.bb_rook <<= 1;
+                this.bb_bishop <<= 1;
+                this.bb_knight <<= 1;
+                this.bb_pawn <<= 1;
+            };
+
+            Action<int> addBitBoards = piece =>
+            {
+                switch (Piece.Color(piece))
+                {
+                    case (Piece.White):
+                        {
+                            this.bb_white |= 1;
+                            break;
+                        }
+                    case (Piece.Black):
+                        {
+                            this.bb_black |= 1;
+                            break;
+                        }
+                }
+                switch (Piece.Type(piece))
                 {
                     case (Piece.Pawn):
                         {
-                            this.pawnSquares.Add(idx);
+                            this.bb_pawn |= 1;
                             break;
                         }
                     case (Piece.Knight):
                         {
-                            this.knightSquares.Add(idx);
+                            this.bb_knight |= 1;
                             break;
                         }
                     case (Piece.Bishop):
                         {
-                            this.bishopSquares.Add(idx);
+                            this.bb_bishop |= 1;
                             break;
                         }
                     case (Piece.Rook):
                         {
-                            this.rookSquares.Add(idx);
+                            this.bb_rook |= 1;
                             break;
                         }
                     case (Piece.Queen):
                         {
-                            this.queenSquares.Add(idx);
+                            this.bb_queen |= 1;
+                            break;
+                        }
+                    case (Piece.King):
+                        {
+                            this.bb_king |= 1;
                             break;
                         }
                 };
+                shiftBitBoards();
             };
 
             for (int idx = 0; idx < boardData.Length; ++idx)
             {
-                if (Piece.Type(boardData[idx]) == Piece.Empty) continue;
-                addToLists(idx); // adds piece to curTurn's list of pieces 
-                if (Piece.Color(boardData[idx]) == Piece.White)
+                int piece = boardData[idx];
+                if (piece == Piece.Empty)
                 {
-                    whitePieces.Add(idx);
-                    if (Piece.Type(boardData[idx]) == Piece.King) whiteKingSquare = idx;
+                    shiftBitBoards();
+                    continue;
                 }
-                else if (Piece.Color(boardData[idx]) == Piece.Black)
+                addBitBoards(piece);
+                if(Piece.Type(piece) == Piece.King)
                 {
-                    blackPieces.Add(idx);
-                    if (Piece.Type(boardData[idx]) == Piece.King) blackKingSquare = idx;
+                    if(Piece.Color(piece) == Piece.White) whiteKingSquare = idx;
+                    if(Piece.Color(piece) == Piece.Black) blackKingSquare = idx;
                 }
             }
             this.kingSquare = (curTurnColor == Piece.White) ? whiteKingSquare : blackKingSquare;
