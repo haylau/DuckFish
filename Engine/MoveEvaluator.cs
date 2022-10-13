@@ -2,12 +2,15 @@
 namespace Engine
 {
     using static MoveData;
+
     public class MoveEvaluator
     {
+
         private bool debug = true;
         private System.Diagnostics.Stopwatch? watch;
         public const int whiteCheckmate = 100000;
         public const int blackCheckmate = -100000;
+        public static Dictionary<string, int> ttable;
         public static readonly Dictionary<int, int> pieceValue = new()
         {
             {Piece.Pawn, 100},
@@ -170,6 +173,7 @@ namespace Engine
                            + originalPosition.bishopSquares.Count
                            + originalPosition.rookSquares.Count
                            + originalPosition.queenSquares.Count;
+            ttable = new(); //#TODO import/export ttable
         }
         private int getPositionalValue(int idx, int type)
         {
@@ -286,6 +290,13 @@ namespace Engine
             }
             if (bound != alpha) bestMove = runningBestMove;
             return alpha;
+        }
+
+        private string ZHash(MoveGenerator moveGen, int depth)
+        {
+            string hash = "";
+
+            return hash;
         }
     }
 }
