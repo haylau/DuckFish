@@ -8,26 +8,21 @@ namespace Engine
         public int opponentTurnColor;
         public List<Move> prevMoves;
         public List<Tuple<Move, int>> possibleMoves;
-        public int[] boardData; // convert to bitboards
+        public int[] initalBoardData; 
         public ulong bb_board;
-        public List<int> whitePieces; // convert to bitboards
+        public ulong bb_currentColor;
+        public ulong bb_opponentColor;
         public ulong bb_white;
-        public List<int> blackPieces; // convert to bitboards
         public ulong bb_black;
-        public List<int> pawnSquares; // convert to bitboards
         public ulong bb_pawn;
-        public List<int> knightSquares; // convert to bitboards
         public ulong bb_knight;
-        public List<int> bishopSquares; // convert to bitboards
         public ulong bb_bishop;
-        public List<int> rookSquares; // convert to bitboards
         public ulong bb_rook;
-        public List<int> queenSquares; // convert to bitboards
         public ulong bb_queen;
         public ulong bb_king;
         public bool[] attackedSquares;
         public ulong bb_attacked;
-        public bool[] checkedSquares;
+        public bool[] checkedSquares; // convert to bitboard
         public ulong bb_checked;
         public int[] pinnedSquares; // pinnedSquare[idx] = direction  
         public int pawnForwardDistance;
@@ -94,8 +89,8 @@ namespace Engine
             */
         public MoveGenerator(int[] boardData, int curTurnColor, List<Move>? prevMoves = default, Move curMove = default)
         {
-            this.boardData = new int[boardData.Length];
-            boardData.CopyTo(this.boardData, 0);
+            this.initalBoardData = new int[boardData.Length];
+            boardData.CopyTo(this.initalBoardData, 0);
             ulong bitboard = BitBoard.convertToBitBoard(boardData);
             if (prevMoves is null)
             {
@@ -108,7 +103,7 @@ namespace Engine
             this.curTurnColor = curTurnColor;
             if (!curMove.IsInvalid)
             {
-                this.boardData = Move.MakeMove(this.boardData, this.curTurnColor, curMove);
+                this.initalBoardData = Move.MakeMove(this.initalBoardData, this.curTurnColor, curMove);
                 this.curTurnColor = this.curTurnColor == Piece.White ? Piece.Black : Piece.White; // swap game turn
                 this.prevMoves.Add(curMove);
             }
@@ -121,13 +116,6 @@ namespace Engine
             this.checkedSquares = new bool[64];
             this.pinnedSquares = new int[64];
             this.checkingPiece = -1;
-            this.whitePieces = new();
-            this.blackPieces = new();
-            this.pawnSquares = new();
-            this.knightSquares = new();
-            this.bishopSquares = new();
-            this.rookSquares = new();
-            this.queenSquares = new();
             LocatePieces();
             CalculateAttackedSquares();
             CalculatePinnedSquares();
@@ -140,7 +128,8 @@ namespace Engine
         {
             int weight = 0;
             // Check if captures opponent
-            if (Piece.Color(boardData[move.TargetSquare]) == opponentTurnColor)
+            // if (Piece.Color(boardData[move.TargetSquare]) == opponentTurnColor)
+            if (((bb_opponentColor >> move.TargetSquare ) & 1) == 1)
             {
                 weight += moveCapture;
             }
@@ -633,6 +622,8 @@ namespace Engine
                 }
             }
             this.kingSquare = (curTurnColor == Piece.White) ? whiteKingSquare : blackKingSquare;
+            this.bb_currentColor  = curTurnColor == Piece.White ? this.bb_white : this.bb_black;
+            this.bb_opponentColor = curTurnColor == Piece.White ? this.bb_black : this.bb_white;
         }
         private void CalculateAttackedSquares()
         {
