@@ -5,12 +5,12 @@ namespace Engine
 
     public class MoveEvaluator
     {
-
         private bool debug = true;
         private System.Diagnostics.Stopwatch? watch;
         public const int whiteCheckmate = 100000;
         public const int blackCheckmate = -100000;
-        public static Dictionary<string, int> ttable;
+        public const string tt_salt = "9021"; // CHANGE IF EVAL FUNCTION CHANGES
+        public static Dictionary<int, int> ttable = new();
         public static readonly Dictionary<int, int> pieceValue = new()
         {
             {Piece.Pawn, 100},
@@ -173,7 +173,7 @@ namespace Engine
                            + originalPosition.bishopSquares.Count
                            + originalPosition.rookSquares.Count
                            + originalPosition.queenSquares.Count;
-            ttable = new(); //#TODO import/export ttable
+            //#TODO import/export ttable
         }
         private int getPositionalValue(int idx, int type)
         {
@@ -224,7 +224,7 @@ namespace Engine
             int boardVal = 0;
             foreach (int idx in moveGen.whitePieces)
             {
-                boardVal += pieceValue[Piece.Type(moveGen.boardData[idx])];
+                boardVal += pieceValue[Piece.Type(moveGen.boardData[idx])];  
                 boardVal += getPositionalValue(idx, Piece.Type(moveGen.boardData[idx]));
             }
             foreach (int idx in moveGen.blackPieces)
@@ -237,10 +237,8 @@ namespace Engine
 
         public Move Search(int depth)
         {
-            if (debug)
-            {
-                var watch = System.Diagnostics.Stopwatch.StartNew();
-            }
+            if (debug) watch = System.Diagnostics.Stopwatch.StartNew();
+
             int eval = NegaMax(originalPosition, depth, blackCheckmate, whiteCheckmate);
             if (bestMove.IsInvalid)
             {
@@ -259,10 +257,14 @@ namespace Engine
 
         private int NegaMax(MoveGenerator moveGenerator, int depth, int alpha, int beta)
         {
+            int zhash = ZHash(moveGenerator, depth);
+            if (ttable.ContainsKey(zhash)) return ttable[zhash];
             if (depth == 0)
             {
                 ++this.numNodes;
-                return EvaluateMove(moveGenerator);
+                int eval = EvaluateMove(moveGenerator);
+                ttable.Add(zhash, eval);
+                return eval;
             }
             int bound = alpha;
             Move runningBestMove = Move.InvalidMove;
@@ -271,6 +273,7 @@ namespace Engine
                 ++this.halfmove;
                 MoveGenerator nextPosition = new MoveGenerator(moveGenerator.boardData, moveGenerator.curTurnColor, moveGenerator.prevMoves, move);
                 int score = -1 * NegaMax(nextPosition, depth: depth - 1, alpha: -1 * beta, beta: -1 * alpha);
+                if (!ttable.ContainsKey(zhash)) ttable.Add(zhash, score);
                 --this.halfmove;
                 // hardfail cutoff
                 if (score >= beta)
@@ -292,11 +295,14 @@ namespace Engine
             return alpha;
         }
 
-        private string ZHash(MoveGenerator moveGen, int depth)
+        private int ZHash(MoveGenerator moveGen, int depth)
         {
-            string hash = "";
-
-            return hash;
+            // tt_hash = salt + general bitboard + curTurn + depth searched
+            string hash = tt_salt;
+            hash += BitBoard.convertToBitBoard(moveGen.boardData);
+            hash += moveGen.curTurnColor;
+            hash += depth;
+            return hash.GetHashCode();
         }
     }
 }
