@@ -540,6 +540,21 @@ namespace Engine
                 }
             }
         }
+
+        private void isCheck(int idx, int target)
+        {
+            int type = Piece.Empty; 
+            if (((int) this.bb_queen << idx & 1) == 1) type = Piece.Queen;
+            else if (((int) this.bb_rook << idx & 1) == 1) type = Piece.Rook;
+            else if (((int) this.bb_bishop << idx & 1) == 1) type = Piece.Bishop;
+            else if (((int) this.bb_knight << idx & 1) == 1) type = Piece.Knight;
+            else if (((int) this.bb_pawn << idx & 1) == 1) type = Piece.Queen;
+
+            if(type == Piece.Queen || type == Piece.Rook)
+            {
+
+            }
+        }
         private void LocatePieces()
         {
 
